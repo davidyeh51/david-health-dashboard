@@ -10,6 +10,7 @@
 <!-- External Libraries -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
@@ -45,7 +46,7 @@ body{
 .topnav::-webkit-scrollbar{display:none}
 .topnav a{
   text-decoration:none; color:var(--muted); font-size:.84rem; font-weight:600;
-  padding:6px 13px; border-radius:4px; white-space:nowrap; border:1px solid transparent;
+  padding:6px 12px; border-radius:4px; white-space:nowrap; border:1px solid transparent;
   transition:all .15s ease; display:flex; align-items:center; gap:6px;
 }
 .topnav a:hover{color:var(--blue); background:var(--blue-soft)}
@@ -53,8 +54,10 @@ body{
 .topnav a.special-ai{color:var(--purple); border-color:var(--purple-soft)}
 .topnav a.special-ai:hover{background:var(--purple-soft); color:var(--purple)}
 .topnav a.special-ai.active{background:var(--purple); color:#fff}
+.topnav a.special-pdf{color:var(--red); border-color:var(--red-soft)}
+.topnav a.special-pdf:hover{background:var(--red-soft); color:var(--red)}
 .topbar .meta{font-size:.74rem; color:var(--muted); white-space:nowrap; font-weight:600}
-@media(max-width:1120px){.topbar .meta{display:none}}
+@media(max-width:1200px){.topbar .meta{display:none}}
 @media(max-width:860px){.topbar .brand .tx{font-size:.78rem}}
 
 /* ---------- views / slides ---------- */
@@ -96,6 +99,7 @@ body{
 .two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
 .three-col{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
 .four-col{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+.five-col{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
 .split-45{display:grid; grid-template-columns:45% 1fr; gap:18px; align-items:start}
 .split-55{display:grid; grid-template-columns:1fr 45%; gap:18px; align-items:start}
 .split-img-right{display:grid; grid-template-columns:1fr 1.1fr; gap:18px; align-items:start}
@@ -103,11 +107,11 @@ body{
 
 @media(max-width:1050px){
   .slide{padding:72px 18px 96px}
-  .two-col,.three-col,.four-col,.split-45,.split-55,.split-img-right,.split-img-left{grid-template-columns:1fr}
+  .two-col,.three-col,.four-col,.five-col,.split-45,.split-55,.split-img-right,.split-img-left{grid-template-columns:1fr}
 }
 
 /* ---------- components ---------- */
-.card{background:var(--card); border:1px solid var(--line); border-top:3px solid var(--blue); border-radius:4px; padding:16px 18px; box-shadow:0 3px 10px rgba(18,41,61,.04)}
+.card{background:var(--card); border:1px solid var(--line); border-top:3px solid var(--blue); border-radius:4px; padding:16px 18px; box-shadow:0 3px 10px rgba(18,41,61,.04); position:relative}
 .card.teal{border-top-color:var(--teal)}
 .card.amber{border-top-color:var(--amber)}
 .card.coral{border-top-color:var(--coral)}
@@ -181,6 +185,35 @@ td.ctr,th.ctr{text-align:center}
 .fig .figtitle{font-size:.88rem; font-weight:800; margin-bottom:8px; color:var(--blue-dd); display:flex; align-items:center; justify-content:space-between}
 .fig svg{display:block; width:100%; height:auto}
 
+/* PDF Report Action Badges */
+.report-badge{
+  display:inline-flex; align-items:center; gap:6px; font-size:.76rem; font-weight:700;
+  padding:5px 12px; border-radius:4px; text-decoration:none;
+  background:var(--red-soft); color:var(--red); border:1px solid rgba(197,34,31,.2);
+  transition:all .15s ease;
+}
+.report-badge:hover{background:var(--red); color:#fff}
+
+/* Chart Canvas Container */
+.chart-box{
+  background:#fff; border:1px solid var(--line); border-radius:4px;
+  padding:16px 20px; box-shadow:0 3px 12px rgba(18,41,61,.04);
+  position:relative; height:340px;
+}
+
+/* Home PDF Library Cards */
+.pdf-lib-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-top:16px}
+.pdf-lib-card{
+  background:#fff; border:1px solid var(--line); border-top:3px solid var(--red);
+  border-radius:4px; padding:14px 16px; display:flex; flex-direction:column; justify-content:space-between;
+  box-shadow:0 2px 8px rgba(0,0,0,.03); transition:transform .15s;
+}
+.pdf-lib-card:hover{transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.pdf-lib-card .year{font-size:1.1rem; font-weight:900; color:var(--ink)}
+.pdf-lib-card .inst{font-size:.78rem; color:var(--blue); font-weight:700; margin-top:2px}
+.pdf-lib-card .desc{font-size:.76rem; color:var(--muted); line-height:1.4; margin-top:6px}
+.pdf-lib-card .btn-row{margin-top:12px; display:flex; gap:6px}
+
 /* ---------- home ---------- */
 .home{min-height:100vh}
 .hero{
@@ -199,26 +232,30 @@ td.ctr,th.ctr{text-align:center}
 .homebody{max-width:1380px; margin:0 auto; padding:30px 48px 56px}
 @media(max-width:1000px){.homebody{padding:24px 18px 46px}}
 
-.part-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px}
+.part-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px}
 .part-card{
   display:block; text-decoration:none; color:var(--ink); background:#fff;
-  border:1px solid var(--line); border-top:4px solid var(--blue); border-radius:4px; padding:22px;
+  border:1px solid var(--line); border-top:4px solid var(--blue); border-radius:4px; padding:20px;
   transition:transform .15s ease, box-shadow .15s ease; position:relative; overflow:hidden;
 }
 .part-card:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(18,41,61,.12)}
 .part-card.c2{border-top-color:var(--teal)}
-.part-card.c3{border-top-color:var(--coral)}
-.part-card.c4{border-top-color:var(--purple)}
+.part-card.c3{border-top-color:var(--amber)}
+.part-card.c4{border-top-color:var(--coral)}
+.part-card.c5{border-top-color:var(--purple)}
 .part-card .pc-eyebrow{font-size:.72rem; font-weight:800; letter-spacing:.14em; color:var(--blue)}
 .part-card.c2 .pc-eyebrow{color:var(--teal-d)}
-.part-card.c3 .pc-eyebrow{color:var(--coral)}
-.part-card.c4 .pc-eyebrow{color:var(--purple)}
-.part-card h2{font-size:1.18rem; font-weight:800; margin:8px 0 6px; line-height:1.35}
-.part-card p{color:var(--muted); font-size:.87rem; line-height:1.58}
+.part-card.c3 .pc-eyebrow{color:var(--amber)}
+.part-card.c4 .pc-eyebrow{color:var(--coral)}
+.part-card.c5 .pc-eyebrow{color:var(--purple)}
+.part-card h2{font-size:1.14rem; font-weight:800; margin:8px 0 6px; line-height:1.35}
+.part-card p{color:var(--muted); font-size:.85rem; line-height:1.55}
 .part-card .pc-flags{margin-top:12px; display:flex; gap:6px; flex-wrap:wrap}
 .part-card .pc-go{margin-top:14px; font-weight:800; color:var(--blue); font-size:.85rem}
-.part-card.c4 .pc-go{color:var(--purple)}
-.part-card .pc-icon{position:absolute; right:16px; top:16px; opacity:.85; font-size:1.6rem}
+.part-card.c3 .pc-go{color:var(--amber)}
+.part-card.c4 .pc-go{color:var(--coral)}
+.part-card.c5 .pc-go{color:var(--purple)}
+.part-card .pc-icon{position:absolute; right:16px; top:16px; opacity:.85; font-size:1.5rem}
 
 .quick-spec-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:24px}
 .home-foot{padding-top:20px; font-size:.74rem; color:var(--muted); border-top:1px solid var(--line); margin-top:30px; line-height:1.8}
@@ -260,6 +297,7 @@ td.ctr,th.ctr{text-align:center}
 </head>
 <body>
 
+
 <!-- ================= TOP BAR ================= -->
 <div class="topbar">
   <a class="brand" href="#home">
@@ -273,11 +311,14 @@ td.ctr,th.ctr{text-align:center}
     <a href="#home" data-nav="home"><i class="fas fa-home"></i> 封面</a>
     <a href="#p1" data-nav="p1"><i class="fas fa-calendar-check"></i> Part 1 逐年摘要 (5 頁)</a>
     <a href="#p2" data-nav="p2"><i class="fas fa-chart-line"></i> Part 2 長期趨勢 (13 頁)</a>
-    <a href="#p3" data-nav="p3"><i class="fas fa-exclamation-triangle"></i> Part 3 行動方案 (4 頁)</a>
-    <a href="#p4" data-nav="p4" class="special-ai"><i class="fas fa-user-md"></i> Part 4 AI 虛擬醫生 (即時諮詢)</a>
+    <a href="#p3" data-nav="p3" style="color:var(--amber); font-weight:700"><i class="fas fa-chart-area"></i> Part 3 視覺化趨勢圖 (6 頁)</a>
+    <a href="#p4" data-nav="p4"><i class="fas fa-exclamation-triangle"></i> Part 4 行動方案 (4 頁)</a>
+    <a href="#p5" data-nav="p5" class="special-ai"><i class="fas fa-user-md"></i> Part 5 AI 虛擬醫生</a>
+    <a href="#reports-section" class="special-pdf"><i class="fas fa-file-pdf"></i> 原始報告庫 (5 份)</a>
   </nav>
-  <div class="meta">基準：2026/09 ｜ 榮總＋佑康診所 ｜ 狀態：待門診確認</div>
+  <div class="meta">基準：2026/09 ｜ 榮總＋佑康 ｜ 狀態：待門診確認</div>
 </div>
+
 
 <!-- ================= HOME VIEW ================= -->
 <div class="view active home" id="view-home">
@@ -313,6 +354,7 @@ td.ctr,th.ctr{text-align:center}
   </div>
 
   <div class="homebody">
+    <!-- 5 PART CARDS -->
     <div class="part-cards">
       <!-- Card 1 -->
       <a class="part-card" href="#p1-1">
@@ -326,7 +368,7 @@ td.ctr,th.ctr{text-align:center}
 
       <!-- Card 2 -->
       <a class="part-card c2" href="#p2-1">
-        <i class="fas fa-chart-bar pc-icon text-teal"></i>
+        <i class="fas fa-chart-line pc-icon text-teal"></i>
         <div class="pc-eyebrow">PART 2</div>
         <h2>五年長期趨勢分析 (13大科別)</h2>
         <p>深入拆解體位、心血管、血糖胰島素、血脂、肝膽、甲狀腺、消化道、骨骼、呼吸、血液尿液等 13 項全維度跨年度數據趨勢。</p>
@@ -334,20 +376,30 @@ td.ctr,th.ctr{text-align:center}
         <div class="pc-go">進入趨勢章節 &rarr;</div>
       </a>
 
-      <!-- Card 3 -->
+      <!-- Card 3 (NEW!) -->
       <a class="part-card c3" href="#p3-1">
+        <i class="fas fa-chart-area pc-icon text-amber"></i>
+        <div class="pc-eyebrow">PART 3 · 新增圖庫</div>
+        <h2>核心與異常參數視覺化追蹤庫</h2>
+        <p>以互動式折線圖與警戒帶追蹤：HOMA-IR、LDL 連五年紅線、ALT 逆轉暴跌、體脂 vs 骨骼肌、eGFR 與甲狀腺結節增長曲線。</p>
+        <div class="pc-flags"><span class="chip amber">6 頁圖庫</span><span class="chip red">LDL 5年紅線</span><span class="chip green">逆轉折線</span></div>
+        <div class="pc-go">進入視覺化圖庫 &rarr;</div>
+      </a>
+
+      <!-- Card 4 -->
+      <a class="part-card c4" href="#p4-1">
         <i class="fas fa-clipboard-check pc-icon text-coral"></i>
-        <div class="pc-eyebrow">PART 3</div>
+        <div class="pc-eyebrow">PART 4</div>
         <h2>目前需要注意的事項 (行動方案)</h2>
         <p>依急迫性嚴格分級：第一級立即穿刺、第二級三個月內用藥與超音波追蹤、第三級生活型態改善，以及 2026 斷線補回清單。</p>
         <div class="pc-flags"><span class="chip coral">4 頁</span><span class="chip red">第一級立即處理</span><span class="chip amber">三個月內</span></div>
         <div class="pc-go">進入行動清單 &rarr;</div>
       </a>
 
-      <!-- Card 4 -->
-      <a class="part-card c4" href="#p4-1">
+      <!-- Card 5 -->
+      <a class="part-card c5" href="#p5-1">
         <i class="fas fa-robot pc-icon text-purple"></i>
-        <div class="pc-eyebrow">PART 4 · AI 賦能</div>
+        <div class="pc-eyebrow">PART 5 · AI 賦能</div>
         <h2>AI 虛擬醫生 (即時互動問診)</h2>
         <p>完整掛載 2021–2025 全文體檢數據。可直接向專屬 AI 虛擬醫生詢問各項指數變化、用藥評估、穿刺流程與健康生活指南。</p>
         <div class="pc-flags"><span class="chip purple">即時問診</span><span class="chip teal">大衛健檢大腦</span><span class="chip blue">Gemini 核心</span></div>
@@ -383,6 +435,93 @@ td.ctr,th.ctr{text-align:center}
       </div>
     </div>
 
+    <!-- ================= 原始健檢報告專屬資料庫 (Requirement 1) ================= -->
+    <div id="reports-section" style="margin-top:34px; padding:24px; background:#fff; border:1px solid var(--line); border-left:5px solid var(--red); border-radius:4px; box-shadow:0 3px 12px rgba(18,41,61,.04)">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px">
+        <div>
+          <h3 style="font-size:1.15rem; font-weight:800; color:var(--ink); display:flex; align-items:center; gap:8px">
+            <i class="fas fa-folder-open text-red"></i> 五年原始健檢報告資料庫 (醫院出具官方文件)
+          </h3>
+          <p style="font-size:.82rem; color:var(--muted); margin-top:4px">
+            點擊可直接在瀏覽器線上檢視高解析 PDF 原始檔案，或下載備存以供門診時主治醫師閱覽。
+          </p>
+        </div>
+        <span class="chip red"><i class="fas fa-file-pdf"></i> 5 份完整官方報告</span>
+      </div>
+
+      <div class="pdf-lib-grid">
+        <!-- 2021 -->
+        <div class="pdf-lib-card">
+          <div>
+            <div class="year">2021 年度健檢</div>
+            <div class="inst"><i class="fas fa-clinic-medical"></i> 佑康診所 (2021-08-14)</div>
+            <div class="desc">共 6 頁 ｜ 建立體脂、肝膽、腎功能、血脂與骨密初始基準；抓出四條健康紅線。</div>
+          </div>
+          <div class="btn-row">
+            <a href="reports/2021_YouKang_Report.pdf" target="_blank" class="report-badge" style="width:100%; justify-content:center">
+              <i class="fas fa-eye"></i> 線上閱讀 PDF (645KB)
+            </a>
+          </div>
+        </div>
+
+        <!-- 2022 -->
+        <div class="pdf-lib-card">
+          <div>
+            <div class="year">2022 年度健檢</div>
+            <div class="inst"><i class="fas fa-clinic-medical"></i> 佑康診所 (2022-11-05)</div>
+            <div class="desc">共 6 頁 ｜ 腰圍降至 90cm 最佳，但空腹血糖 127 疑糖尿病、eGFR 54 谷底、尿酸 8.30。</div>
+          </div>
+          <div class="btn-row">
+            <a href="reports/2022_YouKang_Report.pdf" target="_blank" class="report-badge" style="width:100%; justify-content:center">
+              <i class="fas fa-eye"></i> 線上閱讀 PDF (600KB)
+            </a>
+          </div>
+        </div>
+
+        <!-- 2023 -->
+        <div class="pdf-lib-card">
+          <div>
+            <div class="year">2023 年度健檢</div>
+            <div class="inst"><i class="fas fa-hospital"></i> 高雄榮總 (2023-10-26)</div>
+            <div class="desc">共 32 頁 ｜ 胃鏡、大腸鏡、DXA 雙能量骨密；切除增生息肉、解套 eGFR、驗出胰島素抗性。</div>
+          </div>
+          <div class="btn-row">
+            <a href="reports/2023_VGHKS_Report.pdf" target="_blank" class="report-badge" style="width:100%; justify-content:center">
+              <i class="fas fa-eye"></i> 線上閱讀 PDF (1.45MB)
+            </a>
+          </div>
+        </div>
+
+        <!-- 2024 -->
+        <div class="pdf-lib-card">
+          <div>
+            <div class="year">2024 年度健檢</div>
+            <div class="inst"><i class="fas fa-hospital"></i> 高雄榮總 (2024-10-09)</div>
+            <div class="desc">共 22 頁 ｜ 雙 CT 檢查（冠狀動脈鈣化分數 0、微輻射肺癌篩檢乾淨）、ALT 36 完全正常。</div>
+          </div>
+          <div class="btn-row">
+            <a href="reports/2024_VGHKS_Report.pdf" target="_blank" class="report-badge" style="width:100%; justify-content:center">
+              <i class="fas fa-eye"></i> 線上閱讀 PDF (982KB)
+            </a>
+          </div>
+        </div>
+
+        <!-- 2025 -->
+        <div class="pdf-lib-card" style="border-top-color:#8B0000; background:#FFFDFC">
+          <div>
+            <div class="year" style="color:#C5221F">2025 年度健檢 ★</div>
+            <div class="inst"><i class="fas fa-hospital"></i> 高雄榮總 (2025-10-29)</div>
+            <div class="desc">共 24 頁 ｜ 甲狀腺結節 2.6cm (A級建議穿刺)、HOMA-IR 1.42 改善、次世代腸道菌叢定序。</div>
+          </div>
+          <div class="btn-row">
+            <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge" style="width:100%; justify-content:center; background:#C5221F; color:#fff">
+              <i class="fas fa-file-medical-alt"></i> 線上閱讀 PDF (1.31MB)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 基本資料表 -->
     <div class="table-wrap" style="margin-top:28px">
       <table>
@@ -394,6 +533,7 @@ td.ctr,th.ctr{text-align:center}
             <th>受檢機構</th>
             <th>年度核心總評與重大項目</th>
             <th>榮總等級判讀</th>
+            <th>原始報告直達</th>
           </tr>
         </thead>
         <tbody>
@@ -404,6 +544,7 @@ td.ctr,th.ctr{text-align:center}
             <td>佑康診所</td>
             <td>中度脂肪肝、腎絲球過濾率偏低、血脂全面超標、發現甲狀腺結節 2.2cm</td>
             <td><span class="chip grey">常規診所總評</span></td>
+            <td><a href="reports/2021_YouKang_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 2021 PDF</a></td>
           </tr>
           <tr>
             <td><strong>2022</strong></td>
@@ -412,6 +553,7 @@ td.ctr,th.ctr{text-align:center}
             <td>佑康診所</td>
             <td>腰圍最佳 90cm，但空腹血糖 127 疑糖尿病、尿酸 8.30 超標、eGFR 54 低谷</td>
             <td><span class="chip amber">疑糖尿病 / 門診追蹤</span></td>
+            <td><a href="reports/2022_YouKang_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 2022 PDF</a></td>
           </tr>
           <tr>
             <td><strong>2023</strong></td>
@@ -420,6 +562,7 @@ td.ctr,th.ctr{text-align:center}
             <td>高雄榮總</td>
             <td>首度執行胃鏡+大腸鏡+DXA骨密；切除良性增生息肉、異位性胰腺；eGFR 解套 97.5</td>
             <td><span class="chip blue">胃腸 / 代謝 B 級</span></td>
+            <td><a href="reports/2023_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 2023 PDF</a></td>
           </tr>
           <tr>
             <td><strong>2024</strong></td>
@@ -428,6 +571,7 @@ td.ctr,th.ctr{text-align:center}
             <td>高雄榮總</td>
             <td>微輻射肺部CT乾淨(Lung-RADS 1)、冠狀動脈鈣化分數 0、ALT 36 完全正常化</td>
             <td><span class="chip green">胃腸 / 代謝 B 級 (血管極佳)</span></td>
+            <td><a href="reports/2024_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 2024 PDF</a></td>
           </tr>
           <tr class="alert-row">
             <td><strong>2025</strong></td>
@@ -436,6 +580,7 @@ td.ctr,th.ctr{text-align:center}
             <td>高雄榮總</td>
             <td>新陳代謝科 A 級 (甲狀腺結節 2.6cm 建議穿刺)；HOMA-IR 降至 1.42；首次記錄心雜音</td>
             <td><span class="chip red">新陳代謝科 A 級 (立即處理)</span></td>
+            <td><a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge" style="background:var(--red); color:#fff"><i class="fas fa-file-pdf"></i> 2025 PDF</a></td>
           </tr>
         </tbody>
       </table>
@@ -446,6 +591,7 @@ td.ctr,th.ctr{text-align:center}
     </div>
   </div>
 </div>
+
 
 <!-- ================= PART 1: 五年逐年摘要 (5 頁) ================= -->
 <div class="view" id="view-p1">
@@ -459,9 +605,9 @@ td.ctr,th.ctr{text-align:center}
         <div class="sub">作為五年追蹤的第一個對照錨點，一次性暴露了脂肪肝、腎功能警訊、血脂超標及骨質流失四大潛在問題。</div>
       </div>
       <div class="flags">
+        <a href="reports/2021_YouKang_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 佑康 2021 原始報告 P.1~P.6 &rarr;</a>
         <span class="flag blue">基準年度</span>
         <span class="flag coral">4條紅線</span>
-        <span class="flag amber">中度脂肪肝</span>
       </div>
     </div>
 
@@ -514,32 +660,31 @@ td.ctr,th.ctr{text-align:center}
       <!-- Graphic/Diagram row -->
       <div class="fig">
         <div class="figtitle">
-          <span><i class="fas fa-chart-pie"></i> 2021 身體組成與重要代謝參數雷達分布</span>
+          <span><i class="fas fa-chart-pie"></i> 2021 身體組成與重要代謝參數分布圖 (原始報告 P.2~P.4 數據繪製)</span>
           <span class="chip blue">基準建檔</span>
         </div>
-        <svg viewBox="0 0 800 130" style="background:#F8FAFC; border-radius:4px;">
-          <!-- Bar indicators -->
-          <text x="30" y="30" font-size="12" font-weight="bold" fill="#12293D">體重/BMI: 87.4kg / 27.2 (過重)</text>
-          <rect x="30" y="40" width="320" height="14" rx="3" fill="#E2E8F0"/>
-          <rect x="30" y="40" width="220" height="14" rx="3" fill="#D95F45"/>
-          
-          <text x="30" y="85" font-size="12" font-weight="bold" fill="#12293D">體脂率: 34.7% (肥胖警戒區 >25%)</text>
-          <rect x="30" y="95" width="320" height="14" rx="3" fill="#E2E8F0"/>
-          <rect x="30" y="95" width="260" height="14" rx="3" fill="#E09A2B"/>
+        <svg viewBox="0 0 880 120" style="background:#F8FAFC; border-radius:4px;">
+          <text x="30" y="28" font-size="12" font-weight="bold" fill="#12293D">體重 / BMI: 87.4 kg / 27.19 (過重)</text>
+          <rect x="30" y="38" width="380" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="30" y="38" width="260" height="14" rx="3" fill="#D95F45"/>
 
-          <text x="420" y="30" font-size="12" font-weight="bold" fill="#12293D">ALT 肝指數: 66 U/L (標準 0-40)</text>
-          <rect x="420" y="40" width="320" height="14" rx="3" fill="#E2E8F0"/>
-          <rect x="420" y="40" width="230" height="14" rx="3" fill="#D95F45"/>
+          <text x="30" y="80" font-size="12" font-weight="bold" fill="#12293D">體脂率: 34.7% (肥胖紅線 >25%)</text>
+          <rect x="30" y="90" width="380" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="30" y="90" width="310" height="14" rx="3" fill="#E09A2B"/>
 
-          <text x="420" y="85" font-size="12" font-weight="bold" fill="#12293D">LDL 膽固醇: 136.2 mg/dL (標準 <130)</text>
-          <rect x="420" y="95" width="320" height="14" rx="3" fill="#E2E8F0"/>
-          <rect x="420" y="95" width="210" height="14" rx="3" fill="#1968AD"/>
+          <text x="470" y="28" font-size="12" font-weight="bold" fill="#12293D">ALT 肝指數: 66 U/L (標準上限 40)</text>
+          <rect x="470" y="38" width="380" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="470" y="38" width="280" height="14" rx="3" fill="#D95F45"/>
+
+          <text x="470" y="80" font-size="12" font-weight="bold" fill="#12293D">LDL-C: 136.2 mg/dL (標準目標 <130)</text>
+          <rect x="470" y="90" width="380" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="470" y="90" width="240" height="14" rx="3" fill="#1968AD"/>
         </svg>
       </div>
     </div>
 
     <div class="slide-foot">
-      <span>資料來源：2021-08-14 佑康診所健檢報告</span>
+      <span>原始報告對應：2021-08-14 佑康診所健檢報告（共 6 頁）</span>
       <span class="pageno">PART 1 · 1 / 5</span>
     </div>
   </div>
@@ -553,8 +698,8 @@ td.ctr,th.ctr{text-align:center}
         <div class="sub">這一年腰圍縮小、血壓極佳，然而血糖與腎指標卻出現五年最嚴峻的數值，直接被診斷「疑糖尿病」。</div>
       </div>
       <div class="flags">
+        <a href="reports/2022_YouKang_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 佑康 2022 原始報告 P.1~P.6 &rarr;</a>
         <span class="flag coral">疑糖尿病</span>
-        <span class="flag amber">eGFR 54 谷底</span>
         <span class="flag green">腰圍 90cm 最佳</span>
       </div>
     </div>
@@ -603,53 +748,38 @@ td.ctr,th.ctr{text-align:center}
       </div>
 
       <!-- Comparison Visual -->
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>核心觀察項目</th>
-              <th>2021 數據</th>
-              <th>2022 數據</th>
-              <th>年度變動幅度</th>
-              <th>臨床意義解讀</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="bad-row">
-              <td>空腹血糖 (Glucose AC)</td>
-              <td>110 mg/dL</td>
-              <td>127 mg/dL</td>
-              <td>+17 mg/dL (&uarr; 15%)</td>
-              <td>明顯惡化，診所首次警示疑似糖尿病</td>
-            </tr>
-            <tr class="bad-row">
-              <td>eGFR 腎絲球過濾率</td>
-              <td>58.79</td>
-              <td>54.04</td>
-              <td>-4.75 (&darr; 8%)</td>
-              <td>跨機構檢驗法不同導致的虛驚，但當年造成高度心理警訊</td>
-            </tr>
-            <tr class="good-row">
-              <td>三酸甘油脂 (TG)</td>
-              <td>137 mg/dL</td>
-              <td>93 mg/dL</td>
-              <td>-44 mg/dL (&darr; 32%)</td>
-              <td>受清淡飲食與短期節制正面影響大幅改善</td>
-            </tr>
-            <tr class="hl-row">
-              <td>體脂率 vs 體重</td>
-              <td>87.4kg / 34.7%</td>
-              <td>85.0kg / 35.2%</td>
-              <td>體重降但體脂率升</td>
-              <td>典型流失骨骼肌與水分的無效減重型態</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="fig">
+        <div class="figtitle">
+          <span><i class="fas fa-balance-scale"></i> 2021 vs 2022 身體組成質量悖論：減重卻減到肌肉示意圖</span>
+          <span class="chip amber">減肌警訊</span>
+        </div>
+        <svg viewBox="0 0 880 110" style="background:#F8FAFC">
+          <!-- Left: 2021 -->
+          <rect x="60" y="20" width="160" height="70" rx="4" fill="#0C3A63"/>
+          <text x="140" y="44" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">2021 體態組構</text>
+          <text x="140" y="62" fill="#8FD9E4" font-size="11" text-anchor="middle">體重: 87.4 kg</text>
+          <text x="140" y="78" fill="#8FD9E4" font-size="11" text-anchor="middle">體脂率: 34.7%</text>
+
+          <path d="M240 55 h70" stroke="#D95F45" stroke-width="2.5" marker-end="url(#arr)"/>
+          <text x="275" y="46" font-size="10" font-weight="bold" fill="#D95F45" text-anchor="middle">體重 -2.4kg</text>
+
+          <!-- Right: 2022 -->
+          <rect x="330" y="20" width="160" height="70" rx="4" fill="#D95F45"/>
+          <text x="410" y="44" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">2022 體態組構</text>
+          <text x="410" y="62" fill="#FFEAEA" font-size="11" text-anchor="middle">體重: 85.0 kg (&darr;)</text>
+          <text x="410" y="78" fill="#FFEAEA" font-size="11" font-weight="bold" text-anchor="middle">體脂率: 35.2% (&uarr; 惡化)</text>
+
+          <!-- Explain Callout -->
+          <rect x="520" y="16" width="320" height="78" rx="4" fill="#FCF2DE" stroke="#E09A2B"/>
+          <text x="535" y="38" font-size="11" font-weight="bold" fill="#9a6a10">生理機轉深度判讀：</text>
+          <text x="535" y="56" font-size="10" fill="#9a6a10">體重下降 2.4kg，但體脂率不降反升，證明流失的是</text>
+          <text x="535" y="72" font-size="10" fill="#9a6a10">水分與高代謝率的骨骼肌肉組織，此為典型的無效減重。</text>
+        </svg>
       </div>
     </div>
 
     <div class="slide-foot">
-      <span>資料來源：2022-11-05 佑康診所健檢報告</span>
+      <span>原始報告對應：2022-11-05 佑康診所健檢報告（共 6 頁）</span>
       <span class="pageno">PART 1 · 2 / 5</span>
     </div>
   </div>
@@ -663,10 +793,9 @@ td.ctr,th.ctr{text-align:center}
         <div class="sub">轉移至醫學中心執行高規格檢查（胃鏡、大腸鏡、DXA 骨密），證實腎臟無恙，但挖出了嚴重胰島素抗性與極低維生素 D。</div>
       </div>
       <div class="flags">
-        <span class="flag blue">高雄榮總首檢</span>
+        <a href="reports/2023_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2023 原始報告 P.1~P.32 &rarr;</a>
         <span class="flag green">eGFR 97.5 解套</span>
-        <span class="flag coral">胰島素抗性 B級</span>
-        <span class="flag amber">維生素D 8.1 嚴重缺乏</span>
+        <span class="flag coral">HOMA-IR 2.48</span>
       </div>
     </div>
 
@@ -692,7 +821,7 @@ td.ctr,th.ctr{text-align:center}
 
       <div class="two-col">
         <div class="card green">
-          <h3><i class="fas fa-check-circle text-green"></i> 醫學中心證實之優點</h3>
+          <h3><i class="fas fa-check-circle text-green"></i> 醫學中心證實之優點 (報告 P.3~P.15)</h3>
           <ul>
             <li><strong>腎功能洗清嫌疑：</strong>肌酸酐 0.85、eGFR 97.5，證明過去診所數據係因 Jaffe 反應法高估所致，實體腎臟健康。</li>
             <li><strong>肝功能大躍進：</strong>ALT 自 66 降至 47 U/L，脂肪肝從中度降至輕度。</li>
@@ -703,7 +832,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
 
         <div class="card coral">
-          <h3><i class="fas fa-exclamation-circle text-coral"></i> 醫學中心揪出的深層缺點</h3>
+          <h3><i class="fas fa-exclamation-circle text-coral"></i> 醫學中心揪出的深層缺點 (報告 P.16~P.28)</h3>
           <ul>
             <li><strong>新陳代謝科 B級：</strong>診斷「嚴重胰島素抗性」，糖尿病長期風險高。</li>
             <li><strong>維生素D 瀕危：</strong>僅 8.1 ng/mL，對骨質、睪固酮與代謝屏障形成骨牌效應。</li>
@@ -716,12 +845,12 @@ td.ctr,th.ctr{text-align:center}
       </div>
 
       <div class="note">
-        <strong>重要決策盲點：</strong>2023 年榮總大腸鏡切除增生性息肉後，病理報告明載<strong>「suggest f/u colonoscopic exam next year (建議次年追蹤大腸鏡)」</strong>，且甲狀腺超音波當年漏未排檢，形成後續追蹤斷層。
+        <strong>原始報告追蹤醫囑警告 (見 2023 榮總報告 P.21)：</strong>大腸鏡病理切片確認良性增生息肉後，原文載明<strong>「suggest f/u colonoscopic exam next year (建議次年追蹤大腸鏡)」</strong>，因 2024、2025 皆未重照，目前已逾期約兩年。
       </div>
     </div>
 
     <div class="slide-foot">
-      <span>資料來源：2023-10-26 高雄榮總健康管理中心 (29頁完整報告)</span>
+      <span>原始報告對應：2023-10-26 高雄榮總健康管理中心（共 32 頁完整報告）</span>
       <span class="pageno">PART 1 · 3 / 5</span>
     </div>
   </div>
@@ -735,10 +864,10 @@ td.ctr,th.ctr{text-align:center}
         <div class="sub">雙 CT 檢查（冠狀動脈 CT＋低劑量肺癌 CT）交出滿分成績，然而甲狀腺理學摸到結節卻未排超音波，埋下最大隱患。</div>
       </div>
       <div class="flags">
+        <a href="reports/2024_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2024 原始報告 P.1~P.22 &rarr;</a>
         <span class="flag green">鈣化分數 0</span>
-        <span class="flag teal">Lung-RADS 1 肺部乾淨</span>
-        <span class="flag blue">ALT 36 正常化</span>
-        <span class="flag coral">追蹤漏洞：漏檢超音波</span>
+        <span class="flag teal">Lung-RADS 1</span>
+        <span class="flag coral">超音波追蹤缺口</span>
       </div>
     </div>
 
@@ -766,17 +895,17 @@ td.ctr,th.ctr{text-align:center}
         <div class="card green">
           <h3><i class="fas fa-shield-alt text-green"></i> 心血管與全身核心防線全面確立</h3>
           <ul>
-            <li><strong>最強防護罩：</strong>冠狀動脈 18 個節段 Stenosis 全部為 None，主動脈與瓣膜無鈣化，回推過去所有代謝紅字尚未造成血管實體器質性破壞。</li>
-            <li><strong>肺部乾淨：</strong>Lung-RADS 1，排除肺癌風險。</li>
+            <li><strong>最強防護罩 (報告 P.7)：</strong>冠狀動脈 18 個節段全部為 Stenosis: None，主動脈與瓣膜無鈣化，回推過去所有代謝紅字尚未造成血管實質器質損害。</li>
+            <li><strong>肺部乾淨 (報告 P.9)：</strong>Lung-RADS 1，排除肺部結節與肺癌風險。</li>
             <li><strong>體重跌破 85kg：</strong>體重 84.4kg、BMI 25.9，胰島素抗性 HOMA-IR 由 2.48 降至 2.07。</li>
-            <li><strong>多科全數無異常：</strong>大腸直腸外科、腎臟科、胸腔內科、家醫科、眼科全數獲評 E 級。維生素 D 回升至 11.8。</li>
+            <li><strong>多科全數無異常：</strong>大腸直腸外科、腎臟科、胸腔內科、家醫科、眼科全數獲評 E 級。</li>
           </ul>
         </div>
 
         <div class="card coral">
           <h3><i class="fas fa-exclamation-triangle text-coral"></i> 致命追蹤疏忽與身體組成警訊</h3>
           <ul>
-            <li><strong>🔴 重大疏忽：</strong>醫師理學檢查摸到「疑似甲狀腺結節」，明確建議做超音波，<strong>但當年並未執行</strong>！</li>
+            <li><strong>🔴 重大疏忽 (報告 P.2)：</strong>醫師理學檢查摸到「疑似甲狀腺結節」，明確建議做超音波，<strong>但當年並未執行</strong>！</li>
             <li><strong>減重反減肌肉：</strong>體重雖降 1.7kg，但肌肉量掉 0.9kg (骨骼肌 33.1&rarr;32.2kg)，體脂重 26.8kg 毫無改變；相位角跌至 5.0&deg;。</li>
             <li><strong>內臟脂肪上升：</strong>腰圍反彈至 99cm，內臟脂肪面積上升至 184 cm² (五年最高)。</li>
             <li><strong>維生素 D 仍遠不足：</strong>11.8 ng/mL 僅達標準下限之 39%，日常補充劑量明顯過低。</li>
@@ -791,7 +920,7 @@ td.ctr,th.ctr{text-align:center}
     </div>
 
     <div class="slide-foot">
-      <span>資料來源：2024-10-09 高雄榮總健康管理中心 (含雙CT報告)</span>
+      <span>原始報告對應：2024-10-09 高雄榮總健康管理中心（含雙 CT 報告，共 22 頁）</span>
       <span class="pageno">PART 1 · 4 / 5</span>
     </div>
   </div>
@@ -805,10 +934,10 @@ td.ctr,th.ctr{text-align:center}
         <div class="sub">HOMA-IR 大幅改善至 1.42、體脂率降至五年最佳 30.4%，然而甲狀腺結節增大至 2.6cm，正式進入細針穿刺關鍵期。</div>
       </div>
       <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge" style="background:var(--red); color:#fff"><i class="fas fa-file-pdf"></i> 榮總 2025 原始報告 P.1~P.24 &rarr;</a>
         <span class="flag red">新陳代謝科 A級</span>
-        <span class="flag red">甲狀腺結節 2.6cm</span>
+        <span class="flag red">甲狀腺 2.6cm</span>
         <span class="flag green">HOMA-IR 1.42</span>
-        <span class="flag teal">體脂率 30.4% 最優</span>
       </div>
     </div>
 
@@ -834,18 +963,18 @@ td.ctr,th.ctr{text-align:center}
 
       <div class="two-col">
         <div class="card green">
-          <h3><i class="fas fa-trophy text-green"></i> 2025 年度重大健康勝績</h3>
+          <h3><i class="fas fa-trophy text-green"></i> 2025 年度重大健康勝績 (報告 P.3~P.12)</h3>
           <ul>
             <li><strong>代謝結構徹底扭轉：</strong>HOMA-IR 降至 1.42，胰島素抗性降至「輕度」，空腹血糖 90 mg/dL。</li>
             <li><strong>身體組成回穩：</strong>骨骼肌重止跌回升至 32.7kg、內臟脂肪面積降至 168 cm²、腰圍自 99 縮至 95cm。</li>
             <li><strong>肝臟零纖維化：</strong>Fibrosis-4 纖維化指數僅 0.6 (標準 &le;3.25)，五年脂肪肝未造成器質硬化。</li>
-            <li><strong>腸道年輕化：</strong>腸道菌叢檢測腸道年齡僅 20~39 歲，多樣性高、益菌組成正常。</li>
+            <li><strong>腸道年輕化 (報告 P.21~24)：</strong>腸道菌叢檢測腸道年齡僅 20~39 歲，多樣性高、益菌組成正常。</li>
             <li><strong>腎絲球過濾率極佳：</strong>eGFR 達 103.2，血液與尿液常規全數健全。</li>
           </ul>
         </div>
 
         <div class="card red">
-          <h3><i class="fas fa-bell text-red"></i> 🔴 2025 必須正視之紅色警戒</h3>
+          <h3><i class="fas fa-bell text-red"></i> 🔴 2025 必須正視之紅色警戒 (報告 P.18)</h3>
           <ul>
             <li><strong>甲狀腺 A級警報：</strong>超音波見兩葉結節，最大在左葉約 2.6cm，混合實質與囊性、異質回音且血流豐富。<strong>醫囑明列：建議 FNA 細針穿刺檢查</strong>。</li>
             <li><strong>首見心雜音：</strong>心臟聽診首次發現心雜音，需與 2024 年二尖瓣/三尖瓣輕微逆流進行超音波比對。</li>
@@ -862,12 +991,13 @@ td.ctr,th.ctr{text-align:center}
     </div>
 
     <div class="slide-foot">
-      <span>資料來源：2025-10-29 高雄榮總健康管理中心 (含甲狀腺超音波與腸道菌報告)</span>
+      <span>原始報告對應：2025-10-29 高雄榮總健康管理中心（含甲狀腺超音波與腸道菌，共 24 頁）</span>
       <span class="pageno">PART 1 · 5 / 5</span>
     </div>
   </div>
 
 </div>
+
 
 <!-- ================= PART 2: 長期趨勢分析 (13 頁) ================= -->
 <div class="view" id="view-p2">
@@ -880,7 +1010,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-1 體位與身體組成趨勢：體脂減去 4.5kg，但中央型肥胖仍在警戒線</h2>
         <div class="sub">五年總體重微幅減少 3.2 kg，但體脂率下降 4.3%，顯示身體組成質性提升；然而腰圍與內臟脂肪仍待最後攻堅。</div>
       </div>
-      <div class="flags"><span class="flag blue">體脂率 30.4%</span><span class="flag amber">腰圍 95cm</span><span class="flag teal">減脂 4.5kg</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 InBody P.6 &rarr;</a>
+        <span class="flag blue">體脂率 30.4%</span>
+        <span class="flag amber">腰圍 95cm</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -902,16 +1036,16 @@ td.ctr,th.ctr{text-align:center}
       </div>
       <div class="two-col">
         <div class="card teal">
-          <h3><i class="fas fa-check"></i> 正面成果：高品質減脂</h3>
-          <p>減重過程減掉的幾乎全為脂肪（純脂肪減 4.5kg，佔總減重 140%），代表生活型態有在起作用。2024 年減去肌肉的錯誤已被 2025 年的肌力回升 (+0.5kg) 所修正。</p>
+          <h3><i class="fas fa-check-circle text-teal"></i> 正面成果：高品質減脂</h3>
+          <p>減重過程減掉的幾乎全為純脂肪（體脂重減少 4.5kg，佔總體重降幅 140%），代表生活型態有在起作用。2024 年減去肌肉的錯誤已被 2025 年的肌力回升 (+0.5kg) 所修正。</p>
         </div>
         <div class="card amber">
-          <h3><i class="fas fa-exclamation"></i> 核心阻礙：內臟脂肪頑固</h3>
+          <h3><i class="fas fa-exclamation-triangle text-amber"></i> 核心阻礙：內臟脂肪頑固</h3>
           <p>腰圍 95cm、內臟脂肪面積 168 cm²、腹部外觀變為「球狀」，這是目前體脂率卡在 30% 難以跌破 25% 的根本上游源頭。</p>
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>檢測儀器：InBody 身體組成分析儀</span><span class="pageno">PART 2 · 1 / 13</span></div>
+    <div class="slide-foot"><span>檢測儀器：InBody 身體組成分析儀 ｜ 詳見榮總 2025 報告 P.6</span><span class="pageno">PART 2 · 1 / 13</span></div>
   </div>
 
   <!-- p2-2: 心血管系統 -->
@@ -922,7 +1056,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-2 血壓與心血管系統：鈣化分數 0 護身符，但需注意 PWV 與心雜音</h2>
         <div class="sub">冠狀動脈電腦斷層掃描顯示血管乾淨無斑塊，但周邊動脈硬化指標 (PWV) 偏高與 2025 新增心雜音需持續盯防。</div>
       </div>
-      <div class="flags"><span class="flag green">鈣化分數 0</span><span class="flag teal">血壓正常</span><span class="flag amber">PWV 偏高</span><span class="flag coral">2025 心雜音</span></div>
+      <div class="flags">
+        <a href="reports/2024_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2024 冠狀動脈CT P.7 &rarr;</a>
+        <span class="flag green">鈣化分數 0</span>
+        <span class="flag coral">2025 心雜音</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -946,7 +1084,7 @@ td.ctr,th.ctr{text-align:center}
           <div class="label">五年含金量最高的單一數據</div>
           <div class="answer">冠狀動脈鈣化分數 CAC = 0 (CAD-RADS 0)</div>
           <div class="more">
-            榮總 2024 電腦斷層證實 18 條冠狀動脈皆無狹窄。這項數據提供了 5~10 年的強大心臟病保護傘，推論過去的血糖與膽固醇問題尚未形成實質血管內皮粥狀硬化斑塊。
+            榮總 2024 電腦斷層證實 18 條冠狀動脈節段皆無狹窄。這項數據提供了 5~10 年的強大心臟病保護傘，推論過去的血糖與膽固醇問題尚未形成實質血管內皮粥狀硬化斑塊。
           </div>
         </div>
         <div class="card coral">
@@ -955,7 +1093,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>檢查單位：高雄榮總心臟血管中心</span><span class="pageno">PART 2 · 2 / 13</span></div>
+    <div class="slide-foot"><span>檢查單位：高雄榮總心臟血管中心 ｜ 詳見 2024 報告 P.7 與 2025 報告 P.2</span><span class="pageno">PART 2 · 2 / 13</span></div>
   </div>
 
   <!-- p2-3: 血糖與胰島素代謝 -->
@@ -966,7 +1104,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-3 血糖與胰島素代謝：HOMA-IR 大幅改善 43%，HbA1c 卡在瓶頸</h2>
         <div class="sub">五年最具成就感的逆轉線：從 2022 年「疑糖尿病」一路降級至 2025 年「輕度胰島素抗性」。</div>
       </div>
-      <div class="flags"><span class="flag green">HOMA-IR 降 43%</span><span class="flag teal">空腹血糖 90</span><span class="flag amber">HbA1c 5.8% 橫盤</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 代謝報告 P.8 &rarr;</a>
+        <span class="flag green">HOMA-IR 降 43%</span>
+        <span class="flag amber">HbA1c 5.8% 橫盤</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -994,7 +1136,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>新陳代謝科五年追蹤模型</span><span class="pageno">PART 2 · 3 / 13</span></div>
+    <div class="slide-foot"><span>新陳代謝科五年追蹤模型 ｜ 詳見 2025 榮總報告 P.8</span><span class="pageno">PART 2 · 3 / 13</span></div>
   </div>
 
   <!-- p2-4: 血脂全項 -->
@@ -1005,7 +1147,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-4 血脂全項趨勢：三酸甘油脂大降，但 LDL 連續五年零次達標</h2>
         <div class="sub">三酸甘油脂靠飲食成功壓制，但低密度壞膽固醇（LDL）卡在 134~145 區間，印證肝臟體質合成佔比極高。</div>
       </div>
-      <div class="flags"><span class="flag red">LDL 5年零達標</span><span class="flag green">TG 125 正常</span><span class="flag teal">HDL 56 達標</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 生化報告 P.9 &rarr;</a>
+        <span class="flag red">LDL 5年零達標</span>
+        <span class="flag green">TG 125 正常</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1033,7 +1179,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>標準指引：中華民國心臟學會血脂治療指引</span><span class="pageno">PART 2 · 4 / 13</span></div>
+    <div class="slide-foot"><span>標準指引：中華民國心臟學會血脂治療指引 ｜ 詳見 2025 榮總報告 P.9</span><span class="pageno">PART 2 · 4 / 13</span></div>
   </div>
 
   <!-- p2-5: 肝膽機能與結構 -->
@@ -1044,7 +1190,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-5 肝膽機能與結構：五年最大成功典範，脂肪肝逆轉且無纖維化</h2>
         <div class="sub">ALT 指數自 66 驟降至 37（降幅 44%），脂肪肝自中度降至輕度，2025 肝纖維化指數僅 0.6 安全無虞。</div>
       </div>
-      <div class="flags"><span class="flag green">ALT 37 正常</span><span class="flag green">纖維化 0.6 極佳</span><span class="flag teal">脂肪肝輕度</span><span class="flag amber">囊腫 2.0cm</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 腹部超音波 P.16 &rarr;</a>
+        <span class="flag green">ALT 37 正常</span>
+        <span class="flag green">纖維化 0.6 極佳</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1074,7 +1224,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>科別：高雄榮總胃腸肝膽科</span><span class="pageno">PART 2 · 5 / 13</span></div>
+    <div class="slide-foot"><span>科別：高雄榮總胃腸肝膽科 ｜ 詳見 2025 報告 P.16</span><span class="pageno">PART 2 · 5 / 13</span></div>
   </div>
 
   <!-- p2-6: 腎臟機能與尿酸 -->
@@ -1085,7 +1235,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-6 腎臟機能與尿酸：榮總三年 eGFR >90 破除腎病虛驚，尿酸逼近上限</h2>
         <div class="sub">2021~2022 佑康檢出 eGFR 54~58 係檢驗方法偏誤；榮總連續三年 >90 確認腎臟健全，但尿酸 2025 回彈至 7.5。</div>
       </div>
-      <div class="flags"><span class="flag green">eGFR 103.2 正常</span><span class="flag teal">肌酸酐 0.92</span><span class="flag amber">尿酸 7.5 貼邊</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 腎功能報告 P.10 &rarr;</a>
+        <span class="flag green">eGFR 103.2 正常</span>
+        <span class="flag amber">尿酸 7.5 貼邊</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1098,7 +1252,7 @@ td.ctr,th.ctr{text-align:center}
             <tr class="good-row"><td>肌酸酐 Creatinine</td><td>1.40</td><td>1.50</td><td>0.85</td><td>0.90</td><td><strong>0.92</strong></td><td>0.7~1.3 mg/dL</td><td>✅ 穩定於 0.9 左右之正常值</td></tr>
             <tr><td>尿素氮 BUN</td><td>16.2</td><td>17.1</td><td>9.0</td><td>11.0</td><td><strong>10.0</strong></td><td>7~25 mg/dL</td><td>✅ 長年正常</td></tr>
             <tr class="hl-row"><td>尿酸 (Uric Acid)</td><td>7.70</td><td>8.30</td><td>6.70</td><td>6.40</td><td><strong>7.50</strong></td><td>4.4~7.6 mg/dL</td><td>⚠️ 2025 回彈逼近上限 7.6</td></tr>
-            <tr><td>尿液全項 (蛋白/糖/潛血)</td><td>陰性</td><td>陰性</td><td>陰性</td><td>陰性</td><td><strong>陰性</strong></td><td>全陰性</td><td>✅ 五年全乾淨無蛋白尿</td></tr>
+            <tr><td>尿液全項 (蛋白/糖/潛血)</td><td>陰性</td><td>陰性</td><td>陰性</td><td>陰性</td><td><strong>陰性</strong></td><td>全陰性</td><td>⭐ 連續五年無任何腎泌尿紅字</td></tr>
           </tbody>
         </table>
       </div>
@@ -1113,7 +1267,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>科別：高雄榮總腎臟科 / 佑康診所檢驗室</span><span class="pageno">PART 2 · 6 / 13</span></div>
+    <div class="slide-foot"><span>科別：高雄榮總腎臟科 / 佑康診所檢驗室 ｜ 詳見 2025 報告 P.10</span><span class="pageno">PART 2 · 6 / 13</span></div>
   </div>
 
   <!-- p2-7: 甲狀腺專題 🔴 -->
@@ -1124,7 +1278,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-7 甲狀腺專題 🔴：結節增大至 2.6cm，五年首見「A級立即進一步檢查」</h2>
         <div class="sub">這是整份健檢報告中唯一持續惡化、且處置優先順序最高的焦點問題；功能正常，但結構需穿刺切片。</div>
       </div>
-      <div class="flags"><span class="flag red">A級立即處置</span><span class="flag red">最大徑 2.6cm</span><span class="flag coral">都卜勒血流增加</span><span class="flag green">TSH 0.87 正常</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge" style="background:var(--red); color:#fff"><i class="fas fa-file-pdf"></i> 榮總 2025 甲狀腺超音波 P.18 &rarr;</a>
+        <span class="flag red">A級立即處置</span>
+        <span class="flag red">最大徑 2.6cm</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1156,7 +1314,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>科別：高雄榮總新陳代謝科 ｜ 醫囑明細：立即進一步檢查治療</span><span class="pageno">PART 2 · 7 / 13</span></div>
+    <div class="slide-foot"><span>科別：高雄榮總新陳代謝科 ｜ 詳見 2025 報告 P.18（建議 FNA 細針穿刺）</span><span class="pageno">PART 2 · 7 / 13</span></div>
   </div>
 
   <!-- p2-8: 消化道與腸道菌叢 -->
@@ -1167,12 +1325,16 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-8 消化道與腸道菌叢：切片全良性，但大腸鏡追蹤逾期兩年</h2>
         <div class="sub">2023 腸胃鏡抓出胃食道逆流、息肉切除與異位性胰腺；2025 腸道菌顯示多樣性高但缺乏 AKK 瘦子菌。</div>
       </div>
-      <div class="flags"><span class="flag teal">腸道年齡 20~39</span><span class="flag coral">大腸鏡逾期 2 年</span><span class="flag amber">AKK 菌偏低</span></div>
+      <div class="flags">
+        <a href="reports/2023_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2023 腸鏡切片 P.21 &rarr;</a>
+        <span class="flag teal">腸道年齡 20~39</span>
+        <span class="flag coral">大腸鏡逾期 2 年</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="two-col">
         <div class="card blue">
-          <h3><i class="fas fa-procedures"></i> 內視鏡與消化道病理回顧 (2023)</h3>
+          <h3><i class="fas fa-procedures"></i> 內視鏡與消化道病理回顧 (2023 報告 P.21)</h3>
           <ul>
             <li><strong>胃食道逆流 (GERD)：</strong>洛杉磯分級 LA-A 級，伴隨慢性胃炎、Hill II 賁門鬆弛。</li>
             <li><strong>十二指腸黏膜下腫瘤：</strong>1.5~2.0cm，切片病理證實為先天「異位性胰腺 (Heterotopic pancreas)」，良性無惡化風險。</li>
@@ -1181,7 +1343,7 @@ td.ctr,th.ctr{text-align:center}
           </ul>
         </div>
         <div class="card purple">
-          <h3><i class="fas fa-bacterium"></i> 2025 首度腸道菌叢次世代定序分析</h3>
+          <h3><i class="fas fa-bacterium"></i> 2025 首度腸道菌叢次世代定序分析 (報告 P.21~24)</h3>
           <ul>
             <li><strong>好消息：</strong>腸道菌健康分數 78（尚可）、腸道年齡 20~39 歲（優於實齡 47 歲）、益菌組成與短鏈脂肪酸（SCFA）合成健全。</li>
             <li><strong>壞消息：</strong>有害菌比例偏高（困難梭菌、沙門氏菌偏多）、<strong>AKK 菌偏低</strong>、乳酸桿菌屬偏少。</li>
@@ -1193,7 +1355,7 @@ td.ctr,th.ctr{text-align:center}
         <strong>腸道菌改善處方：</strong>每日補充水溶性膳食纖維（燕麥、木耳、奇異果）、多攝取多酚類食物（莓果、深色蔬菜、綠茶）以活化 AKK 菌，並補充優質 Omega-3 降低腸道有害梭菌。
       </div>
     </div>
-    <div class="slide-foot"><span>科別：胃腸肝膽科 / 宏碁智醫腸道菌基因定序報告</span><span class="pageno">PART 2 · 8 / 13</span></div>
+    <div class="slide-foot"><span>科別：胃腸肝膽科 ｜ 詳見 2023 榮總報告 P.21 與 2025 榮總報告 P.21~24</span><span class="pageno">PART 2 · 8 / 13</span></div>
   </div>
 
   <!-- p2-9: 骨骼肌肉與骨密度 -->
@@ -1204,7 +1366,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-9 骨骼肌肉與骨密度：腰椎顯著改善，但股骨頸骨質缺乏仍待補強</h2>
         <div class="sub">腰椎骨質自 2021 年 -1.00 逆轉至 2023 年 +0.1，但下肢髖關節股骨頸 T值 (-1.8) 顯示下肢骨質偏脆弱。</div>
       </div>
-      <div class="flags"><span class="flag green">腰椎 T值 +0.1</span><span class="flag amber">股骨頸 T值 -1.8</span><span class="flag coral">DXA 中斷 2 年</span></div>
+      <div class="flags">
+        <a href="reports/2023_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2023 DXA報告 P.25 &rarr;</a>
+        <span class="flag green">腰椎 T值 +0.1</span>
+        <span class="flag amber">股骨頸 T值 -1.8</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1231,7 +1397,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>檢測：高雄榮總骨密度中心 (DXA 雙能量X光吸光式測定)</span><span class="pageno">PART 2 · 9 / 13</span></div>
+    <div class="slide-foot"><span>檢測：高雄榮總骨密度中心 (DXA 雙能量X光吸光式測定) ｜ 詳見 2023 報告 P.25</span><span class="pageno">PART 2 · 9 / 13</span></div>
   </div>
 
   <!-- p2-10: 維生素D與睪固酮 -->
@@ -1242,7 +1408,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-10 維生素D、荷爾蒙與發炎：維生素D嚴重缺乏，睪固酮兩年驟降 33%</h2>
         <div class="sub">維生素 D 僅 11.8 ng/mL 被長期忽視；男性睪固酮兩年掉三分之一，但高敏感度 CRP 極低證明無全身發炎。</div>
       </div>
-      <div class="flags"><span class="flag red">維生素D 11.8 極低</span><span class="flag amber">睪固酮跌 33%</span><span class="flag green">hsCRP 0.10 無發炎</span></div>
+      <div class="flags">
+        <a href="reports/2024_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2024 維生素D P.11 &rarr;</a>
+        <span class="flag red">維生素D 11.8 極低</span>
+        <span class="flag amber">睪固酮跌 33%</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1270,7 +1440,7 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>檢驗：高雄榮總內分泌生化組</span><span class="pageno">PART 2 · 10 / 13</span></div>
+    <div class="slide-foot"><span>檢驗：高雄榮總內分泌生化組 ｜ 詳見 2024 報告 P.11 與 2025 報告 P.10</span><span class="pageno">PART 2 · 10 / 13</span></div>
   </div>
 
   <!-- p2-11: 呼吸與肺功能 -->
@@ -1281,14 +1451,18 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-11 呼吸與肺功能：低劑量 CT 乾淨，但小氣道功能偏低伴隨長期打鼾</h2>
         <div class="sub">肺活量與大氣道極佳，微輻射 CT 排除肺癌；唯小氣道 FEF75% 偏低，吻合常態性打鼾與咳嗽之呼吸道特徵。</div>
       </div>
-      <div class="flags"><span class="flag green">Lung-RADS 1</span><span class="flag teal">FVC 93% 優良</span><span class="flag amber">FEF75% 65~70%</span></div>
+      <div class="flags">
+        <a href="reports/2024_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2024 肺部CT P.9 &rarr;</a>
+        <span class="flag green">Lung-RADS 1</span>
+        <span class="flag amber">FEF75% 65~70%</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="two-col">
         <div class="card green">
           <h3><i class="fas fa-lungs text-green"></i> 大肺功能與斷層掃描滿分</h3>
           <ul>
-            <li><strong>肺部電腦斷層 (2024)：</strong>微輻射 LDCT 評級為 <strong>Lung-RADS 1</strong>，肺實質乾淨，無大於 6mm 實質結節或毛玻璃結節。</li>
+            <li><strong>肺部電腦斷層 (2024 報告 P.9)：</strong>微輻射 LDCT 評級為 <strong>Lung-RADS 1</strong>，肺實質乾淨，無大於 6mm 實質結節或毛玻璃結節。</li>
             <li><strong>肺活量 FVC：</strong>4440 mL（達 93% 預測值），正常健全。</li>
             <li><strong>第一秒用力呼氣量 FEV1：</strong>3650 mL（達 94% 預測值），FEV1/FVC 達 82%，無阻塞性肺氣腫或氣喘病徵。</li>
             <li><strong>胸部 X 光：</strong>五年連續全數正常無浸潤。</li>
@@ -1307,7 +1481,7 @@ td.ctr,th.ctr{text-align:center}
         <strong>建議處置：</strong>若夜間打鼾頻繁或晨起口乾疲憊，建議可至胸腔科或睡眠中心安排一次<strong>居家睡眠多項生理檢查 (HST)</strong>，徹底評估是否存在夜間血氧下降問題。
       </div>
     </div>
-    <div class="slide-foot"><span>科別：高雄榮總胸腔內科 ｜ 儀器：肺功能機 / 微輻射胸部斷層</span><span class="pageno">PART 2 · 11 / 13</span></div>
+    <div class="slide-foot"><span>科別：高雄榮總胸腔內科 ｜ 詳見 2024 報告 P.9 與 P.15 肺功能檢查</span><span class="pageno">PART 2 · 11 / 13</span></div>
   </div>
 
   <!-- p2-12: 血液常規與腫瘤標記 -->
@@ -1318,7 +1492,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-12 血液、尿液與腫瘤標記：造血系統五年零異常，腫瘤標記全數過關</h2>
         <div class="sub">血液常規、紅白血球、血小板與尿液全項是五年最穩固的基石；主要腫瘤標記長年維持健康安全水準。</div>
       </div>
-      <div class="flags"><span class="flag green">血紅素 15.0 穩定</span><span class="flag green">尿液全陰性</span><span class="flag teal">腫瘤標記全過關</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 血液報告 P.4 &rarr;</a>
+        <span class="flag green">血紅素 15.0 穩定</span>
+        <span class="flag green">尿液全陰性</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="table-wrap">
@@ -1342,7 +1520,7 @@ td.ctr,th.ctr{text-align:center}
         <p>血液五項與尿液檢驗連續五年無任何瑕疵，顯示骨髓造血、肝腎排泄與基本免疫系統底子極為良好，沒有任何隱藏性慢性貧血或自體免疫破壞徵兆。</p>
       </div>
     </div>
-    <div class="slide-foot"><span>檢驗室：佑康診所 / 高雄榮總病理檢驗部</span><span class="pageno">PART 2 · 12 / 13</span></div>
+    <div class="slide-foot"><span>檢驗室：佑康診所 / 高雄榮總病理檢驗部 ｜ 詳見 2025 報告 P.4</span><span class="pageno">PART 2 · 12 / 13</span></div>
   </div>
 
   <!-- p2-13: 眼科與綜合體能 -->
@@ -1353,7 +1531,11 @@ td.ctr,th.ctr{text-align:center}
         <h2>2-13 眼科與綜合健康評分：視力矯正穩定 1.2，身體年齡略超實齡需逆轉</h2>
         <div class="sub">眼科連續三年維持 E 級無異常，眼壓完全正常；身體年齡 49 歲超出實齡 2 歲，未來攻堅重心在內臟脂肪。</div>
       </div>
-      <div class="flags"><span class="flag green">眼科 E 級無異常</span><span class="flag teal">眼壓 11~14</span><span class="flag amber">身體年齡 49 歲</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge"><i class="fas fa-file-pdf"></i> 榮總 2025 眼科報告 P.5 &rarr;</a>
+        <span class="flag green">眼科 E 級無異常</span>
+        <span class="flag amber">身體年齡 49 歲</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="two-col">
@@ -1383,23 +1565,290 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>綜合評定：高雄榮總健康管理整合平台</span><span class="pageno">PART 2 · 13 / 13</span></div>
+    <div class="slide-foot"><span>綜合評定：高雄榮總健康管理整合平台 ｜ 詳見 2025 報告 P.5 與 P.6</span><span class="pageno">PART 2 · 13 / 13</span></div>
   </div>
 
 </div>
 
-<!-- ================= PART 3: 行動方案 (4 頁) ================= -->
+
+<!-- ================= PART 3: 核心與異常指標視覺化趨勢圖庫 (6 頁) ================= -->
 <div class="view" id="view-p3">
 
-  <!-- p3-1: 第一級：應立即處理 -->
+  <!-- p3-1: 代謝與胰島素趨勢 -->
   <div class="slide" id="p3-1">
     <div class="slide-header">
       <div>
-        <div class="eyebrow">PART 3 · 行動方案 1/4</div>
+        <div class="eyebrow">PART 3 · 視覺化趨勢圖庫 1/6</div>
+        <h2>3-1 血糖代謝與胰島素抗性 (HOMA-IR) 五年動態軌跡圖</h2>
+        <div class="sub">HOMA-IR 自 2023 年 2.48 大幅壓至 1.42（改善 43%），空腹血糖回穩；HbA1c 紋風不動卡在 5.8% 顯示餐後血糖為下階段重點。</div>
+      </div>
+      <div class="flags">
+        <span class="flag green">HOMA-IR 改善 43%</span>
+        <span class="flag teal">空腹血糖 90</span>
+        <span class="flag amber">HbA1c 5.8% 橫盤</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Chart Canvas -->
+      <div class="chart-box">
+        <canvas id="chart-metabolic"></canvas>
+      </div>
+
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-chart-line text-teal"></i> 數值軌跡與里程碑解讀</h3>
+          <ul>
+            <li><strong>2022 血糖危機峰值：</strong>空腹血糖飆至 127 mg/dL，醫師註記「疑糖尿病」，創下五年代謝最嚴峻時刻。</li>
+            <li><strong>2023~2025 胰島素阻抗逆轉：</strong>HOMA-IR 自 2.48（嚴重抗性）&rarr; 2.07（明顯抗性）&rarr; <strong>1.42（輕度抗性）</strong>，下降達 43%，證實生活型態調整確實修復了細胞受體。</li>
+            <li><strong>HbA1c 瓶頸現象：</strong>連續五年介於 5.7%~5.9% 窄幅盤整，推論與餐後精緻澱粉或宵夜引起的血糖峰值波動有關。</li>
+          </ul>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-bullseye text-amber"></i> 下一步臨床攻堅目標</h3>
+          <ul>
+            <li><strong>目標數值：</strong>維持 HOMA-IR &le; 1.0（完全正常敏感度），並將 HbA1c 壓低至 5.5% 以下。</li>
+            <li><strong>關鍵手段：</strong>維持「菜 &rarr; 肉 &rarr; 飯」進食次序，晚餐戒絕精緻甜食與高升糖水果，搭配飯後 15 分鐘輕度步行以消耗餐後血糖峰值。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>數據來源：2021-2022 佑康診所 / 2023-2025 高雄榮總健康管理中心新陳代謝科</span>
+      <span class="pageno">PART 3 · 1 / 6</span>
+    </div>
+  </div>
+
+  <!-- p3-2: 頑固血脂四項趨勢 -->
+  <div class="slide" id="p3-2">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 視覺化趨勢圖庫 2/6</div>
+        <h2>3-2 血脂四項動態追蹤：三酸甘油脂大降，LDL-C 五年零次達標紅線</h2>
+        <div class="sub">三酸甘油脂（TG）成功從 203 壓至 125，HDL 長年 >45；然而 LDL 連續五年在 134~145 徘徊，證實為肝臟體質自發合成。</div>
+      </div>
+      <div class="flags">
+        <span class="flag red">🔴 LDL 連5年超標</span>
+        <span class="flag green">TG 125 控制優良</span>
+        <span class="flag teal">HDL 56 保護力高</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Chart Canvas -->
+      <div class="chart-box">
+        <canvas id="chart-lipids"></canvas>
+      </div>
+
+      <div class="two-col">
+        <div class="card coral">
+          <h3><i class="fas fa-heart-broken text-coral"></i> LDL-C 頑固高檔病理機制</h3>
+          <p><strong>體質合成佔 80%：</strong>飲食調整已五年，TG 明顯下降證明飲食自律，但 LDL 紋風不動（134~145 mg/dL，標準應 &lt;130）。這說明大衛體內的 LDL 主要源自<strong>肝臟 HMG-CoA 膽固醇合成酶的基因體質調控</strong>，純靠飲食無法克服。</p>
+          <p style="margin-top:6px"><strong>藥物介入必要性：</strong>2025 榮總醫囑建議「三個月後追蹤血脂分析」，建議諮詢心臟科醫師評估每日或隔日補充低劑量 Statin（如 Rosuvastatin 5mg），徹底將 LDL 壓制在 100 以下。</p>
+        </div>
+
+        <div class="card green">
+          <h3><i class="fas fa-shield-alt text-green"></i> 血管安全雙重緩衝盾</h3>
+          <p><strong>良好比值與鈣化 0：</strong>HDL 長年維持在 45~66 mg/dL，總膽固醇/HDL 比值保持在 3.4~4.4 的低致粥狀硬化水準。更關鍵的是 2024 年<strong>冠狀動脈鈣化分數 CAC = 0</strong>，證實高 LDL 尚未造成動脈管壁不可逆之鈣化沉積，目前處於黃金預防期。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>臨床指引：中華民國心臟學會動脈硬化血脂治療規範 ｜ 詳見 2025 榮總報告 P.9</span>
+      <span class="pageno">PART 3 · 2 / 6</span>
+    </div>
+  </div>
+
+  <!-- p3-3: 肝膽機能逆轉趨勢 -->
+  <div class="slide" id="p3-3">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 視覺化趨勢圖庫 3/6</div>
+        <h2>3-3 肝膽機能逆轉軌跡：ALT 劇降 44% 正常化，肝臟結構零纖維化</h2>
+        <div class="sub">五年最具代表性的健康勝利：ALT 發炎指數從 66 降至 37，脂肪肝降為輕度，2025 纖維化指數 0.6 確保無肝硬化結構變性。</div>
+      </div>
+      <div class="flags">
+        <span class="flag green">ALT 37 正常</span>
+        <span class="flag green">纖維化 0.6 安全</span>
+        <span class="flag teal">脂肪肝輕度</span>
+        <span class="flag amber">囊腫 2.0cm 追蹤</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Chart Canvas -->
+      <div class="chart-box">
+        <canvas id="chart-liver"></canvas>
+      </div>
+
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-trophy text-teal"></i> 肝臟逆轉三部曲</h3>
+          <ul>
+            <li><strong>2021~2022 肝臟發炎期：</strong>ALT 連續兩年高達 66 U/L（超標 65%），合併中度脂肪肝與 1.63cm 水囊腫。</li>
+            <li><strong>2023~2025 逆轉恢復期：</strong>ALT 自 66 &rarr; 47 &rarr; 36 &rarr; <strong>37 U/L</strong> 完全回到標準區間（0~40），脂肪肝降為輕度。</li>
+            <li><strong>2025 纖維化指標定錨：</strong>Fibrosis-4 僅 <strong>0.6</strong>（安全門檻 &le;3.25，低風險 &le;1.45），代表脂肪肝並未引起非酒精性脂肪肝炎 (NASH) 或纖維化。</li>
+          </ul>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-exclamation-circle text-amber"></i> 囊腫與息肉追蹤提示</h3>
+          <ul>
+            <li><strong>肝囊腫 (Liver Cyst)：</strong>自 1.63cm 緩慢生長至 2.00cm，為單純良性水泡，無癌變風險，每年腹部超音波觀察即可。</li>
+            <li><strong>膽囊息肉 (Gallbladder Polyp)：</strong>2022 年曾量得 0.55cm，但在榮總三年未提及，需在下次超音波請醫師特意確認是消失還是漏記。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>數據來源：高雄榮總健康管理中心胃腸肝膽科 ｜ 詳見 2025 報告 P.16</span>
+      <span class="pageno">PART 3 · 3 / 6</span>
+    </div>
+  </div>
+
+  <!-- p3-4: 身體組成追蹤 -->
+  <div class="slide" id="p3-4">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 視覺化趨勢圖庫 4/6</div>
+        <h2>3-4 身體組成與體脂增減追蹤：純脂肪大減 4.5kg，肌肉量回穩修正</h2>
+        <div class="sub">體重自 87.4 降至 84.2kg，但體脂率自 35.2% 降至 30.4%，純脂肪減去 4.5kg；2024 年減掉肌肉的偏差在 2025 年已修正回升。</div>
+      </div>
+      <div class="flags">
+        <span class="flag green">純減脂 4.5 kg</span>
+        <span class="flag teal">體脂率 30.4% 最低</span>
+        <span class="flag amber">腰圍 95cm 警戒</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Chart Canvas -->
+      <div class="chart-box">
+        <canvas id="chart-body"></canvas>
+      </div>
+
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-weight text-teal"></i> 身體組成質量解密</h3>
+          <p><strong>真正的高品質減重：</strong>體重看似僅減少 3.2kg，但<strong>純體脂重由 30.1kg 降至 25.6kg（大減 4.5kg）</strong>，意味著減脂效率超過 100%。2024 年曾發生骨骼肌流失至 32.2kg 的「假性減重」，在 2025 年骨骼肌已回升至 32.7kg，肌肉量止跌反彈。</p>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-tape text-amber"></i> 中央型腹部肥胖之最後攻堅</h3>
+          <p><strong>腰圍與內臟脂肪停滯：</strong>2022 年腰圍曾短暫達到 90cm，隨後反彈至 99cm，2025 年雖降回 95cm，但仍超標 5cm。內臟脂肪面積 168 cm² 依然顯著高於標準 100 cm²，需透過每週阻力訓練與夜間控碳進一步打破平台期。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>檢測儀器：InBody 身體組成分析儀 ｜ 詳見 2025 榮總報告 P.6</span>
+      <span class="pageno">PART 3 · 4 / 6</span>
+    </div>
+  </div>
+
+  <!-- p3-5: 腎功能與尿酸趨勢 -->
+  <div class="slide" id="p3-5">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 視覺化趨勢圖庫 5/6</div>
+        <h2>3-5 腎功能與尿酸動態趨勢：eGFR 破除偏誤達 103.2，尿酸 7.5 貼近上限</h2>
+        <div class="sub">2021~2022 eGFR 54~58 係診所 Jaffe 反應法高估肌酸酐之虛驚；榮總連續三年 >90 確立健康，但 2025 尿酸回升至 7.5。</div>
+      </div>
+      <div class="flags">
+        <span class="flag green">eGFR 103.2 正常</span>
+        <span class="flag teal">肌酸酐 0.92</span>
+        <span class="flag amber">尿酸 7.5 貼邊</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Chart Canvas -->
+      <div class="chart-box">
+        <canvas id="chart-renal"></canvas>
+      </div>
+
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-vial text-teal"></i> eGFR 跳升的檢驗醫學解析</h3>
+          <p>2021 (58.79) 與 2022 (54.04) 曾在佑康診所被警示腎功能不全。2023 年至榮總後立即躍升至 97.5、2024 為 90.8、<strong>2025 更達 103.2</strong>。此現象在醫學上為典型「<strong>Jaffe 法 vs 酵素法</strong>」的非肌酸酐干擾物落差，證明大衛腎絲球過濾能力始終充沛健康。</p>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-beer text-amber"></i> 尿酸回彈 7.5 之生活對策</h3>
+          <p>尿酸在 2024 降至 6.4 後，2025 回升至 <strong>7.5 mg/dL（上限 7.6）</strong>。這與腸道菌叢報告的「都會肉類油脂飲食型」及內臟脂肪代謝相互呼應。建議每日維持 2,500cc 以上白開水攝取，降低濃肉湯、帶殼海鮮與高果糖玉米糖漿飲料。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>數據檢驗：高雄榮總臨床生化組 ｜ 詳見 2025 報告 P.10</span>
+      <span class="pageno">PART 3 · 5 / 6</span>
+    </div>
+  </div>
+
+  <!-- p3-6: 內分泌與高風險焦點病灶 -->
+  <div class="slide" id="p3-6">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 視覺化趨勢圖庫 6/6</div>
+        <h2>3-6 內分泌與高風險病灶追蹤：甲狀腺結節膨脹至 2.6cm，維生素D與睪固酮低落</h2>
+        <div class="sub">甲狀腺結節自 2.2cm 擴大至 2.6cm 觸發 A 級穿刺警訊；維生素 D 僅 11.8 嚴重不足，男性睪固酮兩年內衰退 33%。</div>
+      </div>
+      <div class="flags">
+        <span class="flag red">甲狀腺 2.6cm (A級)</span>
+        <span class="flag red">維生素D 11.8 匱乏</span>
+        <span class="flag amber">睪固酮跌 33%</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Chart Canvas -->
+      <div class="chart-box">
+        <canvas id="chart-endocrine"></canvas>
+      </div>
+
+      <div class="two-col">
+        <div class="card red" style="border-top-color:#C5221F">
+          <h3><i class="fas fa-exclamation-triangle text-red"></i> 🔴 甲狀腺結節膨脹曲線警訊</h3>
+          <p><strong>尺寸突破 2.0cm 門檻：</strong>2021 年為 2.2cm，2022 年為 1.73cm，2023、2024 中斷追蹤，2025 一驗已達 <strong>2.6cm</strong>。超音波更呈現「異質回音、血流增加」，榮總評為最高級別 <strong>A級（立即進一步檢查治療）</strong>。細針穿刺 (FNA) 是排除惡性的唯一金標準。</p>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-sun text-amber"></i> 維生素 D 與男性睪固酮失衡</h3>
+          <p><strong>連鎖代謝骨牌效應：</strong>維生素 D 長期低於 12 ng/mL（標準 >30），直接造成股骨頸骨質偏低 (-1.8) 與胰島素敏感度受損。同時睪固酮兩年內自 4.64 掉到 3.12 ng/mL（跌幅 33%），與內臟脂肪及長期夜間打鼾低血氧互為因果。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>數據檢驗：高雄榮總新陳代謝科 / 內分泌生化組 ｜ 詳見 2025 報告 P.18 與 P.10</span>
+      <span class="pageno">PART 3 · 6 / 6</span>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ================= PART 4: 優先行動方案 (4 頁) ================= -->
+<div class="view" id="view-p4">
+
+  <!-- p4-1: 第一級：應立即處理 -->
+  <div class="slide" id="p4-1">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 4 · 行動方案 1/4</div>
         <h2>🔴 第一級：應立即處理事項（已延宕近一年之重大醫療決策）</h2>
         <div class="sub">基準日為 2026/09，距離 2025-10-29 榮總發布 A 級警報已過去 11 個月，以下事項必須在兩週內完成掛號排程。</div>
       </div>
-      <div class="flags"><span class="flag red">榮總 A 級</span><span class="flag red">立即處理</span><span class="flag coral">已延宕11個月</span></div>
+      <div class="flags">
+        <a href="reports/2025_VGHKS_Report.pdf" target="_blank" class="report-badge" style="background:var(--red); color:#fff"><i class="fas fa-file-pdf"></i> 榮總 2025 A級醫囑 P.18 &rarr;</a>
+        <span class="flag red">榮總 A 級</span>
+        <span class="flag coral">已延宕11個月</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="split-55">
@@ -1431,7 +1880,7 @@ td.ctr,th.ctr{text-align:center}
           <text x="110" y="52" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">門診超音波定位</text>
           <text x="110" y="68" fill="#8FD9E4" font-size="10" text-anchor="middle">比對 2.6cm 尺寸增長</text>
 
-          <path d="M200 55 h50" stroke="#1968AD" stroke-width="2" marker-end="url(#arr)"/>
+          <path d="M200 55 h50" stroke="#1968AD" stroke-width="2"/>
 
           <rect x="250" y="30" width="180" height="50" rx="4" fill="#C5221F"/>
           <text x="340" y="52" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">FNA 細針穿刺抽吸</text>
@@ -1456,18 +1905,22 @@ td.ctr,th.ctr{text-align:center}
         </svg>
       </div>
     </div>
-    <div class="slide-foot"><span>處置時程：建議於 2026/09 兩週內完成門診</span><span class="pageno">PART 3 · 1 / 4</span></div>
+    <div class="slide-foot"><span>處置時程：建議於 2026/09 兩週內完成門診 ｜ 詳見 2025 榮總報告 P.18</span><span class="pageno">PART 4 · 1 / 4</span></div>
   </div>
 
-  <!-- p3-2: 第二級：三個月內處理 -->
-  <div class="slide" id="p3-2">
+  <!-- p4-2: 第二級：三個月內處理 -->
+  <div class="slide" id="p4-2">
     <div class="slide-header">
       <div>
-        <div class="eyebrow">PART 3 · 行動方案 2/4</div>
+        <div class="eyebrow">PART 4 · 行動方案 2/4</div>
         <h2>⚠️ 第二級：三個月內應處理事項（專科門診與追蹤處方）</h2>
         <div class="sub">包含連續五年超標之 LDL 頑固抗藥性評估、維生素 D 劑量校正、大腸鏡逾期補做及心雜音確認。</div>
       </div>
-      <div class="flags"><span class="flag amber">三個月內</span><span class="flag coral">LDL 藥物諮詢</span><span class="flag teal">維生素D 補追</span></div>
+      <div class="flags">
+        <span class="flag amber">三個月內</span>
+        <span class="flag coral">LDL 藥物諮詢</span>
+        <span class="flag teal">維生素D 補追</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="four-col">
@@ -1506,18 +1959,23 @@ td.ctr,th.ctr{text-align:center}
         </table>
       </div>
     </div>
-    <div class="slide-foot"><span>執行目標：2026 Q4 前完成專科門診與排檢</span><span class="pageno">PART 3 · 2 / 4</span></div>
+    <div class="slide-foot"><span>執行目標：2026 Q4 前完成專科門診與排檢</span><span class="pageno">PART 4 · 2 / 4</span></div>
   </div>
 
-  <!-- p3-3: 第三級：生活型態長期管理 -->
-  <div class="slide" id="p3-3">
+  <!-- p4-3: 第三級：生活型態長期管理 -->
+  <div class="slide" id="p4-3">
     <div class="slide-header">
       <div>
-        <div class="eyebrow">PART 3 · 行動方案 3/4</div>
+        <div class="eyebrow">PART 4 · 行動方案 3/4</div>
         <h2>📊 第三級：生活型態與長期健康治理（6 大工程）</h2>
         <div class="sub">體重大致到位，但內臟脂肪、肌肉品質、餐後血糖、尿酸、腸道菌與睡眠呼吸是決定未來 10 年健康壽命的關鍵。</div>
       </div>
-      <div class="flags"><span class="flag blue">生活型態</span><span class="flag green">減脂增肌</span><span class="flag purple">腸道調整</span><span class="flag teal">睡眠呼吸</span></div>
+      <div class="flags">
+        <span class="flag blue">生活型態</span>
+        <span class="flag green">減脂增肌</span>
+        <span class="flag purple">腸道調整</span>
+        <span class="flag teal">睡眠呼吸</span>
+      </div>
     </div>
     <div class="slide-body">
       <div class="three-col">
@@ -1552,18 +2010,22 @@ td.ctr,th.ctr{text-align:center}
         </div>
       </div>
     </div>
-    <div class="slide-foot"><span>執行方針：日常行為科學管理 ｜ 預計回測時間：2026/10 年度體檢</span><span class="pageno">PART 3 · 4 / 4</span></div>
+    <div class="slide-foot"><span>執行方針：日常行為科學管理 ｜ 預計回測時間：2026/10 年度體檢</span><span class="pageno">PART 4 · 3 / 4</span></div>
   </div>
 
-  <!-- p3-4: 2026 補回清單與五年總結 -->
-  <div class="slide" id="p3-4">
+  <!-- p4-4: 2026 補回清單與五年總結 -->
+  <div class="slide" id="p4-4">
     <div class="slide-header">
       <div>
-        <div class="eyebrow">PART 3 · 行動方案 4/4</div>
+        <div class="eyebrow">PART 4 · 行動方案 4/4</div>
         <h2>📋 2026 年度健檢必補項目清單與五年全景總結</h2>
         <div class="sub">建立「防呆制度」補齊過往中斷的關鍵檢驗，並盤點五年健檢做對與沒做好的核心功課。</div>
       </div>
-      <div class="flags"><span class="flag blue">2026 健檢清單</span><span class="flag green">做對三件事</span><span class="flag coral">沒做好三件事</span></div>
+      <div class="flags">
+        <span class="flag blue">2026 健檢清單</span>
+        <span class="flag green">做對三件事</span>
+        <span class="flag coral">沒做好三件事</span>
+      </div>
     </div>
     <div class="slide-body">
       <!-- 追蹤斷線清單表 -->
@@ -1609,17 +2071,18 @@ td.ctr,th.ctr{text-align:center}
         <div class="answer">「代謝與肝臟走出逆轉曲線，心血管底子極佳；甲狀腺立即穿刺，該追蹤的項目用制度鎖死。」</div>
       </div>
     </div>
-    <div class="slide-foot"><span>大衛體檢五年分析決策平台 ｜ 完結篇</span><span class="pageno">PART 3 · 4 / 4</span></div>
+    <div class="slide-foot"><span>大衛體檢五年分析決策平台 ｜ 完結篇</span><span class="pageno">PART 4 · 4 / 4</span></div>
   </div>
 
 </div>
 
-<!-- ================= PART 4: AI 虛擬醫生 (即時互動問診室) ================= -->
-<div class="view" id="view-p4">
-  <div class="slide" id="p4-1">
+
+<!-- ================= PART 5: AI 虛擬醫生 (即時互動問診室) ================= -->
+<div class="view" id="view-p5">
+  <div class="slide" id="p5-1">
     <div class="slide-header">
       <div>
-        <div class="eyebrow">PART 4 · AI 專屬醫療顧問</div>
+        <div class="eyebrow">PART 5 · AI 專屬醫療顧問</div>
         <h2>AI 虛擬醫生：即時問診諮詢室（已完整載入 2021–2025 大衛健檢大腦）</h2>
         <div class="sub">以大衛 5 年完整健檢數據為知識底座，結合實證臨床醫學。支援自備 Gemini API Key 即時對話，或點選內建預置問題體驗深度解答。</div>
       </div>
@@ -1695,10 +2158,11 @@ td.ctr,th.ctr{text-align:center}
 
     <div class="slide-foot">
       <span>AI 引擎支援：Google Gemini 1.5 Flash / 2.0 ｜ 具備大衛完整五年健檢上下文記憶</span>
-      <span class="pageno">PART 4 · 1 / 1</span>
+      <span class="pageno">PART 5 · 1 / 1</span>
     </div>
   </div>
 </div>
+
 
 <!-- ================= BOTTOM DECK CONTROLS ================= -->
 <div class="deckbar" id="deckbar">
@@ -1711,27 +2175,30 @@ td.ctr,th.ctr{text-align:center}
   </div>
 </div>
 
+
 <!-- ================= PRESENTATION & APP CONTROLLER SCRIPT ================= -->
 <script>
 (function(){
-  // Slide groups matching topnav
+  // 5 Parts + Home
   var parts = {
     p1: Array.prototype.slice.call(document.querySelectorAll('#view-p1 .slide')),
     p2: Array.prototype.slice.call(document.querySelectorAll('#view-p2 .slide')),
     p3: Array.prototype.slice.call(document.querySelectorAll('#view-p3 .slide')),
-    p4: Array.prototype.slice.call(document.querySelectorAll('#view-p4 .slide'))
+    p4: Array.prototype.slice.call(document.querySelectorAll('#view-p4 .slide')),
+    p5: Array.prototype.slice.call(document.querySelectorAll('#view-p5 .slide'))
   };
 
-  var order = ['p1','p2','p3','p4'];
+  var order = ['p1','p2','p3','p4','p5'];
   var state = { view:'home', idx:0 };
-  var last = { p1:0, p2:0, p3:0, p4:0 };
+  var last = { p1:0, p2:0, p3:0, p4:0, p5:0 };
 
   var views = {
     home: document.getElementById('view-home'),
     p1: document.getElementById('view-p1'),
     p2: document.getElementById('view-p2'),
     p3: document.getElementById('view-p3'),
-    p4: document.getElementById('view-p4')
+    p4: document.getElementById('view-p4'),
+    p5: document.getElementById('view-p5')
   };
 
   var deckbar = document.getElementById('deckbar');
@@ -1763,16 +2230,27 @@ td.ctr,th.ctr{text-align:center}
       }
     }
     window.scrollTo(0, 0);
+
+    // If entering Part 3, trigger Chart.js resize
+    if(state.view === 'p3'){
+      setTimeout(initAllCharts, 100);
+    }
   }
 
   function goHash(hash){
     hash = (hash || '#home').replace('#', '');
-    if(hash === 'home' || hash === ''){
+    if(hash === 'home' || hash === '' || hash === 'reports-section'){
       state.view = 'home';
       render();
+      if(hash === 'reports-section'){
+        setTimeout(function(){
+          var sec = document.getElementById('reports-section');
+          if(sec) sec.scrollIntoView({behavior:'smooth'});
+        }, 150);
+      }
       return;
     }
-    var m = hash.match(/^(p1|p2|p3|p4)-(\d+)$/);
+    var m = hash.match(/^(p1|p2|p3|p4|p5)-(\d+)$/);
     if(m){
       var v = m[1], i = parseInt(m[2], 10) - 1;
       if(parts[v] && parts[v][i]){
@@ -1850,10 +2328,390 @@ td.ctr,th.ctr{text-align:center}
 })();
 </script>
 
+<!-- ================= CHART.JS VISUALIZATION LOGIC ================= -->
+<script>
+var chartsInitialized = false;
+var chartInstances = {};
+
+function initAllCharts(){
+  if(chartsInitialized){
+    // Just trigger update for responsive resizing
+    Object.values(chartInstances).forEach(function(c){ if(c) c.resize(); });
+    return;
+  }
+  chartsInitialized = true;
+
+  var years = ['2021', '2022', '2023', '2024', '2025'];
+  var commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 14, font: { weight: 'bold', size: 12 } } },
+      tooltip: { padding: 10, cornerRadius: 4 }
+    },
+    scales: {
+      x: { grid: { color: '#EDF1F5' }, ticks: { font: { weight: 'bold' } } },
+      y: { grid: { color: '#EDF1F5' } }
+    }
+  };
+
+  // 1. Metabolic Chart
+  var ctx1 = document.getElementById('chart-metabolic');
+  if(ctx1){
+    chartInstances.metabolic = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: '空腹血糖 Glucose AC (mg/dL)',
+            data: [110, 127, 88, 94, 90],
+            borderColor: '#1968AD',
+            backgroundColor: 'rgba(25,104,173,0.1)',
+            borderWidth: 3,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: '糖化血色素 HbA1c (%)',
+            data: [5.9, 5.9, 5.7, 5.9, 5.8],
+            borderColor: '#E09A2B',
+            borderDash: [5, 5],
+            borderWidth: 2.5,
+            tension: 0.2,
+            yAxisID: 'y1'
+          },
+          {
+            label: 'HOMA-IR 胰島素抗性指數',
+            data: [null, null, 2.48, 2.07, 1.42],
+            borderColor: '#2E7D32',
+            backgroundColor: 'rgba(46,125,50,0.15)',
+            borderWidth: 3.5,
+            pointRadius: 6,
+            tension: 0.2,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          x: { grid: { color: '#EDF1F5' } },
+          y: {
+            type: 'linear',
+            position: 'left',
+            title: { display: true, text: '血糖 mg/dL', font: { weight: 'bold' } },
+            suggestedMin: 70, suggestedMax: 140
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: 'HbA1c % / HOMA-IR', font: { weight: 'bold' } },
+            suggestedMin: 1.0, suggestedMax: 6.5
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Lipids Chart
+  var ctx2 = document.getElementById('chart-lipids');
+  if(ctx2){
+    chartInstances.lipids = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: '🔴 LDL-C 壞膽固醇 (五年未達標)',
+            data: [136.2, 144.7, 134.0, 134.0, 142.0],
+            borderColor: '#C5221F',
+            backgroundColor: 'rgba(197,34,31,0.08)',
+            borderWidth: 3.5,
+            pointRadius: 6,
+            tension: 0.1
+          },
+          {
+            label: '總膽固醇 Total Cholesterol',
+            data: [217, 230, 199, 186, 211],
+            borderColor: '#1968AD',
+            borderWidth: 2,
+            tension: 0.2
+          },
+          {
+            label: '三酸甘油脂 TG (劇降逆轉)',
+            data: [137, 93, 203, 140, 125],
+            borderColor: '#2E7D32',
+            borderWidth: 2.5,
+            tension: 0.2
+          },
+          {
+            label: 'HDL-C 好膽固醇 (健康防護)',
+            data: [53.4, 66.7, 45.0, 48.0, 56.0],
+            borderColor: '#1BB1BF',
+            borderDash: [4, 4],
+            borderWidth: 2.5,
+            tension: 0.2
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          y: {
+            title: { display: true, text: 'mg/dL', font: { weight: 'bold' } },
+            suggestedMin: 40, suggestedMax: 240
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Liver Chart
+  var ctx3 = document.getElementById('chart-liver');
+  if(ctx3){
+    chartInstances.liver = new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: '⭐ ALT / SGPT 肝發炎 (降幅 44%)',
+            data: [66, 66, 47, 36, 37],
+            borderColor: '#2E7D32',
+            backgroundColor: 'rgba(46,125,50,0.1)',
+            borderWidth: 3.5,
+            pointRadius: 6,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: 'AST / SGOT',
+            data: [37, 30, 28, 21, 23],
+            borderColor: '#1BB1BF',
+            borderWidth: 2,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: 'GGT 膽道/酒精酵素',
+            data: [50, 50, 32, 27, 31],
+            borderColor: '#1968AD',
+            borderDash: [5, 5],
+            borderWidth: 2,
+            yAxisID: 'y'
+          },
+          {
+            label: '肝水囊腫最大直徑 (cm)',
+            data: [1.63, 0.94, 1.87, null, 2.00],
+            borderColor: '#E09A2B',
+            borderWidth: 2.5,
+            pointRadius: 5,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          y: {
+            title: { display: true, text: '酵素 U/L (正常 <=40)', font: { weight: 'bold' } },
+            suggestedMin: 10, suggestedMax: 80
+          },
+          y1: {
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: '囊腫直徑 cm', font: { weight: 'bold' } },
+            suggestedMin: 0.5, suggestedMax: 2.5
+          }
+        }
+      }
+    });
+  }
+
+  // 4. Body Composition Chart
+  var ctx4 = document.getElementById('chart-body');
+  if(ctx4){
+    chartInstances.body = new Chart(ctx4, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: '體重 Total Weight (kg)',
+            data: [87.4, 85.0, 86.1, 84.4, 84.2],
+            borderColor: '#12293D',
+            borderWidth: 2.5,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: '⭐ 純體脂重 Fat Mass (-4.5kg 脂肪)',
+            data: [30.1, 29.8, 26.8, 26.8, 25.6],
+            borderColor: '#2E7D32',
+            backgroundColor: 'rgba(46,125,50,0.1)',
+            borderWidth: 3.5,
+            pointRadius: 6,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: '骨骼肌重 Skeletal Muscle (kg)',
+            data: [null, null, 33.1, 32.2, 32.7],
+            borderColor: '#1968AD',
+            borderWidth: 2.5,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: '體脂率 Body Fat %',
+            data: [34.7, 35.2, 31.1, 31.7, 30.4],
+            borderColor: '#D95F45',
+            borderDash: [4, 4],
+            borderWidth: 2.5,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          y: {
+            title: { display: true, text: '重量 (kg)', font: { weight: 'bold' } },
+            suggestedMin: 20, suggestedMax: 95
+          },
+          y1: {
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: '體脂率 %', font: { weight: 'bold' } },
+            suggestedMin: 25, suggestedMax: 40
+          }
+        }
+      }
+    });
+  }
+
+  // 5. Renal & Uric Acid Chart
+  var ctx5 = document.getElementById('chart-renal');
+  if(ctx5){
+    chartInstances.renal = new Chart(ctx5, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'eGFR 腎絲球過濾率 (榮總連三年 >90)',
+            data: [58.79, 54.04, 97.5, 90.8, 103.2],
+            borderColor: '#1BB1BF',
+            backgroundColor: 'rgba(27,177,191,0.1)',
+            borderWidth: 3.5,
+            pointRadius: 6,
+            tension: 0.2,
+            yAxisID: 'y'
+          },
+          {
+            label: '⚠️ 尿酸 Uric Acid (2025 回升至 7.5)',
+            data: [7.70, 8.30, 6.70, 6.40, 7.50],
+            borderColor: '#E09A2B',
+            borderWidth: 3,
+            pointRadius: 6,
+            tension: 0.2,
+            yAxisID: 'y1'
+          },
+          {
+            label: '血清肌酸酐 Creatinine (mg/dL)',
+            data: [1.40, 1.50, 0.85, 0.90, 0.92],
+            borderColor: '#1968AD',
+            borderDash: [5, 5],
+            borderWidth: 2,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          y: {
+            title: { display: true, text: 'eGFR mL/min/1.73m²', font: { weight: 'bold' } },
+            suggestedMin: 40, suggestedMax: 120
+          },
+          y1: {
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: '尿酸 / 肌酸酐 (mg/dL)', font: { weight: 'bold' } },
+            suggestedMin: 0.5, suggestedMax: 10.0
+          }
+        }
+      }
+    });
+  }
+
+  // 6. Endocrine & High-Risk Chart
+  var ctx6 = document.getElementById('chart-endocrine');
+  if(ctx6){
+    chartInstances.endocrine = new Chart(ctx6, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: '🔴 甲狀腺結節直徑 (cm) [>2cm 穿刺線]',
+            data: [2.2, 1.73, null, null, 2.6],
+            borderColor: '#C5221F',
+            backgroundColor: 'rgba(197,34,31,0.15)',
+            borderWidth: 3.5,
+            pointRadius: 8,
+            tension: 0.1,
+            yAxisID: 'y'
+          },
+          {
+            label: '25-OH 維生素 D (ng/mL) [嚴重缺乏 <20]',
+            data: [null, null, 8.1, 11.8, null],
+            borderColor: '#E09A2B',
+            borderWidth: 2.5,
+            pointRadius: 6,
+            yAxisID: 'y1'
+          },
+          {
+            label: '總睪固酮 Testosterone (ng/mL) [-33%]',
+            data: [null, null, 4.64, null, 3.12],
+            borderColor: '#6B46C1',
+            borderWidth: 2.5,
+            pointRadius: 6,
+            yAxisID: 'y'
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          y: {
+            title: { display: true, text: '結節直徑 (cm) / 睪固酮 (ng/mL)', font: { weight: 'bold' } },
+            suggestedMin: 0.5, suggestedMax: 5.5
+          },
+          y1: {
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: '維生素 D (ng/mL, 標準 30~100)', font: { weight: 'bold' } },
+            suggestedMin: 5, suggestedMax: 35
+          }
+        }
+      }
+    });
+  }
+}
+
+// Trigger initial load
+window.addEventListener('load', function(){
+  setTimeout(initAllCharts, 250);
+});
+</script>
+
 <!-- ================= AI VIRTUAL DOCTOR LOGIC ================= -->
 <script>
 var systemPrompt = `你是一位專業、嚴謹且有極高同理心的私人資深主治醫師兼健康管理顧問。你正在為患者「大衛 (David，現年47-48歲)」進行健康諮詢。
-你已經完整研讀並熟記大衛 2021-2025 年這五年間在「佑康診所」與「高雄榮總健康管理中心」的所有體檢數據。
+你已經完整研讀並熟記大衛 2021-2025 年這五年間在「佑康診所」與「高雄榮總健康管理中心」的所有體檢數據與原始報告。
 
 【大衛核心臨床病歷與數據總覽】：
 1. 甲狀腺（最緊急）：
@@ -1883,7 +2741,6 @@ var systemPrompt = `你是一位專業、嚴謹且有極高同理心的私人資
 - 專業、具說服力、條理清晰，多用重點條列與粗體。
 - 語氣溫和親切，給予信心，但對重大風險（如甲狀腺穿刺、大腸鏡逾期、LDL用藥）給予明確、堅定的行動指導。`;
 
-// Pre-computed fallback responses for offline or zero-key instant preview
 var precomputed = {
   "ldl": `**為什麼您的 LDL-C 連續五年降不下來？**
 
@@ -1967,9 +2824,7 @@ var precomputed = {
 - 飯後散步 15 分鐘（直接削平餐後血糖高峰，突破 HbA1c 5.8 瓶頸）。`
 };
 
-// Handle preset buttons
 function askPreset(question){
-  var q = question.toLowerCase();
   var input = document.getElementById('userMsgInput');
   input.value = question;
   sendUserMessage();
@@ -1989,7 +2844,6 @@ function appendMessage(role, text){
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// LocalStorage API Key handling
 var savedKey = localStorage.getItem('david_gemini_api_key') || '';
 if(savedKey){
   document.getElementById('apiKeyInput').value = savedKey;
@@ -2017,7 +2871,6 @@ async function sendUserMessage(){
 
   appendMessage('user', text);
 
-  // Check if API Key is available
   if(savedKey){
     var loadingDiv = document.createElement('div');
     loadingDiv.className = 'chat-bubble ai';
@@ -2061,7 +2914,6 @@ async function sendUserMessage(){
       fallbackAnswer(text);
     }
   } else {
-    // Intelligent matching to rich fallback
     setTimeout(function(){
       fallbackAnswer(text);
     }, 400);
@@ -2095,5 +2947,6 @@ function fallbackAnswer(text){
   }
 }
 </script>
+
 </body>
 </html>
