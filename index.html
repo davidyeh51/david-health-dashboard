@@ -1,854 +1,2099 @@
 <!DOCTYPE html>
-<html lang=\x22zh-TW\x22 class=\x22scroll-smooth\x22>
+<html lang="zh-Hant">
 <head>
-    <meta charset=\x22UTF-8\x22>
-    <meta name=\x22viewport\x22 content=\x22width=device-width, initial-scale=1.0\x22>
-    <title>大衛體檢五年分析 (2021–2025)</title>
-    <script src=\x22https://cdn.tailwindcss.com\x22></script>
-    <script src=\x22https://unpkg.com/vue@3/dist/vue.global.js\x22></script>
-    <script src=\x22https://cdn.jsdelivr.net/npm/marked/marked.min.js\x22></script>
-    <link rel=\x22stylesheet\x22 href=\x22https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\x22>
-    <style>
-        body { font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background-color: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
-        .markdown-body h1 { font-size: 2.25rem; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem; color: #1e293b; }
-        .markdown-body h2 { font-size: 1.75rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
-        .markdown-body h3 { font-size: 1.25rem; font-weight: bold; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #475569; }
-        .markdown-body p { margin-bottom: 1rem; line-height: 1.7; color: #334155; }
-        .markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
-        .markdown-body li { margin-bottom: 0.5rem; line-height: 1.6; }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 0.5rem; overflow: hidden; }
-        .markdown-body th { background-color: #f1f5f9; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; }
-        .markdown-body td { padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; color: #334155; }
-        .markdown-body tr:hover { background-color: #f8fafc; }
-        .markdown-body blockquote { border-left: 4px solid #3b82f6; background-color: #eff6ff; padding: 1rem; margin-bottom: 1rem; border-radius: 0 0.5rem 0.5rem 0; }
-        .markdown-body strong { color: #0f172a; font-weight: 600; }
-        .chat-container { height: 500px; display: flex; flex-direction: column; }
-        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 1rem; }
-        .nav-link.active { color: #3b82f6; font-weight: bold; border-bottom: 2px solid #3b82f6; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%230C3A63%27/%3E%3Cpath d=%27M16 34h8l5-12 8 24 6-16 5 4h6%27 stroke=%27%231BB1BF%27 stroke-width=%274%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E">
+<title>大衛體檢五年分析決策平台 (2021–2025) ｜ 健康數據深度解構</title>
+<meta name="description" content="大衛個人健檢五年數據深度分析決策平台：涵蓋代謝逆轉、肝臟指標、心血管鈣化分數0、甲狀腺A級警訊追蹤，以及整合AI虛擬醫生即時問診諮詢。">
+
+<!-- External Libraries -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+:root{
+  --blue:#1968AD; --blue-d:#12518A; --blue-dd:#0C3A63; --blue-soft:#E8F1F9;
+  --teal:#1BB1BF; --teal-d:#12818C; --teal-soft:#E2F5F7;
+  --ink:#12293D; --muted:#5B7285; --line:#D9E3EC; --paper:#F4F7FA; --card:#fff;
+  --amber:#E09A2B; --amber-soft:#FCF2DE;
+  --coral:#D95F45; --coral-soft:#FBEAE5;
+  --grey:#9FB1C0; --grey-soft:#EDF1F5;
+  --green:#2E7D32; --green-soft:#E8F5E9;
+  --purple:#6B46C1; --purple-soft:#F3E8FF;
+  --red:#C5221F; --red-soft:#FCE8E6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,-apple-system,sans-serif;
+  background:var(--paper); color:var(--ink); line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:50; height:54px;
+  display:flex; align-items:center; gap:8px; padding:0 20px;
+  background:rgba(255,255,255,.96); backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--blue);
+}
+.topbar .brand{display:flex; align-items:center; gap:10px; margin-right:14px; white-space:nowrap; text-decoration:none}
+.topbar .brand .mk{flex:0 0 28px}
+.topbar .brand .tx{font-weight:800; font-size:.88rem; letter-spacing:.02em; color:var(--ink); line-height:1.15}
+.topbar .brand .tx small{display:block; font-weight:700; font-size:.66rem; letter-spacing:.08em; color:var(--blue)}
+.topnav{display:flex; gap:4px; flex:1; min-width:0; overflow-x:auto; scrollbar-width:none}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{
+  text-decoration:none; color:var(--muted); font-size:.84rem; font-weight:600;
+  padding:6px 13px; border-radius:4px; white-space:nowrap; border:1px solid transparent;
+  transition:all .15s ease; display:flex; align-items:center; gap:6px;
+}
+.topnav a:hover{color:var(--blue); background:var(--blue-soft)}
+.topnav a.active{color:#fff; background:var(--blue); font-weight:700}
+.topnav a.special-ai{color:var(--purple); border-color:var(--purple-soft)}
+.topnav a.special-ai:hover{background:var(--purple-soft); color:var(--purple)}
+.topnav a.special-ai.active{background:var(--purple); color:#fff}
+.topbar .meta{font-size:.74rem; color:var(--muted); white-space:nowrap; font-weight:600}
+@media(max-width:1120px){.topbar .meta{display:none}}
+@media(max-width:860px){.topbar .brand .tx{font-size:.78rem}}
+
+/* ---------- views / slides ---------- */
+.view{display:none}
+.view.active{display:block}
+.slide{
+  display:none; min-height:100vh; padding:78px 48px 88px;
+  max-width:1380px; margin:0 auto; flex-direction:column;
+}
+.slide.active{display:flex}
+.slide-header{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:18px}
+.eyebrow{font-size:.76rem; font-weight:800; letter-spacing:.14em; color:var(--teal-d); text-transform:uppercase; margin-bottom:6px}
+.slide-header h1,.slide-header h2{font-size:clamp(1.35rem,2.5vw,1.9rem); line-height:1.3; font-weight:800; max-width:32em; color:var(--ink)}
+.slide-header h1::after,.slide-header h2::after{
+  content:""; display:block; width:64px; height:4px; margin-top:10px;
+  background:linear-gradient(90deg,var(--blue),var(--teal));
+}
+.slide-header .sub{margin-top:10px; color:var(--muted); font-size:.92rem; max-width:58em; line-height:1.58}
+.flags{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+.flag{font-size:.72rem; font-weight:700; padding:5px 12px; border-radius:3px; white-space:nowrap}
+.flag.blue{background:var(--blue-soft); color:var(--blue-d)}
+.flag.teal{background:var(--teal-soft); color:var(--teal-d)}
+.flag.amber{background:var(--amber-soft); color:#9a6a10}
+.flag.coral{background:var(--coral-soft); color:#b4432c}
+.flag.green{background:var(--green-soft); color:var(--green)}
+.flag.purple{background:var(--purple-soft); color:var(--purple)}
+.flag.grey{background:var(--grey-soft); color:var(--muted)}
+.flag.red{background:var(--red-soft); color:var(--red)}
+
+.slide-body{flex:1; display:flex; flex-direction:column; gap:18px}
+.slide-foot{
+  display:flex; justify-content:space-between; align-items:center; gap:16px; margin-top:24px; padding-top:12px;
+  border-top:1px solid var(--line); font-size:.75rem; color:var(--muted);
+  background:rgba(255,255,255,.7); border-radius:3px; padding-left:12px; padding-right:12px;
+}
+.slide-foot .pageno{white-space:nowrap; font-weight:800; color:var(--blue)}
+
+/* ---------- layout grids ---------- */
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
+.three-col{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+.four-col{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+.split-45{display:grid; grid-template-columns:45% 1fr; gap:18px; align-items:start}
+.split-55{display:grid; grid-template-columns:1fr 45%; gap:18px; align-items:start}
+.split-img-right{display:grid; grid-template-columns:1fr 1.1fr; gap:18px; align-items:start}
+.split-img-left{display:grid; grid-template-columns:1.1fr 1fr; gap:18px; align-items:start}
+
+@media(max-width:1050px){
+  .slide{padding:72px 18px 96px}
+  .two-col,.three-col,.four-col,.split-45,.split-55,.split-img-right,.split-img-left{grid-template-columns:1fr}
+}
+
+/* ---------- components ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-top:3px solid var(--blue); border-radius:4px; padding:16px 18px; box-shadow:0 3px 10px rgba(18,41,61,.04)}
+.card.teal{border-top-color:var(--teal)}
+.card.amber{border-top-color:var(--amber)}
+.card.coral{border-top-color:var(--coral)}
+.card.green{border-top-color:var(--green)}
+.card.purple{border-top-color:var(--purple)}
+.card.grey{border-top-color:var(--grey)}
+.card.red{border-top-color:var(--red)}
+.card h3{font-size:.98rem; font-weight:800; margin-bottom:8px; color:var(--ink); display:flex; align-items:center; gap:8px}
+.card p,.card li{font-size:.87rem; color:var(--muted); line-height:1.55}
+.card ul{padding-left:18px; margin-top:6px}
+.card li{margin-bottom:5px}
+.card strong{color:var(--ink)}
+
+.metric{border-radius:4px; padding:14px 16px; border:1px solid var(--line); background:#fff; border-left:5px solid var(--blue); box-shadow:0 2px 8px rgba(18,41,61,.03)}
+.metric .k{font-size:clamp(1.35rem,2.2vw,1.85rem); font-weight:900; line-height:1.1; color:var(--blue); font-variant-numeric:tabular-nums}
+.metric .t{font-size:.8rem; color:var(--muted); margin-top:6px; line-height:1.45}
+.metric.teal{border-left-color:var(--teal)} .metric.teal .k{color:var(--teal-d)}
+.metric.amber{border-left-color:var(--amber)} .metric.amber .k{color:#9a6a10}
+.metric.coral{border-left-color:var(--coral)} .metric.coral .k{color:#b4432c}
+.metric.green{border-left-color:var(--green)} .metric.green .k{color:var(--green)}
+.metric.purple{border-left-color:var(--purple)} .metric.purple .k{color:var(--purple)}
+.metric.red{border-left-color:var(--red)} .metric.red .k{color:var(--red)}
+
+.big-callout{
+  background:linear-gradient(120deg,var(--blue-dd),var(--blue) 62%,var(--teal-d)); color:#fff;
+  border-radius:4px; padding:20px 24px; position:relative; overflow:hidden;
+}
+.big-callout.red-alert{
+  background:linear-gradient(120deg,#8B0000,#C5221F 65%,#E05D44);
+}
+.big-callout .label{font-size:.72rem; letter-spacing:.14em; opacity:.85; font-weight:800; margin-bottom:6px}
+.big-callout .answer{font-size:clamp(1.1rem,2vw,1.45rem); font-weight:800; line-height:1.38}
+.big-callout .more{margin-top:8px; font-size:.88rem; opacity:.92; line-height:1.55}
+
+.table-wrap{background:#fff; border:1px solid var(--line); border-radius:4px; overflow-x:auto; box-shadow:0 4px 14px rgba(7,29,59,.04)}
+table{width:100%; border-collapse:collapse; font-size:.85rem; min-width:600px}
+th{background:var(--blue); color:#fff; text-align:left; font-weight:700; padding:10px 12px; white-space:nowrap; font-size:.82rem}
+th.sub{background:var(--blue-d)}
+td{padding:9px 12px; border-bottom:1px solid #EDF1F5; vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:#FAFCFE}
+tbody tr:hover{background:#F0F6FC}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+td.ctr,th.ctr{text-align:center}
+.hl-row{background:var(--amber-soft) !important}
+.hl-row td{font-weight:700; color:#9a6a10}
+.bad-row{background:var(--coral-soft) !important}
+.bad-row td{font-weight:700; color:#b4432c}
+.good-row{background:var(--green-soft) !important}
+.good-row td{font-weight:700; color:var(--green)}
+.alert-row{background:var(--red-soft) !important}
+.alert-row td{font-weight:700; color:var(--red)}
+
+.chip{display:inline-block; font-size:.7rem; font-weight:700; padding:2px 8px; border-radius:3px; white-space:nowrap}
+.chip.blue{background:var(--blue-soft); color:var(--blue-d)}
+.chip.teal{background:var(--teal-soft); color:var(--teal-d)}
+.chip.amber{background:var(--amber-soft); color:#9a6a10}
+.chip.coral{background:var(--coral-soft); color:#b4432c}
+.chip.green{background:var(--green-soft); color:var(--green)}
+.chip.purple{background:var(--purple-soft); color:var(--purple)}
+.chip.red{background:var(--red-soft); color:var(--red)}
+.chip.grey{background:var(--grey-soft); color:var(--muted)}
+
+.note{background:var(--amber-soft); border-left:4px solid var(--amber); padding:11px 15px; font-size:.86rem; border-radius:0 3px 3px 0}
+.warn{background:var(--coral-soft); border-left:4px solid var(--coral); padding:11px 15px; font-size:.86rem; border-radius:0 3px 3px 0}
+.tip{background:var(--green-soft); border-left:4px solid var(--green); padding:11px 15px; font-size:.86rem; border-radius:0 3px 3px 0}
+.alert-box{background:var(--red-soft); border-left:4px solid var(--red); padding:11px 15px; font-size:.86rem; border-radius:0 3px 3px 0}
+
+.fig{background:#fff; border:1px solid var(--line); border-radius:4px; padding:14px 16px; box-shadow:0 3px 12px rgba(18,41,61,.04)}
+.fig .cap{font-size:.76rem; color:var(--muted); margin-top:8px; text-align:center}
+.fig .figtitle{font-size:.88rem; font-weight:800; margin-bottom:8px; color:var(--blue-dd); display:flex; align-items:center; justify-content:space-between}
+.fig svg{display:block; width:100%; height:auto}
+
+/* ---------- home ---------- */
+.home{min-height:100vh}
+.hero{
+  position:relative; overflow:hidden; color:#fff;
+  background:linear-gradient(115deg,var(--blue-dd) 0%,var(--blue) 55%,#1580A8 100%);
+  padding:96px 48px 52px;
+}
+.hero .inner{max-width:1380px; margin:0 auto; position:relative; z-index:2}
+.hero .kicker{font-size:.8rem; font-weight:800; letter-spacing:.16em; color:#8FD9E4; text-transform:uppercase}
+.hero h1{font-size:clamp(1.75rem,3.8vw,2.8rem); font-weight:900; line-height:1.24; margin-top:12px; max-width:26em}
+.hero .lede{margin-top:14px; max-width:54em; font-size:.96rem; opacity:.94; line-height:1.68}
+.hero .herometa{margin-top:22px; display:flex; gap:8px; flex-wrap:wrap}
+.hero .herometa span{font-size:.74rem; font-weight:700; background:rgba(255,255,255,.16); padding:5px 12px; border-radius:3px; display:flex; align-items:center; gap:6px}
+.hero .deco{position:absolute; right:-60px; top:-40px; width:820px; opacity:.35; pointer-events:none; z-index:1}
+@media(max-width:1000px){.hero{padding:80px 18px 40px} .hero .deco{width:540px; right:-140px}}
+.homebody{max-width:1380px; margin:0 auto; padding:30px 48px 56px}
+@media(max-width:1000px){.homebody{padding:24px 18px 46px}}
+
+.part-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px}
+.part-card{
+  display:block; text-decoration:none; color:var(--ink); background:#fff;
+  border:1px solid var(--line); border-top:4px solid var(--blue); border-radius:4px; padding:22px;
+  transition:transform .15s ease, box-shadow .15s ease; position:relative; overflow:hidden;
+}
+.part-card:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(18,41,61,.12)}
+.part-card.c2{border-top-color:var(--teal)}
+.part-card.c3{border-top-color:var(--coral)}
+.part-card.c4{border-top-color:var(--purple)}
+.part-card .pc-eyebrow{font-size:.72rem; font-weight:800; letter-spacing:.14em; color:var(--blue)}
+.part-card.c2 .pc-eyebrow{color:var(--teal-d)}
+.part-card.c3 .pc-eyebrow{color:var(--coral)}
+.part-card.c4 .pc-eyebrow{color:var(--purple)}
+.part-card h2{font-size:1.18rem; font-weight:800; margin:8px 0 6px; line-height:1.35}
+.part-card p{color:var(--muted); font-size:.87rem; line-height:1.58}
+.part-card .pc-flags{margin-top:12px; display:flex; gap:6px; flex-wrap:wrap}
+.part-card .pc-go{margin-top:14px; font-weight:800; color:var(--blue); font-size:.85rem}
+.part-card.c4 .pc-go{color:var(--purple)}
+.part-card .pc-icon{position:absolute; right:16px; top:16px; opacity:.85; font-size:1.6rem}
+
+.quick-spec-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:24px}
+.home-foot{padding-top:20px; font-size:.74rem; color:var(--muted); border-top:1px solid var(--line); margin-top:30px; line-height:1.8}
+
+/* ---------- bottom controls (deckbar) ---------- */
+.deckbar{position:fixed; left:0; right:0; bottom:0; z-index:50; pointer-events:none; display:none}
+.progress{height:4px; background:#DFE7EE}
+.progress .fill{height:100%; width:0%; background:linear-gradient(90deg,var(--blue),var(--teal)); transition:width .25s ease}
+.hint{position:absolute; left:20px; bottom:14px; font-size:.74rem; color:var(--muted); background:rgba(255,255,255,.94); padding:5px 12px; border-radius:3px; border:1px solid var(--line); box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+.ctrl{position:absolute; right:16px; bottom:12px; display:flex; align-items:center; gap:8px; pointer-events:auto}
+.ctrl .counter{font-size:.78rem; font-weight:700; color:var(--ink); background:rgba(255,255,255,.94); border:1px solid var(--line); padding:5px 12px; border-radius:3px; font-variant-numeric:tabular-nums; box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+.ctrl button{
+  width:34px; height:34px; border:1px solid var(--line); background:rgba(255,255,255,.94);
+  border-radius:3px; cursor:pointer; font-size:1.1rem; color:var(--ink); font-weight:800;
+  display:flex; align-items:center; justify-content:center; transition:background .15s; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+.ctrl button:hover{background:var(--blue); color:#fff}
+@media(max-width:800px){.hint{display:none}}
+
+/* ---------- Virtual Doctor UI ---------- */
+.doctor-layout{display:grid; grid-template-columns:320px 1fr; gap:18px; height:640px}
+@media(max-width:960px){.doctor-layout{grid-template-columns:1fr; height:auto}}
+.doc-sidebar{background:#fff; border:1px solid var(--line); border-radius:4px; padding:18px; display:flex; flex-direction:column; gap:14px; overflow-y:auto}
+.doc-main{background:#fff; border:1px solid var(--line); border-radius:4px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.03)}
+.chat-window{flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; background:#F8FAFC}
+.chat-bubble{max-width:82%; padding:12px 16px; border-radius:6px; font-size:.88rem; line-height:1.6}
+.chat-bubble.user{align-self:flex-end; background:var(--blue); color:#fff; border-bottom-right-radius:1px}
+.chat-bubble.ai{align-self:flex-start; background:#fff; color:var(--ink); border:1px solid var(--line); border-bottom-left-radius:1px; box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.chat-bubble.ai strong{color:var(--blue-d)}
+.chat-bubble.ai ul{padding-left:18px; margin:6px 0}
+.chat-input-bar{padding:14px 18px; background:#fff; border-top:1px solid var(--line); display:flex; gap:10px}
+.chat-input-bar input{flex:1; border:1px solid var(--line); border-radius:4px; padding:9px 14px; font-size:.88rem; outline:none; transition:border .15s}
+.chat-input-bar input:focus{border-color:var(--blue)}
+.chat-input-bar button{background:var(--blue); color:#fff; border:none; border-radius:4px; padding:0 18px; font-weight:700; font-size:.88rem; cursor:pointer; display:flex; align-items:center; gap:6px}
+.chat-input-bar button:hover{background:var(--blue-d)}
+.prompt-btn{background:var(--blue-soft); border:1px solid var(--line); color:var(--blue-d); font-size:.78rem; padding:6px 10px; border-radius:4px; text-align:left; cursor:pointer; line-height:1.4; transition:all .15s; width:100%}
+.prompt-btn:hover{background:var(--blue); color:#fff; border-color:var(--blue)}
+</style>
 </head>
-<body class=\x22text-slate-800 antialiased\x22 id=\x22app\x22>
+<body>
 
-    <!-- Navigation -->
-    <nav class=\x22fixed w-full z-50 glass border-b border-slate-200 shadow-sm transition-all duration-300\x22 id=\x22navbar\x22>
-        <div class=\x22max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\x22>
-            <div class=\x22flex justify-between items-center h-16\x22>
-                <div class=\x22flex items-center space-x-2\x22>
-                    <i class=\x22fas fa-heartbeat text-blue-600 text-2xl\x22></i>
-                    <span class=\x22font-bold text-xl tracking-tight\x22>大衛健康儀表板</span>
-                </div>
-                <div class=\x22hidden md:flex space-x-8\x22>
-                    <a href=\x22#home\x22 class=\x22nav-link text-slate-600 hover:text-blue-600 transition-colors py-5\x22>首頁與基本資料</a>
-                    <a href=\x22#part1\x22 class=\x22nav-link text-slate-600 hover:text-blue-600 transition-colors py-5\x22>五年逐年摘要</a>
-                    <a href=\x22#part2\x22 class=\x22nav-link text-slate-600 hover:text-blue-600 transition-colors py-5\x22>長期趨勢分析</a>
-                    <a href=\x22#part3\x22 class=\x22nav-link text-slate-600 hover:text-blue-600 transition-colors py-5\x22>行動方案</a>
-                    <a href=\x22#doctor\x22 class=\x22nav-link text-slate-600 hover:text-blue-600 transition-colors py-5\x22><i class=\x22fas fa-user-md mr-1\x22></i> AI 虛擬醫生</a>
-                </div>
-            </div>
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+  <a class="brand" href="#home">
+    <svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+      <rect x="0" y="0" width="28" height="28" rx="6" fill="#0C3A63"/>
+      <path d="M5 14h5l3-8 5 16 4-11 3 3h3" stroke="#1BB1BF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="tx">大衛體檢決策庫<small>五年追蹤與長期趨勢 (2021–2025)</small></div>
+  </a>
+  <nav class="topnav">
+    <a href="#home" data-nav="home"><i class="fas fa-home"></i> 封面</a>
+    <a href="#p1" data-nav="p1"><i class="fas fa-calendar-check"></i> Part 1 逐年摘要 (5 頁)</a>
+    <a href="#p2" data-nav="p2"><i class="fas fa-chart-line"></i> Part 2 長期趨勢 (13 頁)</a>
+    <a href="#p3" data-nav="p3"><i class="fas fa-exclamation-triangle"></i> Part 3 行動方案 (4 頁)</a>
+    <a href="#p4" data-nav="p4" class="special-ai"><i class="fas fa-user-md"></i> Part 4 AI 虛擬醫生 (即時諮詢)</a>
+  </nav>
+  <div class="meta">基準：2026/09 ｜ 榮總＋佑康診所 ｜ 狀態：待門診確認</div>
+</div>
+
+<!-- ================= HOME VIEW ================= -->
+<div class="view active home" id="view-home">
+  <div class="hero">
+    <svg class="deco" viewBox="0 0 900 520" aria-hidden="true">
+      <g stroke="#fff" stroke-width="1.5" fill="none" opacity=".25">
+        <circle cx="200" cy="180" r="140"/>
+        <circle cx="580" cy="220" r="190"/>
+        <path d="M50 380 Q300 200 650 360 T900 120"/>
+        <path d="M120 140 h300 v180 h-300 z"/>
+      </g>
+      <g fill="#8FD9E4" opacity=".35">
+        <circle cx="650" cy="160" r="10"/>
+        <circle cx="340" cy="280" r="8"/>
+        <circle cx="520" cy="340" r="12"/>
+      </g>
+    </svg>
+    <div class="inner">
+      <div class="kicker">DAVID HEALTH VAULT · 2021–2025 五年數據決策中樞</div>
+      <h1>代謝與肝臟五年逆轉，甲狀腺結節與 LDL 迎戰關鍵時刻</h1>
+      <p class="lede">
+        本決策平台完整收錄大衛 2021 至 2025 五年度連續性健檢報告（佑康診所＋高雄榮總健康管理中心）。跨年度指標深度對比證實：肝臟纖維化指數 0.6、冠狀動脈鈣化分數 0、體脂重減去 4.5kg 證明結構性健康改善；同時精確抓出甲狀腺結節達 2.6cm 之 A 級穿刺警訊，以及連續 5 年 LDL 未達標等核心待決行動。
+      </p>
+      <div class="herometa">
+        <span><i class="fas fa-shield-alt text-teal"></i> 冠狀動脈鈣化分數 = 0</span>
+        <span><i class="fas fa-arrow-down text-teal"></i> 體脂重 -4.5 kg (30.1→25.6)</span>
+        <span><i class="fas fa-heartbeat text-teal"></i> HOMA-IR 降 43% (2.48→1.42)</span>
+        <span><i class="fas fa-check-circle text-teal"></i> ALT 降 44% (66→37 無纖維化)</span>
+        <span style="background:rgba(217,95,69,.25)"><i class="fas fa-exclamation-circle text-coral"></i> 甲狀腺結節 2.6cm (需 FNA)</span>
+        <span style="background:rgba(217,95,69,.25)"><i class="fas fa-capsules text-coral"></i> LDL 連續 5 年未達標</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="homebody">
+    <div class="part-cards">
+      <!-- Card 1 -->
+      <a class="part-card" href="#p1-1">
+        <i class="fas fa-calendar-alt pc-icon text-blue"></i>
+        <div class="pc-eyebrow">PART 1</div>
+        <h2>五年逐年摘要 (優點 / 缺點)</h2>
+        <p>自 2021 年建立首份基準起，到 2023 年轉院榮總大盤查、2024 年獲取零鈣化成績單，至 2025 年出現首個 A 級警訊之完整歷程。</p>
+        <div class="pc-flags"><span class="chip blue">5 頁</span><span class="chip teal">2021-2025</span><span class="chip coral">優缺點清單</span></div>
+        <div class="pc-go">進入逐年章節 &rarr;</div>
+      </a>
+
+      <!-- Card 2 -->
+      <a class="part-card c2" href="#p2-1">
+        <i class="fas fa-chart-bar pc-icon text-teal"></i>
+        <div class="pc-eyebrow">PART 2</div>
+        <h2>五年長期趨勢分析 (13大科別)</h2>
+        <p>深入拆解體位、心血管、血糖胰島素、血脂、肝膽、甲狀腺、消化道、骨骼、呼吸、血液尿液等 13 項全維度跨年度數據趨勢。</p>
+        <div class="pc-flags"><span class="chip teal">13 頁</span><span class="chip blue">全項目對比表</span><span class="chip amber">趨勢解讀</span></div>
+        <div class="pc-go">進入趨勢章節 &rarr;</div>
+      </a>
+
+      <!-- Card 3 -->
+      <a class="part-card c3" href="#p3-1">
+        <i class="fas fa-clipboard-check pc-icon text-coral"></i>
+        <div class="pc-eyebrow">PART 3</div>
+        <h2>目前需要注意的事項 (行動方案)</h2>
+        <p>依急迫性嚴格分級：第一級立即穿刺、第二級三個月內用藥與超音波追蹤、第三級生活型態改善，以及 2026 斷線補回清單。</p>
+        <div class="pc-flags"><span class="chip coral">4 頁</span><span class="chip red">第一級立即處理</span><span class="chip amber">三個月內</span></div>
+        <div class="pc-go">進入行動清單 &rarr;</div>
+      </a>
+
+      <!-- Card 4 -->
+      <a class="part-card c4" href="#p4-1">
+        <i class="fas fa-robot pc-icon text-purple"></i>
+        <div class="pc-eyebrow">PART 4 · AI 賦能</div>
+        <h2>AI 虛擬醫生 (即時互動問診)</h2>
+        <p>完整掛載 2021–2025 全文體檢數據。可直接向專屬 AI 虛擬醫生詢問各項指數變化、用藥評估、穿刺流程與健康生活指南。</p>
+        <div class="pc-flags"><span class="chip purple">即時問診</span><span class="chip teal">大衛健檢大腦</span><span class="chip blue">Gemini 核心</span></div>
+        <div class="pc-go">進入 AI 問診室 &rarr;</div>
+      </a>
+    </div>
+
+    <!-- Quick Spec Grid -->
+    <div class="quick-spec-grid">
+      <div class="metric blue">
+        <div class="k">0 分</div>
+        <div class="t">冠狀動脈鈣化分數 (CAD-RADS 0，血管無狹窄及斑塊)</div>
+      </div>
+      <div class="metric teal">
+        <div class="k">43 %</div>
+        <div class="t">胰島素抗性改善幅度 (HOMA-IR 2.48 &rarr; 1.42 輕度)</div>
+      </div>
+      <div class="metric green">
+        <div class="k">0.6</div>
+        <div class="t">肝纖維化指數 (標準 &le;3.25，脂肪肝存在五年但無纖維化)</div>
+      </div>
+      <div class="metric red">
+        <div class="k">2.6 cm</div>
+        <div class="t">甲狀腺左葉混合性結節 (榮總 A 級：強烈建議 FNA 穿刺)</div>
+      </div>
+      <div class="metric coral">
+        <div class="k">5 次 / 0 達標</div>
+        <div class="t">LDL-C 壞膽固醇五年持續 134~145 mg/dL 徘徊</div>
+      </div>
+      <div class="metric purple">
+        <div class="k">103.2</div>
+        <div class="t">2025 eGFR 腎絲球過濾率 (破除早期診所方法學偏低虛驚)</div>
+      </div>
+    </div>
+
+    <!-- 基本資料表 -->
+    <div class="table-wrap" style="margin-top:28px">
+      <table>
+        <thead>
+          <tr>
+            <th>年度</th>
+            <th>檢查日期</th>
+            <th>年齡</th>
+            <th>受檢機構</th>
+            <th>年度核心總評與重大項目</th>
+            <th>榮總等級判讀</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>2021</strong></td>
+            <td>2021-08-14</td>
+            <td>43</td>
+            <td>佑康診所</td>
+            <td>中度脂肪肝、腎絲球過濾率偏低、血脂全面超標、發現甲狀腺結節 2.2cm</td>
+            <td><span class="chip grey">常規診所總評</span></td>
+          </tr>
+          <tr>
+            <td><strong>2022</strong></td>
+            <td>2022-11-05</td>
+            <td>44</td>
+            <td>佑康診所</td>
+            <td>腰圍最佳 90cm，但空腹血糖 127 疑糖尿病、尿酸 8.30 超標、eGFR 54 低谷</td>
+            <td><span class="chip amber">疑糖尿病 / 門診追蹤</span></td>
+          </tr>
+          <tr>
+            <td><strong>2023</strong></td>
+            <td>2023-10-26</td>
+            <td>45</td>
+            <td>高雄榮總</td>
+            <td>首度執行胃鏡+大腸鏡+DXA骨密；切除良性增生息肉、異位性胰腺；eGFR 解套 97.5</td>
+            <td><span class="chip blue">胃腸 / 代謝 B 級</span></td>
+          </tr>
+          <tr>
+            <td><strong>2024</strong></td>
+            <td>2024-10-09</td>
+            <td>46</td>
+            <td>高雄榮總</td>
+            <td>微輻射肺部CT乾淨(Lung-RADS 1)、冠狀動脈鈣化分數 0、ALT 36 完全正常化</td>
+            <td><span class="chip green">胃腸 / 代謝 B 級 (血管極佳)</span></td>
+          </tr>
+          <tr class="alert-row">
+            <td><strong>2025</strong></td>
+            <td>2025-10-29</td>
+            <td>47</td>
+            <td>高雄榮總</td>
+            <td>新陳代謝科 A 級 (甲狀腺結節 2.6cm 建議穿刺)；HOMA-IR 降至 1.42；首次記錄心雜音</td>
+            <td><span class="chip red">新陳代謝科 A 級 (立即處理)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="home-foot">
+      大衛健康管理 ｜ 本資料庫為個人健檢資料長期趨勢追蹤分析，非醫療診斷。所有醫療處置請以合格醫師指示為準。支援鍵盤 &larr; &rarr; 鍵切換、Home 回封面、F 全螢幕。
+    </div>
+  </div>
+</div>
+
+<!-- ================= PART 1: 五年逐年摘要 (5 頁) ================= -->
+<div class="view" id="view-p1">
+
+  <!-- p1-1: 2021 -->
+  <div class="slide" id="p1-1">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 1 · 逐年摘要 1/5</div>
+        <h2>2021 (43歲・佑康診所)：首份完整基準，抓出四條健康紅線</h2>
+        <div class="sub">作為五年追蹤的第一個對照錨點，一次性暴露了脂肪肝、腎功能警訊、血脂超標及骨質流失四大潛在問題。</div>
+      </div>
+      <div class="flags">
+        <span class="flag blue">基準年度</span>
+        <span class="flag coral">4條紅線</span>
+        <span class="flag amber">中度脂肪肝</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <!-- Metrics row -->
+      <div class="four-col">
+        <div class="metric coral">
+          <div class="k">66 U/L</div>
+          <div class="t">ALT (SGPT) 肝功能超標 65% (參考 0~40)</div>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id=\x22home\x22 class=\x22pt-28 pb-16 bg-gradient-to-br from-blue-50 via-white to-blue-50\x22>
-        <div class=\x22max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\x22>
-            <div class=\x22text-center max-w-3xl mx-auto\x22>
-                <h1 class=\x22text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4\x22>大衛體檢五年分析</h1>
-                <p class=\x22text-xl text-slate-600 mb-8\x22>(2021–2025) 健康數據深度解構與決策中樞</p>
-                <div class=\x22flex justify-center gap-4 text-sm text-slate-500 mb-10\x22>
-                    <span class=\x22bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100\x22><i class=\x22far fa-calendar-alt mr-2\x22></i>更新: 2026-09</span>
-                    <span class=\x22bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100\x22><i class=\x22fas fa-hospital mr-2\x22></i>高雄榮總 / 佑康診所</span>
-                </div>
-            </div>
-            
-            <div class=\x22bg-white rounded-2xl shadow-lg p-8 border border-slate-100 markdown-body\x22 id=\x22content-home\x22>
-                <!-- Injected via JS -->
-            </div>
+        <div class="metric amber">
+          <div class="k">58.79</div>
+          <div class="t">eGFR 腎絲球過濾率偏低 (肌酸酐 1.40)</div>
         </div>
-    </section>
-
-    <!-- Part 1 Section -->
-    <section id=\x22part1\x22 class=\x22py-16 bg-white\x22>
-        <div class=\x22max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\x22>
-            <div class=\x22flex items-center gap-4 mb-8\x22>
-                <div class=\x22w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold\x22>1</div>
-                <h2 class=\x22text-3xl font-bold text-slate-900\x22>五年逐年摘要 (2021-2025)</h2>
-            </div>
-            
-            <div class=\x22grid grid-cols-1 md:grid-cols-3 gap-6 mb-10\x22>
-                <div class=\x22bg-blue-50 rounded-xl p-6 border border-blue-100 flex flex-col items-center text-center\x22>
-                    <i class=\x22fas fa-weight scale-150 text-blue-500 mb-4 text-3xl\x22></i>
-                    <h3 class=\x22font-bold text-lg mb-2\x22>體態與代謝</h3>
-                    <p class=\x22text-sm text-slate-600\x22>五年減去4.5kg純脂肪，內臟脂肪顯著改善，胰島素抗性降級。</p>
-                </div>
-                <div class=\x22bg-emerald-50 rounded-xl p-6 border border-emerald-100 flex flex-col items-center text-center\x22>
-                    <i class=\x22fas fa-heart scale-150 text-emerald-500 mb-4 text-3xl\x22></i>
-                    <h3 class=\x22font-bold text-lg mb-2\x22>心血管風險</h3>
-                    <p class=\x22text-sm text-slate-600\x22>2024冠狀動脈鈣化分數為0，10年心血管風險維持極低，心血管底子極佳。</p>
-                </div>
-                <div class=\x22bg-rose-50 rounded-xl p-6 border border-rose-100 flex flex-col items-center text-center\x22>
-                    <i class=\x22fas fa-exclamation-triangle scale-150 text-rose-500 mb-4 text-3xl\x22></i>
-                    <h3 class=\x22font-bold text-lg mb-2\x22>紅色警報</h3>
-                    <p class=\x22text-sm text-slate-600\x22>甲狀腺結節持續增大達2.6cm，需立即安排穿刺檢查。</p>
-                </div>
-            </div>
-
-            <div class=\x22bg-white rounded-2xl p-2 markdown-body\x22 id=\x22content-part1\x22>
-                <!-- Injected via JS -->
-            </div>
+        <div class="metric coral">
+          <div class="k">136.2</div>
+          <div class="t">LDL-C 壞膽固醇超標 (總膽固醇 217)</div>
         </div>
-    </section>
-
-    <!-- Part 2 Section -->
-    <section id=\x22part2\x22 class=\x22py-16 bg-slate-50\x22>
-        <div class=\x22max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\x22>
-            <div class=\x22flex items-center gap-4 mb-8\x22>
-                <div class=\x22w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold\x22>2</div>
-                <h2 class=\x22text-3xl font-bold text-slate-900\x22>五年長期趨勢分析 (全項目)</h2>
-            </div>
-            
-            <div class=\x22bg-white rounded-2xl shadow-sm border border-slate-200 p-8 markdown-body overflow-x-auto\x22 id=\x22content-part2\x22>
-                <!-- Injected via JS -->
-            </div>
+        <div class="metric teal">
+          <div class="k">4 %</div>
+          <div class="t">10 年心血管疾病風險評估 (維持極低)</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Part 3 Section -->
-    <section id=\x22part3\x22 class=\x22py-16 bg-white\x22>
-        <div class=\x22max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\x22>
-            <div class=\x22flex items-center gap-4 mb-8\x22>
-                <div class=\x22w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-xl font-bold\x22>3</div>
-                <h2 class=\x22text-3xl font-bold text-slate-900\x22>目前需要注意的事項 (行動方案)</h2>
-            </div>
-            
-            <div class=\x22bg-rose-50 rounded-2xl p-8 border border-rose-100 markdown-body\x22 id=\x22content-part3\x22>
-                <!-- Injected via JS -->
-            </div>
+      <!-- Content Split -->
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-check-circle text-green"></i> 2021 年度優點項目</h3>
+          <ul>
+            <li><strong>心臟與血管：</strong>心臟超音波結構收縮正常、無心包膜積水；非侵入性動脈硬化檢測未達明顯硬化，無周邊血管阻塞。</li>
+            <li><strong>常規檢查：</strong>胸部 X 光、心電圖、肺功能、聽力、上消化道攝影皆無明顯異常。</li>
+            <li><strong>血液常規健全：</strong>血紅素 Hb 15.0、白血球 7.03、血小板 301 全在正常區間。</li>
+            <li><strong>腫瘤標記全數過關：</strong>AFP 2.30、CEA 1.26、PSA 1.30 均非常理想。</li>
+            <li><strong>免疫力：</strong>B 型肝炎表面抗體陽性，具備完整保護力。尿液、糞便潛血全陰性。</li>
+          </ul>
         </div>
-    </section>
 
-    <!-- Part 4 AI Doctor Section -->
-    <section id=\x22doctor\x22 class=\x22py-16 bg-slate-900 text-white\x22>
-        <div class=\x22max-w-5xl mx-auto px-4 sm:px-6 lg:px-8\x22>
-            <div class=\x22text-center mb-10\x22>
-                <h2 class=\x22text-3xl font-bold mb-4\x22><i class=\x22fas fa-robot text-blue-400 mr-3\x22></i>AI 虛擬醫生 (專屬健康顧問)</h2>
-                <p class=\x22text-slate-400\x22>已載入您2021-2025的體檢數據。請輸入 Gemini API Key 開始即時問診。</p>
-            </div>
-
-            <div class=\x22bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden chat-container relative\x22>
-                
-                <!-- API Key Setup Overlay -->
-                <div v-if=\x22!apiKey\x22 class=\x22absolute inset-0 bg-slate-900/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6\x22>
-                    <i class=\x22fas fa-key text-4xl text-blue-500 mb-4\x22></i>
-                    <h3 class=\x22text-xl font-bold mb-2\x22>請設定 Gemini API Key</h3>
-                    <p class=\x22text-slate-400 text-sm mb-6 text-center max-w-md\x22>本網頁為純前端應用，API Key 僅存在您的瀏覽器中，不會傳送到任何其他伺服器。建議使用免費的 Gemini 1.5 API。</p>
-                    <div class=\x22flex w-full max-w-md gap-2\x22>
-                        <input v-model=\x22tempKey\x22 type=\x22password\x22 placeholder=\x22AIzaSy...\x22 class=\x22flex-grow bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500\x22>
-                        <button @click=\x22saveKey\x22 class=\x22bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors\x22>開始問診</button>
-                    </div>
-                </div>
-
-                <!-- Chat Messages -->
-                <div class=\x22chat-messages space-y-4\x22 id=\x22chatbox\x22>
-                    <div v-for=\x22(msg, index) in messages\x22 :key=\x22index\x22 class=\x22flex\x22 :class=\x22msg.role === 'user' ? 'justify-end' : 'justify-start'\x22>
-                        <div class=\x22max-w-[80%] rounded-2xl px-5 py-3\x22 
-                             :class=\x22msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-slate-700 text-slate-100 rounded-bl-none'\x22>
-                            <div v-if=\x22msg.role === 'assistant'\x22 class=\x22flex items-center gap-2 mb-1 opacity-70 text-xs\x22>
-                                <i class=\x22fas fa-user-md\x22></i> 虛擬醫生
-                            </div>
-                            <div class=\x22markdown-body text-sm\x22 :class=\x22msg.role === 'user' ? 'text-white' : ''\x22 v-html=\x22renderMd(msg.content)\x22></div>
-                        </div>
-                    </div>
-                    <div v-if=\x22loading\x22 class=\x22flex justify-start\x22>
-                        <div class=\x22bg-slate-700 rounded-2xl rounded-bl-none px-5 py-3 text-slate-300\x22>
-                            <i class=\x22fas fa-circle-notch fa-spin\x22></i> 思考中...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Input -->
-                <div class=\x22p-4 bg-slate-800 border-t border-slate-700\x22>
-                    <form @submit.prevent=\x22sendMessage\x22 class=\x22flex gap-2\x22>
-                        <input v-model=\x22userInput\x22 :disabled=\x22!apiKey || loading\x22 type=\x22text\x22 placeholder=\x22詢問關於您的體檢報告、醫學名詞或飲食建議...\x22 
-                               class=\x22flex-grow bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 disabled:opacity-50\x22>
-                        <button type=\x22submit\x22 :disabled=\x22!apiKey || loading || !userInput.trim()\x22 
-                                class=\x22bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white w-12 rounded-xl flex items-center justify-center transition-colors\x22>
-                            <i class=\x22fas fa-paper-plane\x22></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+        <div class="card coral">
+          <h3><i class="fas fa-exclamation-circle text-coral"></i> 2021 年度缺點與警訊</h3>
+          <ul>
+            <li><strong>中度脂肪肝與肝囊腫：</strong>超音波見中度脂肪肝，伴隨 1.63 cm 肝囊腫，ALT 高達 66 U/L。</li>
+            <li><strong>腎絲球過濾率偏低：</strong>eGFR 僅 58.79，肌酸酐 1.40 (後續證實受檢驗方法影響)。</li>
+            <li><strong>血脂與代謝邊緣：</strong>空腹血糖 110、HbA1c 5.90% 逼近上限；尿酸 7.70 貼邊。</li>
+            <li><strong>體位與骨質失衡：</strong>體重 87.4kg (BMI 27.19 輕度肥胖)、體脂率 34.7%、腰圍 97cm；腰椎 T值 -1.00、髖關節 T值 -1.40。</li>
+            <li><strong>甲狀腺結節：</strong>左葉多發性結節，最大已達 2.2 cm。</li>
+          </ul>
         </div>
-    </section>
+      </div>
 
-    <!-- Footer -->
-    <footer class=\x22bg-slate-950 py-8 text-center text-slate-500 text-sm\x22>
-        <p>© 2026 大衛健康儀表板 | AI-Generated Analysis</p>
-    </footer>
+      <!-- Graphic/Diagram row -->
+      <div class="fig">
+        <div class="figtitle">
+          <span><i class="fas fa-chart-pie"></i> 2021 身體組成與重要代謝參數雷達分布</span>
+          <span class="chip blue">基準建檔</span>
+        </div>
+        <svg viewBox="0 0 800 130" style="background:#F8FAFC; border-radius:4px;">
+          <!-- Bar indicators -->
+          <text x="30" y="30" font-size="12" font-weight="bold" fill="#12293D">體重/BMI: 87.4kg / 27.2 (過重)</text>
+          <rect x="30" y="40" width="320" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="30" y="40" width="220" height="14" rx="3" fill="#D95F45"/>
+          
+          <text x="30" y="85" font-size="12" font-weight="bold" fill="#12293D">體脂率: 34.7% (肥胖警戒區 >25%)</text>
+          <rect x="30" y="95" width="320" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="30" y="95" width="260" height="14" rx="3" fill="#E09A2B"/>
 
-    <script>
-        const rawMarkdown = \\-\\-\\-\\
-\\t\\i\\t\\l\\e\\:\\ \\大\\衛\\體\\檢\\五\\年\\分\\析\\(\\2\\0\\2\\1\\–\\2\\0\\2\\5\\)\\
-\\建\\立\\日\\期\\:\\ \\2\\0\\2\\6\\-\\0\\9\\-\\1\\8\\
-\\資\\料\\來\\源\\:\\ \\2\\0\\2\\1\\/\\2\\0\\2\\2\\ \\佑\\康\\診\\所\\、\\2\\0\\2\\3\\/\\2\\0\\2\\4\\/\\2\\0\\2\\5\\ \\高\\雄\\榮\\總\\健\\康\\管\\理\\中\\心\\
-\\分\\析\\工\\具\\:\\ \\C\\l\\a\\u\\d\\e\\ \\C\\o\\d\\e\\ \\+\\ \\a\\i\\-\\h\\e\\a\\l\\t\\h\\-\\v\\a\\u\\l\\t\\ \\s\\k\\i\\l\\l\\
-\\狀\\態\\:\\ \\待\\門\\診\\確\\認\\
-\\-\\-\\-\\
-\\
-\\#\\ \\大\\衛\\體\\檢\\五\\年\\分\\析\\(\\2\\0\\2\\1\\–\\2\\0\\2\\5\\)\\
-\\
-\\>\\ \\*\\*\\免\\責\\聲\\明\\*\\*\\:\\本\\文\\為\\個\\人\\健\\檢\\報\\告\\的\\資\\料\\整\\理\\與\\趨\\勢\\解\\讀\\,\\*\\*\\不\\是\\醫\\療\\診\\斷\\*\\*\\。\\所\\有\\標\\示\\「\\需\\處\\理\\」\\的\\項\\目\\,\\請\\以\\主\\治\\醫\\師\\判\\斷\\為\\準\\。\\
-\\>\\ \\標\\記\\說\\明\\:\\*\\*\\事\\實\\*\\*\\=\\報\\告\\原\\文\\數\\據\\;\\`\\推\\論\\:\\`\\=\\依\\數\\據\\推\\導\\;\\`\\[\\未\\驗\\證\\]\\`\\=\\需\\進\\一\\步\\確\\認\\。\\
-\\
-\\#\\#\\ \\0\\.\\ \\五\\年\\基\\本\\資\\料\\
-\\
-\\|\\ \\年\\度\\ \\|\\ \\檢\\查\\日\\期\\ \\|\\ \\年\\齡\\ \\|\\ \\機\\構\\ \\|\\ \\總\\評\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\1\\-\\0\\8\\-\\1\\4\\ \\|\\ \\4\\3\\ \\|\\ \\佑\\康\\診\\所\\ \\|\\ \\中\\度\\脂\\肪\\肝\\、\\腎\\絲\\球\\過\\濾\\率\\偏\\低\\、\\膽\\固\\醇\\高\\ \\|\\
-\\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\2\\-\\1\\1\\-\\0\\5\\ \\|\\ \\4\\4\\ \\|\\ \\佑\\康\\診\\所\\ \\|\\ \\同\\上\\ \\+\\ \\尿\\酸\\偏\\高\\、\\疑\\糖\\尿\\病\\ \\|\\
-\\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\3\\-\\1\\0\\-\\2\\6\\ \\|\\ \\4\\5\\ \\|\\ \\高\\雄\\榮\\總\\ \\|\\ \\胃\\腸\\/\\代\\謝\\/\\大\\腸\\ \\*\\*\\B\\級\\*\\*\\;\\做\\了\\胃\\鏡\\+\\大\\腸\\鏡\\ \\|\\
-\\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\4\\-\\1\\0\\-\\0\\9\\ \\|\\ \\4\\6\\ \\|\\ \\高\\雄\\榮\\總\\ \\|\\ \\胃\\腸\\/\\代\\謝\\ \\*\\*\\B\\級\\*\\*\\;\\做\\了\\肺\\部\\C\\T\\+\\冠\\狀\\動\\脈\\C\\T\\ \\|\\
-\\|\\ \\2\\0\\2\\5\\ \\|\\ \\2\\0\\2\\5\\-\\1\\0\\-\\2\\9\\ \\|\\ \\4\\7\\ \\|\\ \\高\\雄\\榮\\總\\ \\|\\ \\新\\陳\\代\\謝\\科\\ \\*\\*\\A\\級\\(\\立\\即\\處\\理\\)\\*\\*\\;\\做\\了\\甲\\狀\\腺\\超\\音\\波\\+\\腸\\道\\菌\\叢\\ \\|\\
-\\
-\\*\\*\\榮\\總\\分\\級\\定\\義\\*\\*\\:\\A\\=\\立\\即\\進\\一\\步\\檢\\查\\或\\治\\療\\ \\/\\ \\B\\=\\定\\期\\回\\診\\追\\蹤\\ \\/\\ \\C\\=\\有\\症\\狀\\再\\回\\診\\ \\/\\ \\D\\=\\輕\\微\\變\\化\\ \\/\\ \\E\\=\\無\\明\\顯\\異\\常\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\ \\第\\一\\部\\分\\:\\五\\年\\逐\\年\\摘\\要\\(\\優\\點\\ \\/\\ \\缺\\點\\)\\
-\\
-\\#\\#\\ \\2\\0\\2\\1\\(\\4\\3\\歲\\・\\佑\\康\\診\\所\\)\\
-\\
-\\*\\*\\當\\年\\重\\點\\*\\*\\:\\第\\一\\份\\完\\整\\基\\準\\,\\一\\次\\抓\\出\\四\\條\\紅\\線\\—\\—\\脂\\肪\\肝\\、\\腎\\功\\能\\、\\血\\脂\\、\\骨\\質\\。\\
-\\
-\\#\\#\\#\\ \\優\\點\\
-\\-\\ \\心\\臟\\超\\音\\波\\:\\心\\臟\\大\\小\\正\\常\\、\\收\\縮\\功\\能\\正\\常\\、\\心\\包\\膜\\正\\常\\
-\\-\\ \\胸\\部\\X\\光\\、\\上\\消\\化\\道\\攝\\影\\、\\心\\電\\圖\\、\\聽\\力\\、\\肺\\功\\能\\:\\皆\\無\\明\\顯\\異\\常\\
-\\-\\ \\血\\液\\常\\規\\全\\數\\正\\常\\(\\H\\b\\ \\1\\5\\.\\0\\、\\W\\B\\C\\ \\7\\.\\0\\3\\、\\P\\L\\T\\ \\3\\0\\1\\)\\
-\\-\\ \\尿\\液\\、\\糞\\便\\潛\\血\\:\\全\\陰\\性\\
-\\-\\ \\腫\\瘤\\標\\記\\全\\正\\常\\(\\A\\F\\P\\ \\2\\.\\3\\0\\、\\C\\E\\A\\ \\1\\.\\2\\6\\、\\P\\S\\A\\ \\1\\.\\3\\0\\)\\
-\\-\\ \\B\\型\\肝\\炎\\表\\面\\抗\\體\\陽\\性\\ \\→\\ \\有\\免\\疫\\力\\,\\不\\需\\打\\疫\\苗\\
-\\-\\ \\非\\侵\\入\\性\\動\\脈\\硬\\化\\:\\未\\達\\明\\顯\\硬\\化\\程\\度\\,\\無\\血\\管\\阻\\塞\\
-\\-\\ \\1\\0\\年\\心\\血\\管\\疾\\病\\風\\險\\僅\\ \\4\\%\\
-\\-\\ \\幽\\門\\桿\\菌\\:\\後\\續\\(\\2\\0\\2\\2\\)\\確\\認\\陰\\性\\
-\\
-\\#\\#\\#\\ \\缺\\點\\
-\\-\\ \\*\\*\\中\\度\\脂\\肪\\肝\\*\\*\\,\\並\\見\\肝\\囊\\腫\\約\\ \\1\\.\\6\\3\\ \\c\\m\\
-\\-\\ \\*\\*\\肝\\功\\能\\異\\常\\*\\*\\:\\A\\L\\T\\(\\S\\G\\P\\T\\)\\ \\6\\6\\ \\U\\/\\L\\(\\參\\考\\ \\0\\–\\4\\0\\)\\,\\超\\標\\ \\6\\5\\%\\
-\\-\\ \\*\\*\\腎\\絲\\球\\過\\濾\\率\\偏\\低\\*\\*\\:\\e\\G\\F\\R\\ \\5\\8\\.\\7\\9\\(\\參\\考\\ \\>\\6\\0\\)\\;\\肌\\酸\\酐\\ \\1\\.\\4\\0\\
-\\-\\ \\*\\*\\血\\脂\\全\\面\\超\\標\\*\\*\\:\\總\\膽\\固\\醇\\ \\2\\1\\7\\、\\L\\D\\L\\ \\1\\3\\6\\.\\2\\(\\參\\考\\ \\<\\1\\3\\0\\)\\
-\\-\\ \\*\\*\\血\\糖\\警\\訊\\*\\*\\:\\飯\\前\\血\\糖\\ \\1\\1\\0\\、\\H\\b\\A\\1\\c\\ \\5\\.\\9\\0\\(\\參\\考\\上\\限\\ \\6\\.\\0\\,\\已\\貼\\邊\\)\\
-\\-\\ \\*\\*\\尿\\酸\\ \\7\\.\\7\\0\\*\\*\\(\\參\\考\\上\\限\\ \\7\\.\\8\\,\\貼\\邊\\)\\
-\\-\\ \\*\\*\\體\\位\\不\\良\\*\\*\\:\\體\\重\\ \\8\\7\\.\\4\\ \\k\\g\\、\\B\\M\\I\\ \\2\\7\\.\\1\\9\\(\\輕\\度\\肥\\胖\\)\\、\\體\\脂\\率\\ \\3\\4\\.\\7\\%\\、\\腰\\圍\\ \\9\\7\\ \\c\\m\\(\\標\\準\\應\\ \\<\\9\\0\\)\\
-\\-\\ \\*\\*\\骨\\質\\流\\失\\*\\*\\:\\腰\\椎\\ \\T\\值\\ \\−\\1\\.\\0\\0\\、\\髖\\關\\節\\ \\T\\值\\ \\−\\1\\.\\4\\0\\
-\\-\\ \\甲\\狀\\腺\\結\\節\\:\\右\\ \\0\\.\\4\\ \\c\\m\\、\\*\\*\\左\\多\\發\\最\\大\\ \\2\\.\\2\\ \\c\\m\\*\\*\\
-\\-\\ \\類\\風\\濕\\因\\子\\(\\R\\A\\)\\6\\.\\3\\0\\(\\參\\考\\ \\<\\4\\)\\偏\\高\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\#\\ \\2\\0\\2\\2\\(\\4\\4\\歲\\・\\佑\\康\\診\\所\\)\\
-\\
-\\*\\*\\當\\年\\重\\點\\*\\*\\:\\體\\重\\與\\腰\\圍\\有\\進\\步\\,\\但\\代\\謝\\指\\標\\全\\面\\惡\\化\\—\\—\\這\\年\\是\\五\\年\\中\\血\\糖\\與\\腎\\功\\能\\數\\字\\最\\差\\的\\一\\年\\。\\
-\\
-\\#\\#\\#\\ \\優\\點\\
-\\-\\ \\體\\重\\ \\8\\7\\.\\4\\ \\→\\ \\8\\5\\.\\0\\ \\k\\g\\,\\B\\M\\I\\ \\2\\7\\.\\1\\9\\ \\→\\ \\2\\6\\.\\7\\1\\
-\\-\\ \\*\\*\\腰\\圍\\ \\9\\7\\ \\→\\ \\9\\0\\ \\c\\m\\*\\*\\(\\五\\年\\最\\佳\\)\\
-\\-\\ \\血\\壓\\ \\1\\2\\7\\/\\7\\8\\ \\→\\ \\*\\*\\1\\0\\5\\/\\6\\1\\*\\*\\(\\五\\年\\最\\佳\\)\\
-\\-\\ \\三\\酸\\甘\\油\\脂\\ \\1\\3\\7\\ \\→\\ \\9\\3\\(\\大\\幅\\下\\降\\)\\
-\\-\\ \\*\\*\\H\\D\\L\\(\\好\\膽\\固\\醇\\)\\5\\3\\.\\4\\ \\→\\ \\6\\6\\.\\7\\*\\*\\(\\五\\年\\最\\高\\)\\,\\總\\/\\H\\D\\L\\比\\值\\降\\至\\ \\3\\.\\4\\5\\(\\五\\年\\最\\佳\\)\\
-\\-\\ \\骨\\質\\改\\善\\:\\腰\\椎\\ \\T\\值\\ \\−\\1\\.\\0\\0\\ \\→\\ \\−\\0\\.\\5\\0\\,\\髖\\關\\節\\轉\\為\\無\\明\\顯\\異\\常\\
-\\-\\ \\1\\0\\年\\心\\血\\管\\風\\險\\ \\4\\%\\ \\→\\ \\3\\%\\
-\\-\\ \\幽\\門\\桿\\菌\\吹\\氣\\檢\\測\\ \\0\\.\\7\\5\\ \\D\\O\\B\\(\\陰\\性\\)\\
-\\-\\ \\心\\臟\\超\\音\\波\\、\\X\\光\\、\\上\\消\\化\\道\\攝\\影\\、\\血\\液\\常\\規\\、\\尿\\液\\:\\維\\持\\正\\常\\
-\\
-\\#\\#\\#\\ \\缺\\點\\
-\\-\\ \\*\\*\\空\\腹\\血\\糖\\ \\1\\1\\0\\ \\→\\ \\1\\2\\7\\ \\m\\g\\/\\d\\L\\*\\*\\,\\醫\\師\\直\\接\\註\\記\\「\\疑\\糖\\尿\\病\\,\\近\\至\\門\\診\\追\\蹤\\治\\療\\」\\
-\\-\\ \\*\\*\\e\\G\\F\\R\\ \\5\\8\\.\\7\\9\\ \\→\\ \\5\\4\\.\\0\\4\\*\\*\\,\\腎\\功\\能\\數\\字\\再\\降\\;\\肌\\酸\\酐\\ \\1\\.\\4\\0\\ \\→\\ \\1\\.\\5\\0\\
-\\-\\ \\*\\*\\尿\\酸\\ \\7\\.\\7\\0\\ \\→\\ \\8\\.\\3\\0\\*\\*\\,\\正\\式\\超\\標\\
-\\-\\ \\*\\*\\總\\膽\\固\\醇\\ \\2\\1\\7\\ \\→\\ \\2\\3\\0\\、\\L\\D\\L\\ \\1\\3\\6\\.\\2\\ \\→\\ \\1\\4\\4\\.\\7\\*\\*\\,\\雙\\雙\\惡\\化\\
-\\-\\ \\*\\*\\A\\L\\T\\ \\維\\持\\ \\6\\6\\ \\U\\/\\L\\*\\*\\,\\肝\\功\\能\\異\\常\\未\\改\\善\\
-\\-\\ \\*\\*\\中\\度\\脂\\肪\\肝\\持\\續\\*\\*\\,\\新\\增\\*\\*\\膽\\囊\\息\\肉\\ \\0\\.\\5\\5\\ \\c\\m\\*\\*\\
-\\-\\ \\甲\\狀\\腺\\:\\左\\側\\混\\合\\性\\結\\節\\ \\1\\.\\7\\3\\×\\1\\.\\7\\6\\ \\c\\m\\,\\醫\\師\\要\\求\\門\\診\\追\\蹤\\
-\\-\\ \\體\\脂\\率\\反\\升\\:\\3\\4\\.\\7\\%\\ \\→\\ \\*\\*\\3\\5\\.\\2\\%\\*\\*\\(\\五\\年\\最\\高\\)\\→\\ \\`\\推\\論\\:\\體\\重\\下\\降\\主\\要\\減\\到\\的\\是\\肌\\肉\\與\\水\\分\\,\\不\\是\\脂\\肪\\`\\
-\\-\\ \\新\\增\\「\\近\\視\\,\\需\\連\\續\\配\\鏡\\矯\\正\\」\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\#\\ \\2\\0\\2\\3\\(\\4\\5\\歲\\・\\高\\雄\\榮\\總\\)\\
-\\
-\\*\\*\\當\\年\\重\\點\\*\\*\\:\\轉\\院\\到\\榮\\總\\做\\完\\整\\檢\\查\\,\\一\\口\\氣\\做\\了\\胃\\鏡\\+\\大\\腸\\鏡\\+\\D\\X\\A\\骨\\密\\度\\,\\把\\過\\去\\看\\不\\到\\的\\問\\題\\全\\挖\\出\\來\\;\\同\\時\\腎\\功\\能\\「\\謎\\團\\」\\得\\到\\解\\答\\。\\
-\\
-\\#\\#\\#\\ \\優\\點\\
-\\-\\ \\*\\*\\e\\G\\F\\R\\ \\5\\4\\.\\0\\4\\ \\→\\ \\9\\7\\.\\5\\*\\*\\,\\肌\\酸\\酐\\ \\1\\.\\5\\0\\ \\→\\ \\0\\.\\8\\5\\ \\→\\ \\腎\\功\\能\\數\\字\\完\\全\\正\\常\\
-\\ \\ \\-\\ \\`\\推\\論\\:\\這\\種\\幅\\度\\跳\\升\\不\\太\\可\\能\\是\\真\\實\\生\\理\\逆\\轉\\,\\更\\可\\能\\是\\兩\\家\\檢\\驗\\室\\的\\肌\\酸\\酐\\檢\\測\\方\\法\\差\\異\\(\\J\\a\\f\\f\\e\\法\\ \\v\\s\\ \\酵\\素\\法\\)\\。\\[\\未\\驗\\證\\]\\ \\建\\議\\請\\醫\\師\\確\\認\\,\\但\\無\\論\\如\\何\\ \\2\\0\\2\\3\\–\\2\\0\\2\\5\\ \\三\\次\\ \\e\\G\\F\\R\\ \\皆\\ \\>\\9\\0\\,\\現\\況\\腎\\功\\能\\正\\常\\。\\`\\
-\\-\\ \\*\\*\\A\\L\\T\\ \\6\\6\\ \\→\\ \\4\\7\\ \\U\\/\\L\\*\\*\\,\\肝\\功\\能\\顯\\著\\改\\善\\;\\脂\\肪\\肝\\由\\「\\中\\度\\」\\降\\為\\*\\*\\輕\\度\\*\\*\\
-\\-\\ \\*\\*\\體\\脂\\率\\ \\3\\5\\.\\2\\%\\ \\→\\ \\3\\1\\.\\1\\%\\*\\*\\(\\大\\幅\\改\\善\\)\\
-\\-\\ \\空\\腹\\血\\糖\\ \\1\\2\\7\\ \\→\\ \\*\\*\\8\\8\\*\\*\\、\\H\\b\\A\\1\\c\\ \\5\\.\\7\\%\\ \\→\\ \\正\\常\\化\\
-\\-\\ \\尿\\酸\\ \\8\\.\\3\\0\\ \\→\\ \\6\\.\\7\\,\\回\\到\\正\\常\\
-\\-\\ \\三\\酸\\甘\\油\\脂\\雖\\ \\2\\0\\3\\ \\超\\標\\,\\但\\總\\膽\\固\\醇\\降\\至\\ \\1\\9\\9\\(\\五\\年\\首\\次\\ \\<\\2\\0\\0\\)\\
-\\-\\ \\*\\*\\骨\\質\\密\\度\\符\\合\\同\\齡\\預\\期\\值\\*\\*\\,\\腰\\椎\\ \\L\\1\\–\\L\\4\\ \\B\\M\\D\\ \\1\\.\\2\\5\\1\\
-\\-\\ \\大\\腸\\息\\肉\\在\\ \\0\\.\\2\\ \\c\\m\\ \\時\\就\\被\\發\\現\\並\\切\\除\\,\\病\\理\\為\\*\\*\\增\\生\\性\\息\\肉\\(\\良\\性\\)\\*\\*\\
-\\-\\ \\十\\二\\指\\腸\\腫\\瘤\\切\\片\\證\\實\\為\\*\\*\\異\\位\\性\\胰\\腺\\(\\良\\性\\先\\天\\構\\造\\)\\*\\*\\,\\非\\惡\\性\\
-\\-\\ \\幽\\門\\桿\\菌\\陰\\性\\、\\胸\\部\\X\\光\\/\\K\\U\\B\\/\\心\\電\\圖\\正\\常\\、\\肺\\功\\能\\正\\常\\
-\\-\\ \\高\\敏\\感\\度\\C\\R\\P\\ \\0\\.\\0\\9\\3\\(\\極\\低\\,\\體\\內\\無\\慢\\性\\發\\炎\\)\\
-\\-\\ \\1\\0\\年\\心\\血\\管\\風\\險\\降\\至\\ \\2\\.\\0\\%\\
-\\
-\\#\\#\\#\\ \\缺\\點\\
-\\-\\ \\*\\*\\新\\陳\\代\\謝\\科\\ \\B\\級\\*\\*\\:\\診\\斷\\「\\*\\*\\嚴\\重\\胰\\島\\素\\抗\\性\\*\\*\\,\\糖\\尿\\病\\風\\險\\增\\加\\」\\,\\H\\O\\M\\A\\-\\I\\R\\ \\*\\*\\2\\.\\4\\8\\*\\*\\(\\參\\考\\ \\≤\\1\\,\\超\\標\\ \\2\\.\\5\\ \\倍\\)\\
-\\-\\ \\*\\*\\2\\5\\-\\羥\\基\\維\\生\\素\\D\\ \\僅\\ \\8\\.\\1\\ \\n\\g\\/\\m\\L\\*\\*\\(\\參\\考\\ \\3\\0\\–\\1\\0\\0\\)\\→\\ \\*\\*\\嚴\\重\\缺\\乏\\*\\*\\,\\不\\到\\下\\限\\的\\三\\分\\之\\一\\
-\\-\\ \\*\\*\\三\\酸\\甘\\油\\脂\\ \\2\\0\\3\\ \\m\\g\\/\\d\\L\\*\\*\\(\\參\\考\\ \\<\\1\\5\\1\\)\\
-\\-\\ \\*\\*\\L\\D\\L\\ \\1\\3\\4\\ \\m\\g\\/\\d\\L\\*\\*\\,\\仍\\未\\達\\標\\
-\\-\\ \\*\\*\\首\\次\\確\\診\\胃\\食\\道\\逆\\流\\*\\*\\(\\洛\\杉\\磯\\分\\級\\ \\A\\ \\級\\)\\+\\ \\*\\*\\胃\\發\\炎\\*\\*\\ \\+\\ \\H\\i\\l\\l\\'\\s\\ \\分\\級\\ \\I\\I\\
-\\-\\ \\*\\*\\乙\\狀\\結\\腸\\息\\肉\\*\\*\\(\\已\\切\\除\\)\\→\\ \\從\\此\\進\\入\\大\\腸\\癌\\追\\蹤\\族\\群\\
-\\-\\ \\*\\*\\十\\二\\指\\腸\\第\\二\\部\\黏\\膜\\下\\腫\\瘤\\ \\1\\.\\5\\–\\2\\ \\c\\m\\*\\*\\(\\良\\性\\但\\需\\追\\蹤\\)\\
-\\-\\ \\*\\*\\脈\\波\\傳\\導\\速\\度\\(\\P\\W\\V\\)\\輕\\微\\偏\\高\\*\\*\\(\\右\\1\\3\\6\\0\\/\\左\\1\\4\\6\\7\\)\\→\\ \\動\\脈\\彈\\性\\下\\降\\
-\\-\\ \\腰\\圍\\ \\*\\*\\9\\8\\ \\c\\m\\*\\*\\、\\腰\\臀\\比\\ \\1\\.\\0\\2\\、\\內\\臟\\脂\\肪\\面\\積\\ \\1\\7\\5\\ \\c\\m\\²\\、\\內\\臟\\脂\\肪\\等\\級\\ \\1\\2\\
-\\-\\ \\*\\*\\身\\體\\年\\齡\\ \\4\\7\\ \\歲\\*\\*\\(\\實\\齡\\4\\5\\)\\、\\*\\*\\相\\位\\角\\ \\5\\.\\5\\°\\*\\*\\(\\標\\準\\ \\6\\–\\8\\,\\細\\胞\\品\\質\\偏\\低\\)\\
-\\-\\ \\肺\\功\\能\\ \\F\\E\\F\\7\\5\\%\\ \\僅\\ \\6\\4\\.\\8\\%\\ \\預\\測\\值\\ \\→\\ \\`\\推\\論\\:\\小\\氣\\道\\輕\\度\\阻\\塞\\,\\可\\能\\與\\長\\期\\打\\鼾\\/\\過\\敏\\相\\關\\`\\
-\\-\\ \\尿\\液\\混\\濁\\、\\細\\菌\\ \\1\\+\\、\\磷\\酸\\鹽\\結\\晶\\ \\1\\+\\(\\單\\次\\,\\後\\續\\年\\度\\已\\清\\澈\\)\\
-\\-\\ \\主\\訴\\首\\次\\記\\錄\\:\\*\\*\\咳\\嗽\\、\\打\\鼾\\*\\*\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\#\\ \\2\\0\\2\\4\\(\\4\\6\\歲\\・\\高\\雄\\榮\\總\\)\\
-\\
-\\*\\*\\當\\年\\重\\點\\*\\*\\:\\五\\年\\中\\檢\\驗\\數\\字\\最\\漂\\亮\\的\\一\\年\\,\\而\\且\\做\\了\\冠\\狀\\動\\脈\\C\\T\\,\\拿\\到\\「\\鈣\\化\\分\\數\\ \\0\\」\\這\\張\\含\\金\\量\\最\\高\\的\\成\\績\\單\\。\\
-\\
-\\#\\#\\#\\ \\優\\點\\
-\\-\\ \\*\\*\\冠\\狀\\動\\脈\\電\\腦\\斷\\層\\:\\鈣\\化\\分\\數\\ \\=\\ \\0\\,\\C\\A\\D\\-\\R\\A\\D\\S\\ \\0\\,\\無\\狹\\窄\\及\\斑\\塊\\*\\*\\
-\\ \\ \\-\\ \\1\\8\\ \\個\\冠\\狀\\動\\脈\\節\\段\\全\\部\\ \\s\\t\\e\\n\\o\\s\\i\\s\\:\\ \\n\\o\\n\\e\\;\\主\\動\\脈\\、\\瓣\\膜\\無\\鈣\\化\\
-\\ \\ \\-\\ \\`\\推\\論\\:\\這\\是\\五\\年\\報\\告\\中\\最\\有\\價\\值\\的\\單\\一\\發\\現\\。\\鈣\\化\\分\\數\\ \\0\\ \\代\\表\\未\\來\\ \\5\\–\\1\\0\\ \\年\\冠\\心\\病\\事\\件\\機\\率\\極\\低\\,\\且\\此\\結\\果\\可\\回\\推\\「\\前\\述\\所\\有\\代\\謝\\紅\\字\\尚\\未\\造\\成\\血\\管\\實\\質\\傷\\害\\」\\。\\`\\
-\\-\\ \\*\\*\\微\\輻\\射\\肺\\癌\\篩\\檢\\ \\L\\u\\n\\g\\-\\R\\A\\D\\S\\ \\1\\*\\*\\:\\無\\大\\於\\ \\6\\m\\m\\ \\實\\質\\結\\節\\、\\無\\大\\於\\ \\5\\m\\m\\ \\毛\\玻\\璃\\結\\節\\ \\→\\ \\肺\\部\\乾\\淨\\
-\\-\\ \\*\\*\\肝\\功\\能\\全\\面\\正\\常\\化\\*\\*\\:\\A\\L\\T\\ \\4\\7\\ \\→\\ \\*\\*\\3\\6\\*\\*\\、\\A\\S\\T\\ \\2\\8\\ \\→\\ \\2\\1\\、\\G\\G\\T\\ \\3\\2\\ \\→\\ \\2\\7\\(\\五\\年\\最\\佳\\)\\
-\\-\\ \\*\\*\\體\\重\\ \\8\\6\\.\\1\\ \\→\\ \\8\\4\\.\\4\\ \\k\\g\\,\\B\\M\\I\\ \\2\\5\\.\\9\\*\\*\\(\\首\\次\\跌\\破\\ \\2\\6\\)\\
-\\-\\ \\*\\*\\H\\O\\M\\A\\-\\I\\R\\ \\2\\.\\4\\8\\ \\→\\ \\2\\.\\0\\7\\*\\*\\,\\胰\\島\\素\\抗\\性\\改\\善\\
-\\-\\ \\*\\*\\三\\酸\\甘\\油\\脂\\ \\2\\0\\3\\ \\→\\ \\1\\4\\0\\*\\*\\,\\回\\到\\正\\常\\
-\\-\\ \\總\\膽\\固\\醇\\ \\1\\8\\6\\(\\五\\年\\最\\低\\)\\、\\H\\D\\L\\ \\4\\5\\ \\→\\ \\4\\8\\、\\總\\/\\H\\D\\L\\比\\ \\3\\.\\9\\
-\\-\\ \\*\\*\\維\\生\\素\\D\\ \\8\\.\\1\\ \\→\\ \\1\\1\\.\\8\\ \\n\\g\\/\\m\\L\\*\\*\\(\\有\\補\\充\\,\\方\\向\\正\\確\\)\\
-\\-\\ \\1\\0\\年\\心\\血\\管\\風\\險\\ \\*\\*\\1\\.\\5\\%\\*\\*\\(\\五\\年\\最\\低\\)\\
-\\-\\ \\心\\臟\\超\\音\\波\\:\\左\\心\\室\\收\\縮\\功\\能\\正\\常\\、\\L\\V\\E\\F\\ \\6\\1\\%\\、\\無\\心\\室\\擴\\張\\
-\\-\\ \\糞\\便\\潛\\血\\ \\<\\7\\.\\0\\(\\正\\常\\)\\、\\尿\\液\\全\\項\\清\\澈\\陰\\性\\、\\血\\液\\常\\規\\正\\常\\
-\\-\\ \\肺\\功\\能\\ \\F\\V\\C\\ \\9\\3\\%\\、\\F\\E\\V\\1\\ \\9\\4\\%\\ \\預\\測\\值\\
-\\-\\ \\大\\腸\\直\\腸\\外\\科\\、\\腎\\臟\\科\\、\\胸\\腔\\內\\科\\、\\家\\醫\\科\\、\\眼\\科\\ \\*\\*\\全\\部\\ \\E\\ \\級\\(\\無\\異\\常\\)\\*\\*\\
-\\
-\\#\\#\\#\\ \\缺\\點\\
-\\-\\ \\*\\*\\L\\D\\L\\ \\1\\3\\4\\ \\m\\g\\/\\d\\L\\,\\與\\去\\年\\一\\模\\一\\樣\\,\\連\\續\\第\\ \\4\\ \\年\\未\\達\\標\\*\\*\\
-\\-\\ \\*\\*\\H\\b\\A\\1\\c\\ \\5\\.\\7\\ \\→\\ \\5\\.\\9\\%\\*\\*\\(\\回\\升\\)\\、\\空\\腹\\血\\糖\\ \\8\\8\\ \\→\\ \\9\\4\\
-\\-\\ \\*\\*\\H\\O\\M\\A\\-\\I\\R\\ \\2\\.\\0\\7\\ \\仍\\為\\「\\明\\顯\\胰\\島\\素\\抗\\性\\」\\*\\*\\,\\新\\陳\\代\\謝\\科\\維\\持\\ \\B\\級\\
-\\-\\ \\*\\*\\維\\生\\素\\D\\ \\1\\1\\.\\8\\ \\n\\g\\/\\m\\L\\,\\補\\充\\後\\仍\\僅\\達\\標\\準\\下\\限\\的\\ \\3\\9\\%\\*\\*\\ \\→\\ \\`\\推\\論\\:\\補\\充\\劑\\量\\明\\顯\\不\\足\\`\\
-\\-\\ \\*\\*\\理\\學\\檢\\查\\首\\次\\摸\\到\\疑\\似\\甲\\狀\\腺\\結\\節\\*\\*\\,\\醫\\師\\建\\議\\做\\超\\音\\波\\ \\→\\ \\*\\*\\當\\年\\並\\未\\執\\行\\*\\*\\
-\\-\\ \\*\\*\\體\\脂\\率\\ \\3\\1\\.\\1\\%\\ \\→\\ \\3\\1\\.\\7\\%\\、\\腰\\圍\\ \\9\\8\\ \\→\\ \\9\\9\\ \\c\\m\\、\\內\\臟\\脂\\肪\\面\\積\\ \\1\\7\\5\\ \\→\\ \\1\\8\\4\\ \\c\\m\\²\\*\\*\\(\\三\\項\\同\\步\\惡\\化\\)\\
-\\-\\ \\*\\*\\骨\\骼\\肌\\重\\ \\3\\3\\.\\1\\ \\→\\ \\3\\2\\.\\2\\ \\k\\g\\、\\S\\M\\I\\ \\7\\.\\6\\1\\ \\→\\ \\7\\.\\4\\4\\、\\相\\位\\角\\ \\5\\.\\5\\°\\ \\→\\ \\5\\.\\0\\°\\*\\*\\
-\\ \\ \\-\\ \\`\\推\\論\\:\\體\\重\\雖\\降\\ \\1\\.\\7\\ \\k\\g\\,\\但\\減\\掉\\的\\主\\要\\是\\肌\\肉\\(\\−\\0\\.\\9\\ \\k\\g\\)\\而\\非\\脂\\肪\\(\\體\\脂\\重\\ \\2\\6\\.\\8\\ \\→\\ \\2\\6\\.\\8\\,\\完\\全\\沒\\變\\)\\。\\這\\是\\「\\瘦\\下\\來\\但\\更\\不\\健\\康\\」\\的\\典\\型\\訊\\號\\。\\`\\
-\\-\\ \\*\\*\\身\\體\\年\\齡\\ \\4\\7\\ \\→\\ \\4\\9\\ \\歲\\*\\*\\(\\超\\出\\實\\齡\\ \\3\\ \\歲\\)\\、\\身\\體\\健\\康\\評\\分\\ \\6\\9\\ \\→\\ \\6\\7\\
-\\-\\ \\肝\\臟\\C\\T\\見\\多\\發\\低\\密\\度\\結\\節\\(\\判\\定\\為\\肝\\水\\囊\\泡\\)\\
-\\-\\ \\心\\臟\\超\\音\\波\\:\\極\\輕\\微\\二\\尖\\瓣\\反\\流\\、\\輕\\度\\三\\尖\\瓣\\反\\流\\
-\\-\\ \\肺\\功\\能\\ \\F\\E\\F\\7\\5\\%\\ \\7\\0\\.\\1\\%\\(\\仍\\偏\\低\\)\\
-\\-\\ \\主\\訴\\新\\增\\:\\*\\*\\頸\\部\\痛\\*\\*\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\#\\ \\2\\0\\2\\5\\(\\4\\7\\歲\\・\\高\\雄\\榮\\總\\)\\
-\\
-\\*\\*\\當\\年\\重\\點\\*\\*\\:\\代\\謝\\指\\標\\持\\續\\進\\步\\,\\但\\甲\\狀\\腺\\問\\題\\正\\式\\升\\級\\為\\紅\\色\\警\\報\\—\\—\\五\\年\\來\\第\\一\\次\\出\\現\\ \\*\\*\\A\\級\\「\\請\\立\\即\\進\\一\\步\\檢\\查\\或\\治\\療\\」\\*\\*\\。\\
-\\
-\\#\\#\\#\\ \\優\\點\\
-\\-\\ \\*\\*\\H\\O\\M\\A\\-\\I\\R\\ \\2\\.\\0\\7\\ \\→\\ \\1\\.\\4\\2\\*\\*\\,\\診\\斷\\從\\「\\明\\顯\\胰\\島\\素\\抗\\性\\」\\降\\級\\為\\「\\*\\*\\輕\\度\\*\\*\\胰\\島\\素\\抗\\性\\」\\
-\\ \\ \\-\\ \\`\\推\\論\\:\\2\\0\\2\\3\\→\\2\\0\\2\\5\\ \\從\\ \\2\\.\\4\\8\\ \\降\\到\\ \\1\\.\\4\\2\\,\\降\\幅\\ \\4\\3\\%\\,\\是\\五\\年\\來\\改\\善\\幅\\度\\最\\大\\的\\單\\一\\指\\標\\,\\代\\表\\生\\活\\型\\態\\調\\整\\確\\實\\有\\效\\。\\`\\
-\\-\\ \\*\\*\\體\\脂\\率\\ \\3\\1\\.\\7\\%\\ \\→\\ \\3\\0\\.\\4\\%\\*\\*\\(\\五\\年\\最\\低\\)\\、\\體\\脂\\重\\ \\2\\6\\.\\8\\ \\→\\ \\2\\5\\.\\6\\ \\k\\g\\
-\\-\\ \\*\\*\\腰\\圍\\ \\9\\9\\ \\→\\ \\9\\5\\ \\c\\m\\、\\腰\\臀\\比\\ \\1\\.\\0\\3\\ \\→\\ \\1\\.\\0\\1\\、\\內\\臟\\脂\\肪\\面\\積\\ \\1\\8\\4\\ \\→\\ \\1\\6\\8\\ \\c\\m\\²\\、\\內\\臟\\脂\\肪\\重\\ \\4\\.\\5\\ \\→\\ \\4\\.\\2\\ \\k\\g\\*\\*\\(\\全\\數\\改\\善\\)\\
-\\-\\ \\*\\*\\骨\\骼\\肌\\重\\ \\3\\2\\.\\2\\ \\→\\ \\3\\2\\.\\7\\ \\k\\g\\、\\S\\M\\I\\ \\7\\.\\4\\4\\ \\→\\ \\7\\.\\5\\0\\、\\相\\位\\角\\ \\5\\.\\0\\°\\ \\→\\ \\5\\.\\1\\°\\*\\*\\(\\肌\\肉\\止\\跌\\回\\升\\)\\
-\\-\\ \\*\\*\\健\\康\\評\\分\\ \\6\\7\\ \\→\\ \\6\\9\\、\\細\\胞\\重\\量\\ \\3\\7\\.\\7\\ \\→\\ \\3\\8\\.\\4\\ \\k\\g\\*\\*\\
-\\-\\ \\*\\*\\H\\D\\L\\ \\4\\8\\ \\→\\ \\5\\6\\ \\m\\g\\/\\d\\L\\*\\*\\、\\總\\/\\H\\D\\L\\比\\ \\3\\.\\8\\、\\三\\酸\\甘\\油\\脂\\ \\1\\2\\5\\(\\五\\年\\次\\低\\)\\
-\\-\\ \\*\\*\\H\\b\\A\\1\\c\\ \\5\\.\\9\\ \\→\\ \\5\\.\\8\\%\\*\\*\\、\\空\\腹\\血\\糖\\ \\9\\0\\
-\\-\\ \\*\\*\\肝\\纖\\維\\化\\指\\數\\ \\0\\.\\6\\*\\*\\(\\參\\考\\ \\≤\\3\\.\\2\\5\\)\\→\\ \\`\\推\\論\\:\\脂\\肪\\肝\\存\\在\\近\\五\\年\\,\\但\\肝\\臟\\尚\\未\\纖\\維\\化\\,\\這\\是\\重\\要\\的\\安\\全\\訊\\號\\`\\
-\\-\\ \\e\\G\\F\\R\\ \\1\\0\\3\\.\\2\\(\\五\\年\\最\\高\\)\\、\\肝\\功\\能\\維\\持\\正\\常\\區\\間\\、\\血\\液\\常\\規\\/\\尿\\液\\全\\正\\常\\
-\\-\\ \\心\\電\\圖\\正\\常\\、\\A\\B\\I\\ \\正\\常\\(\\1\\.\\0\\4\\/\\1\\.\\0\\6\\)\\
-\\-\\ \\視\\力\\提\\升\\:\\左\\眼\\ \\1\\.\\0\\ \\→\\ \\1\\.\\2\\
-\\-\\ \\腸\\道\\菌\\叢\\:\\健\\康\\指\\數\\ \\7\\8\\「\\尚\\可\\」\\,\\*\\*\\菌\\種\\多\\樣\\性\\高\\、\\豐\\富\\度\\高\\、\\益\\菌\\組\\成\\正\\常\\、\\短\\鏈\\脂\\肪\\酸\\合\\成\\正\\常\\、\\腸\\道\\年\\齡\\ \\2\\0\\–\\3\\9\\ \\歲\\*\\*\\
-\\-\\ \\大\\腸\\直\\腸\\外\\科\\、\\胸\\腔\\內\\科\\、\\腎\\臟\\科\\等\\科\\別\\未\\列\\異\\常\\
-\\
-\\#\\#\\#\\ \\缺\\點\\
-\\-\\ \\🔴\\ \\*\\*\\新\\陳\\代\\謝\\科\\ \\A\\級\\—\\—\\五\\年\\首\\見\\*\\*\\:\\
-\\ \\ \\-\\ \\*\\*\\甲\\狀\\腺\\左\\側\\腫\\大\\*\\*\\(\\理\\學\\檢\\查\\)\\
-\\ \\ \\-\\ \\*\\*\\甲\\狀\\腺\\兩\\葉\\結\\節\\,\\最\\大\\在\\左\\葉\\約\\ \\2\\.\\6\\ \\c\\m\\*\\*\\,\\混\\合\\實\\質\\與\\囊\\性\\成\\分\\、\\異\\質\\性\\回\\音\\、\\都\\卜\\勒\\血\\流\\增\\加\\、\\無\\鈣\\化\\
-\\ \\ \\-\\ \\*\\*\\醫\\師\\明\\確\\建\\議\\:\\細\\針\\抽\\取\\細\\胞\\學\\檢\\查\\(\\F\\N\\A\\)\\*\\*\\
-\\-\\ \\*\\*\\心\\臟\\內\\科\\理\\學\\檢\\查\\首\\次\\記\\錄\\「\\心\\雜\\音\\:\\有\\」\\*\\*\\
-\\-\\ \\*\\*\\總\\膽\\固\\醇\\ \\1\\8\\6\\ \\→\\ \\2\\1\\1\\ \\m\\g\\/\\d\\L\\*\\*\\(\\超\\標\\,\\五\\年\\次\\高\\)\\
-\\-\\ \\*\\*\\L\\D\\L\\ \\1\\3\\4\\ \\→\\ \\1\\4\\2\\ \\m\\g\\/\\d\\L\\*\\*\\(\\五\\年\\第\\二\\高\\,\\*\\*\\連\\續\\第\\ \\5\\ \\年\\未\\達\\標\\*\\*\\)\\
-\\-\\ \\*\\*\\尿\\酸\\ \\6\\.\\4\\ \\→\\ \\7\\.\\5\\ \\m\\g\\/\\d\\L\\*\\*\\(\\逼\\近\\上\\限\\ \\7\\.\\6\\)\\
-\\-\\ \\*\\*\\睪\\固\\酮\\ \\4\\.\\6\\4\\(\\2\\0\\2\\3\\)\\ \\→\\ \\3\\.\\1\\2\\ \\n\\g\\/\\m\\L\\*\\*\\,\\兩\\年\\下\\降\\ \\3\\3\\%\\
-\\-\\ \\*\\*\\H\\b\\A\\1\\c\\ \\5\\.\\8\\%\\ \\被\\標\\紅\\*\\*\\(\\榮\\總\\ \\2\\0\\2\\5\\ \\起\\參\\考\\值\\收\\緊\\為\\ \\<\\5\\.\\7\\)\\
-\\-\\ \\*\\*\\腹\\部\\外\\觀\\由\\「\\平\\坦\\」\\變\\為\\「\\球\\狀\\」\\*\\*\\
-\\-\\ \\*\\*\\P\\W\\V\\ \\仍\\輕\\微\\偏\\高\\*\\*\\(\\右\\1\\3\\9\\5\\/\\左\\1\\4\\6\\9\\)\\,\\兩\\年\\無\\改\\善\\
-\\-\\ \\腸\\道\\菌\\叢\\:\\*\\*\\有\\害\\菌\\比\\例\\「\\高\\」\\*\\*\\、\\困\\難\\梭\\菌\\與\\沙\\門\\氏\\菌\\上\\升\\、\\*\\*\\A\\K\\K\\菌\\偏\\低\\*\\*\\、\\乳\\桿\\菌\\屬\\偏\\低\\、\\*\\*\\現\\有\\菌\\相\\有\\誘\\發\\肥\\胖\\的\\風\\險\\*\\*\\
-\\-\\ \\身\\體\\年\\齡\\ \\4\\9\\ \\歲\\(\\超\\出\\實\\齡\\ \\2\\ \\歲\\)\\、\\脂\\肪\\肝\\與\\肝\\水\\囊\\泡\\(\\最\\大\\ \\2\\ \\c\\m\\)\\持\\續\\
-\\-\\ \\主\\訴\\持\\續\\:\\咳\\嗽\\、\\*\\*\\頸\\部\\痛\\*\\*\\、\\打\\鼾\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\ \\第\\二\\部\\分\\:\\五\\年\\長\\期\\趨\\勢\\分\\析\\(\\全\\項\\目\\)\\
-\\
-\\>\\ \\「\\—\\」\\代\\表\\該\\年\\度\\未\\執\\行\\此\\項\\檢\\查\\。\\
-\\>\\ \\⚠\\️\\ \\*\\*\\跨\\機\\構\\警\\告\\*\\*\\:\\2\\0\\2\\1\\–\\2\\0\\2\\2\\ \\為\\佑\\康\\診\\所\\,\\2\\0\\2\\3\\–\\2\\0\\2\\5\\ \\為\\高\\雄\\榮\\總\\,\\檢\\驗\\方\\法\\與\\參\\考\\值\\不\\完\\全\\相\\同\\,\\肌\\酸\\酐\\/\\e\\G\\F\\R\\、\\體\\脂\\率\\兩\\組\\數\\據\\差\\異\\尤\\其\\明\\顯\\,\\跨\\機\\構\\比\\較\\請\\謹\\慎\\。\\
-\\
-\\#\\#\\ \\2\\-\\1\\ \\體\\位\\與\\身\\體\\組\\成\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\趨\\勢\\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\身\\高\\(\\c\\m\\)\\ \\|\\ \\1\\7\\9\\.\\3\\ \\|\\ \\1\\7\\8\\.\\4\\ \\|\\ \\1\\7\\9\\.\\9\\ \\|\\ \\1\\8\\0\\.\\4\\ \\|\\ \\1\\8\\0\\.\\6\\ \\|\\ \\量\\測\\誤\\差\\,\\視\\為\\ \\1\\8\\0\\ \\|\\
-\\|\\ \\體\\重\\(\\k\\g\\)\\ \\|\\ \\8\\7\\.\\4\\ \\|\\ \\8\\5\\.\\0\\ \\|\\ \\8\\6\\.\\1\\ \\|\\ \\8\\4\\.\\4\\ \\|\\ \\8\\4\\.\\2\\ \\|\\ \\↓\\ \\五\\年\\減\\ \\3\\.\\2\\ \\k\\g\\ \\|\\
-\\|\\ \\B\\M\\I\\ \\|\\ \\2\\7\\.\\1\\9\\ \\|\\ \\2\\6\\.\\7\\1\\ \\|\\ \\2\\6\\.\\6\\ \\|\\ \\2\\5\\.\\9\\ \\|\\ \\2\\5\\.\\8\\ \\|\\ \\↓\\ \\由\\輕\\度\\肥\\胖\\降\\至\\過\\重\\ \\|\\
-\\|\\ \\體\\脂\\率\\(\\%\\)\\ \\|\\ \\3\\4\\.\\7\\ \\|\\ \\3\\5\\.\\2\\ \\|\\ \\3\\1\\.\\1\\ \\|\\ \\3\\1\\.\\7\\ \\|\\ \\*\\*\\3\\0\\.\\4\\*\\*\\ \\|\\ \\↓\\ \\明\\顯\\改\\善\\ \\|\\
-\\|\\ \\體\\脂\\重\\(\\k\\g\\)\\ \\|\\ \\3\\0\\.\\1\\0\\ \\|\\ \\2\\9\\.\\8\\0\\ \\|\\ \\2\\6\\.\\8\\ \\|\\ \\2\\6\\.\\8\\ \\|\\ \\*\\*\\2\\5\\.\\6\\*\\*\\ \\|\\ \\↓\\ \\|\\
-\\|\\ \\除\\脂\\體\\重\\(\\k\\g\\)\\ \\|\\ \\5\\6\\.\\6\\0\\ \\|\\ \\5\\4\\.\\9\\0\\ \\|\\ \\5\\9\\.\\3\\ \\|\\ \\5\\7\\.\\6\\ \\|\\ \\5\\8\\.\\6\\ \\|\\ \\→\\ \\波\\動\\ \\|\\
-\\|\\ \\骨\\骼\\肌\\重\\(\\k\\g\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\3\\3\\.\\1\\ \\|\\ \\3\\2\\.\\2\\ \\|\\ \\3\\2\\.\\7\\ \\|\\ \\↓\\↑\\ \\2\\0\\2\\4\\落\\底\\後\\回\\升\\ \\|\\
-\\|\\ \\S\\M\\I\\(\\k\\g\\/\\m\\²\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\7\\.\\6\\1\\ \\|\\ \\7\\.\\4\\4\\ \\|\\ \\7\\.\\5\\0\\ \\|\\ \\↓\\↑\\ \\同\\上\\ \\|\\
-\\|\\ \\腰\\圍\\(\\c\\m\\)\\ \\|\\ \\9\\7\\.\\0\\ \\|\\ \\*\\*\\9\\0\\.\\0\\*\\*\\ \\|\\ \\9\\8\\ \\|\\ \\9\\9\\ \\|\\ \\9\\5\\ \\|\\ \\波\\動\\,\\仍\\ \\>\\9\\0\\ \\標\\準\\ \\|\\
-\\|\\ \\腰\\臀\\比\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\.\\0\\2\\ \\|\\ \\1\\.\\0\\3\\ \\|\\ \\1\\.\\0\\1\\ \\|\\ \\持\\續\\ \\>\\0\\.\\9\\0\\ \\警\\戒\\ \\|\\
-\\|\\ \\內\\臟\\脂\\肪\\面\\積\\(\\c\\m\\²\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\7\\5\\ \\|\\ \\1\\8\\4\\ \\|\\ \\*\\*\\1\\6\\8\\*\\*\\ \\|\\ \\↓\\ \\2\\0\\2\\5\\改\\善\\ \\|\\
-\\|\\ \\內\\臟\\脂\\肪\\等\\級\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\2\\ \\|\\ \\1\\3\\ \\|\\ \\1\\2\\ \\|\\ \\持\\續\\ \\>\\1\\0\\ \\警\\戒\\ \\|\\
-\\|\\ \\皮\\下\\脂\\肪\\重\\(\\k\\g\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\2\\2\\.\\4\\ \\|\\ \\2\\2\\.\\3\\ \\|\\ \\2\\1\\.\\4\\ \\|\\ \\↓\\ \\|\\
-\\|\\ \\身\\體\\年\\齡\\(\\歲\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\4\\7\\ \\|\\ \\4\\9\\ \\|\\ \\4\\9\\ \\|\\ \\↑\\ \\超\\出\\實\\齡\\ \\2\\–\\3\\ \\歲\\ \\|\\
-\\|\\ \\基\\礎\\代\\謝\\(\\k\\c\\a\\l\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\6\\5\\1\\ \\|\\ \\1\\6\\1\\5\\ \\|\\ \\1\\6\\3\\5\\ \\|\\ \\→\\ \\|\\
-\\|\\ \\身\\體\\健\\康\\評\\分\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\6\\9\\ \\|\\ \\6\\7\\ \\|\\ \\6\\9\\ \\|\\ \\→\\ \\|\\
-\\|\\ \\相\\位\\角\\(\\°\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\5\\.\\5\\ \\|\\ \\5\\.\\0\\ \\|\\ \\5\\.\\1\\ \\|\\ \\*\\*\\持\\續\\低\\於\\標\\準\\ \\6\\–\\8\\*\\*\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\五\\年\\體\\重\\只\\掉\\ \\3\\.\\2\\ \\k\\g\\,\\但\\*\\*\\體\\脂\\率\\掉\\了\\ \\4\\.\\3\\ \\個\\百\\分\\點\\、\\體\\脂\\重\\掉\\ \\4\\.\\5\\ \\k\\g\\*\\*\\—\\—\\代\\表\\減\\下\\來\\的\\幾\\乎\\全\\是\\脂\\肪\\,\\身\\體\\組\\成\\品\\質\\確\\實\\變\\好\\。\\2\\0\\2\\4\\ \\是\\唯\\一\\走\\反\\的\\一\\年\\(\\減\\重\\卻\\減\\到\\肌\\肉\\)\\,\\2\\0\\2\\5\\ \\已\\修\\正\\回\\來\\。\\但\\*\\*\\腰\\圍\\、\\腰\\臀\\比\\、\\內\\臟\\脂\\肪\\、\\相\\位\\角\\四\\項\\都\\還\\在\\警\\戒\\區\\*\\*\\,\\這\\是\\目\\前\\最\\大\\的\\結\\構\\性\\問\\題\\。\\
-\\
-\\#\\#\\ \\2\\-\\2\\ \\血\\壓\\與\\心\\血\\管\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\趨\\勢\\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\收\\縮\\壓\\/\\舒\\張\\壓\\ \\|\\ \\1\\2\\7\\/\\7\\8\\ \\|\\ \\1\\0\\5\\/\\6\\1\\ \\|\\ \\1\\1\\9\\/\\6\\6\\ \\|\\ \\1\\0\\5\\/\\6\\2\\ \\|\\ \\1\\2\\1\\/\\6\\8\\ \\|\\ \\✅\\ \\五\\年\\皆\\正\\常\\ \\|\\
-\\|\\ \\脈\\搏\\(\\次\\/\\分\\)\\ \\|\\ \\9\\2\\ \\|\\ \\7\\6\\ \\|\\ \\7\\7\\ \\|\\ \\6\\8\\ \\|\\ \\7\\4\\ \\|\\ \\↓\\ \\明\\顯\\改\\善\\ \\|\\
-\\|\\ \\1\\0\\年\\心\\血\\管\\風\\險\\(\\%\\)\\ \\|\\ \\4\\ \\|\\ \\3\\ \\|\\ \\2\\.\\0\\ \\|\\ \\*\\*\\1\\.\\5\\*\\*\\ \\|\\ \\2\\.\\2\\ \\|\\ \\↓\\ \\維\\持\\極\\低\\ \\|\\
-\\|\\ \\心\\電\\圖\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\心\\臟\\超\\音\\波\\ \\|\\ \\輕\\度\\二\\尖\\瓣\\+\\三\\尖\\瓣\\閉\\鎖\\不\\全\\ \\|\\ \\同\\左\\ \\|\\ \\—\\ \\|\\ \\極\\輕\\微\\M\\R\\+\\輕\\度\\T\\R\\、\\L\\V\\E\\F\\ \\6\\1\\%\\ \\|\\ \\—\\ \\|\\ \\穩\\定\\,\\臨\\床\\不\\顯\\著\\ \\|\\
-\\|\\ \\冠\\狀\\動\\脈\\鈣\\化\\分\\數\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\0\\*\\*\\ \\|\\ \\—\\ \\|\\ \\⭐\\ \\極\\佳\\ \\|\\
-\\|\\ \\C\\A\\D\\-\\R\\A\\D\\S\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\0\\*\\*\\ \\|\\ \\—\\ \\|\\ \\⭐\\ \\無\\狹\\窄\\無\\斑\\塊\\ \\|\\
-\\|\\ \\P\\W\\V\\ \\右\\/\\左\\(\\c\\m\\/\\s\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\3\\6\\0\\/\\1\\4\\6\\7\\ \\|\\ \\—\\ \\|\\ \\1\\3\\9\\5\\/\\1\\4\\6\\9\\ \\|\\ \\⚠\\️\\ \\兩\\年\\皆\\輕\\微\\偏\\高\\ \\|\\
-\\|\\ \\A\\B\\I\\ \\右\\/\\左\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\.\\1\\3\\/\\1\\.\\0\\9\\ \\|\\ \\—\\ \\|\\ \\1\\.\\0\\4\\/\\1\\.\\0\\6\\ \\|\\ \\✅\\ \\正\\常\\ \\|\\
-\\|\\ \\動\\脈\\硬\\化\\(\\非\\侵\\入\\)\\ \\|\\ \\未\\達\\明\\顯\\程\\度\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\心\\雜\\音\\(\\理\\學\\)\\ \\|\\ \\無\\ \\|\\ \\無\\ \\|\\ \\無\\ \\|\\ \\無\\ \\|\\ \\*\\*\\有\\*\\*\\ \\|\\ \\⚠\\️\\ \\2\\0\\2\\5\\首\\見\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\2\\0\\2\\4\\ \\的\\冠\\狀\\動\\脈\\鈣\\化\\分\\數\\ \\0\\ \\是\\五\\年\\最\\強\\的\\護\\身\\符\\,\\代\\表\\血\\管\\尚\\無\\實\\質\\病\\變\\。\\但\\ \\*\\*\\P\\W\\V\\ \\兩\\年\\都\\輕\\微\\偏\\高\\、\\2\\0\\2\\5\\ \\首\\次\\聽\\到\\心\\雜\\音\\*\\*\\,\\顯\\示\\血\\管\\彈\\性\\與\\瓣\\膜\\狀\\況\\需\\要\\持\\續\\盯\\。\\
-\\
-\\#\\#\\ \\2\\-\\3\\ \\血\\糖\\與\\胰\\島\\素\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\趨\\勢\\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\空\\腹\\血\\糖\\(\\m\\g\\/\\d\\L\\)\\ \\|\\ \\1\\1\\0\\ \\|\\ \\*\\*\\1\\2\\7\\*\\*\\ \\|\\ \\8\\8\\ \\|\\ \\9\\4\\ \\|\\ \\9\\0\\ \\|\\ \\↓\\ \\2\\0\\2\\2\\後\\大\\幅\\改\\善\\ \\|\\
-\\|\\ \\H\\b\\A\\1\\c\\(\\%\\)\\ \\|\\ \\5\\.\\9\\0\\ \\|\\ \\5\\.\\9\\0\\ \\|\\ \\5\\.\\7\\ \\|\\ \\5\\.\\9\\ \\|\\ \\5\\.\\8\\ \\|\\ \\→\\ \\五\\年\\卡\\在\\ \\5\\.\\7\\–\\5\\.\\9\\ \\|\\
-\\|\\ \\H\\O\\M\\A\\-\\I\\R\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\2\\.\\4\\8\\ \\|\\ \\2\\.\\0\\7\\ \\|\\ \\*\\*\\1\\.\\4\\2\\*\\*\\ \\|\\ \\↓\\ \\改\\善\\ \\4\\3\\%\\ \\|\\
-\\|\\ \\C\\-\\胜\\肽\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\2\\ \\n\\g\\/\\m\\L\\ \\|\\ \\正\\常\\ \\|\\
-\\|\\ \\診\\斷\\用\\語\\ \\|\\ \\—\\ \\|\\ \\疑\\糖\\尿\\病\\ \\|\\ \\嚴\\重\\胰\\島\\素\\抗\\性\\ \\|\\ \\明\\顯\\胰\\島\\素\\抗\\性\\ \\|\\ \\輕\\度\\胰\\島\\素\\抗\\性\\ \\|\\ \\↓\\ \\逐\\年\\降\\級\\ \\✅\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\這\\是\\五\\年\\最\\勵\\志\\的\\一\\條\\線\\。\\從\\ \\2\\0\\2\\2\\ \\「\\疑\\糖\\尿\\病\\」\\,\\到\\ \\2\\0\\2\\5\\ \\「\\輕\\度\\胰\\島\\素\\抗\\性\\」\\,\\H\\O\\M\\A\\-\\I\\R\\ \\降\\了\\ \\4\\3\\%\\。\\但\\ \\*\\*\\H\\b\\A\\1\\c\\ \\五\\年\\紋\\風\\不\\動\\卡\\在\\ \\5\\.\\8\\±\\0\\.\\1\\*\\*\\,\\而\\榮\\總\\ \\2\\0\\2\\5\\ \\起\\把\\參\\考\\上\\限\\收\\緊\\到\\ \\5\\.\\7\\%\\,\\所\\以\\它\\又\\變\\成\\紅\\字\\。\\`\\推\\論\\:\\空\\腹\\血\\糖\\與\\ \\H\\O\\M\\A\\-\\I\\R\\ \\都\\在\\進\\步\\、\\H\\b\\A\\1\\c\\ \\卻\\不\\動\\,\\可\\能\\與\\餐\\後\\血\\糖\\波\\動\\有\\關\\,\\若\\要\\再\\往\\下\\壓\\,\\重\\點\\在\\「\\吃\\什\\麼\\、\\怎\\麼\\吃\\」\\而\\非\\空\\腹\\數\\字\\。\\[\\未\\驗\\證\\]\\`\\
-\\
-\\#\\#\\ \\2\\-\\4\\ \\血\\脂\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\參\\考\\值\\ \\|\\ \\趨\\勢\\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\總\\膽\\固\\醇\\ \\|\\ \\2\\1\\7\\ \\|\\ \\*\\*\\2\\3\\0\\*\\*\\ \\|\\ \\1\\9\\9\\ \\|\\ \\1\\8\\6\\ \\|\\ \\2\\1\\1\\ \\|\\ \\<\\2\\0\\1\\ \\|\\ \\波\\動\\,\\2\\0\\2\\5\\回\\升\\ \\⚠\\️\\ \\|\\
-\\|\\ \\L\\D\\L\\(\\壞\\)\\ \\|\\ \\1\\3\\6\\.\\2\\ \\|\\ \\*\\*\\1\\4\\4\\.\\7\\*\\*\\ \\|\\ \\1\\3\\4\\ \\|\\ \\1\\3\\4\\ \\|\\ \\1\\4\\2\\ \\|\\ \\<\\1\\3\\0\\ \\|\\ \\🔴\\ \\*\\*\\五\\年\\零\\次\\達\\標\\*\\*\\ \\|\\
-\\|\\ \\H\\D\\L\\(\\好\\)\\ \\|\\ \\5\\3\\.\\4\\ \\|\\ \\*\\*\\6\\6\\.\\7\\*\\*\\ \\|\\ \\4\\5\\ \\|\\ \\4\\8\\ \\|\\ \\5\\6\\ \\|\\ \\>\\3\\9\\ \\|\\ \\✅\\ \\皆\\達\\標\\ \\|\\
-\\|\\ \\三\\酸\\甘\\油\\脂\\ \\|\\ \\1\\3\\7\\ \\|\\ \\9\\3\\ \\|\\ \\*\\*\\2\\0\\3\\*\\*\\ \\|\\ \\1\\4\\0\\ \\|\\ \\1\\2\\5\\ \\|\\ \\<\\1\\5\\1\\ \\|\\ \\↓\\ \\已\\控\\制\\ \\|\\
-\\|\\ \\總\\/\\H\\D\\L\\ \\比\\值\\ \\|\\ \\4\\.\\0\\6\\ \\|\\ \\3\\.\\4\\5\\ \\|\\ \\4\\.\\4\\ \\|\\ \\3\\.\\9\\ \\|\\ \\3\\.\\8\\ \\|\\ \\<\\5\\.\\6\\ \\|\\ \\✅\\ \\皆\\達\\標\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\*\\*\\L\\D\\L\\ \\是\\五\\年\\來\\最\\頑\\固\\的\\指\\標\\,\\連\\續\\五\\次\\未\\達\\標\\(\\1\\3\\4\\–\\1\\4\\5\\ \\之\\間\\橫\\盤\\)\\,\\連\\ \\2\\0\\2\\4\\ \\那\\個\\代\\謝\\數\\字\\最\\漂\\亮\\的\\年\\度\\都\\沒\\壓\\下\\去\\*\\*\\。\\`\\推\\論\\:\\三\\酸\\甘\\油\\脂\\能\\靠\\飲\\食\\控\\制\\降\\下\\來\\、\\L\\D\\L\\ \\卻\\紋\\風\\不\\動\\,\\這\\通\\常\\代\\表\\ \\L\\D\\L\\ \\有\\相\\當\\比\\例\\來\\自\\體\\質\\/\\肝\\臟\\合\\成\\而\\非\\單\\純\\飲\\食\\,\\`\\[\\未\\驗\\證\\]\\ \\`\\值\\得\\與\\醫\\師\\討\\論\\是\\否\\需\\要\\藥\\物\\介\\入\\。\\`\\
-\\
-\\#\\#\\ \\2\\-\\5\\ \\肝\\膽\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\參\\考\\值\\ \\|\\ \\趨\\勢\\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\A\\L\\T\\ \\/\\ \\S\\G\\P\\T\\ \\|\\ \\*\\*\\6\\6\\*\\*\\ \\|\\ \\*\\*\\6\\6\\*\\*\\ \\|\\ \\4\\7\\ \\|\\ \\3\\6\\ \\|\\ \\3\\7\\ \\|\\ \\0\\–\\4\\0\\ \\|\\ \\⭐\\ \\大\\幅\\改\\善\\ \\|\\
-\\|\\ \\A\\S\\T\\ \\/\\ \\S\\G\\O\\T\\ \\|\\ \\3\\7\\ \\|\\ \\3\\0\\ \\|\\ \\2\\8\\ \\|\\ \\2\\1\\ \\|\\ \\2\\3\\ \\|\\ \\1\\3\\–\\3\\9\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\G\\G\\T\\ \\/\\ \\r\\-\\G\\T\\ \\|\\ \\5\\0\\ \\|\\ \\5\\0\\ \\|\\ \\3\\2\\ \\|\\ \\2\\7\\ \\|\\ \\3\\1\\ \\|\\ \\9\\–\\6\\4\\ \\|\\ \\✅\\ \\改\\善\\ \\|\\
-\\|\\ \\總\\膽\\紅\\素\\ \\|\\ \\0\\.\\5\\3\\ \\|\\ \\0\\.\\4\\9\\ \\|\\ \\0\\.\\7\\ \\|\\ \\0\\.\\6\\ \\|\\ \\0\\.\\7\\ \\|\\ \\0\\.\\3\\–\\1\\.\\5\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\白\\蛋\\白\\ \\|\\ \\5\\.\\1\\0\\ \\|\\ \\5\\.\\5\\0\\ \\|\\ \\4\\.\\6\\ \\|\\ \\4\\.\\8\\ \\|\\ \\4\\.\\6\\ \\|\\ \\3\\.\\5\\–\\5\\.\\7\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\總\\蛋\\白\\ \\|\\ \\7\\.\\6\\0\\ \\|\\ \\8\\.\\2\\0\\ \\|\\ \\7\\.\\4\\ \\|\\ \\7\\.\\1\\ \\|\\ \\7\\.\\3\\ \\|\\ \\6\\.\\4\\–\\8\\.\\9\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\A\\L\\P\\ \\|\\ \\4\\5\\.\\0\\0\\ \\|\\ \\3\\9\\.\\0\\0\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\3\\2\\–\\1\\3\\0\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\肝\\纖\\維\\化\\指\\數\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\0\\.\\6\\*\\*\\ \\|\\ \\≤\\3\\.\\2\\5\\ \\|\\ \\⭐\\ \\無\\纖\\維\\化\\ \\|\\
-\\|\\ \\脂\\肪\\肝\\程\\度\\ \\|\\ \\中\\度\\ \\|\\ \\中\\度\\ \\|\\ \\*\\*\\輕\\度\\*\\*\\ \\|\\ \\(\\C\\T\\)\\ \\|\\ \\輕\\度\\ \\|\\ \\—\\ \\|\\ \\↓\\ \\改\\善\\ \\|\\
-\\|\\ \\肝\\囊\\腫\\最\\大\\徑\\(\\c\\m\\)\\ \\|\\ \\1\\.\\6\\3\\ \\|\\ \\0\\.\\9\\4\\ \\|\\ \\1\\.\\8\\7\\ \\|\\ \\多\\發\\ \\|\\ \\*\\*\\2\\.\\0\\*\\*\\ \\|\\ \\—\\ \\|\\ \\↑\\ \\緩\\慢\\增\\大\\ \\|\\
-\\|\\ \\膽\\囊\\息\\肉\\(\\c\\m\\)\\ \\|\\ \\—\\ \\|\\ \\0\\.\\5\\5\\ \\|\\ \\未\\提\\及\\ \\|\\ \\未\\提\\及\\ \\|\\ \\未\\提\\及\\ \\|\\ \\—\\ \\|\\ \\需\\確\\認\\是\\否\\消\\失\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\肝\\臟\\是\\五\\年\\最\\大\\的\\成\\功\\案\\例\\。\\*\\*\\A\\L\\T\\ \\從\\ \\6\\6\\ \\降\\到\\ \\3\\7\\(\\降\\幅\\ \\4\\4\\%\\)\\、\\脂\\肪\\肝\\從\\中\\度\\降\\為\\輕\\度\\、\\2\\0\\2\\5\\ \\肝\\纖\\維\\化\\指\\數\\僅\\ \\0\\.\\6\\*\\*\\—\\—\\代\\表\\脂\\肪\\肝\\存\\在\\多\\年\\但\\肝\\臟\\結\\構\\完\\好\\。\\唯\\一\\要\\盯\\的\\是\\*\\*\\肝\\囊\\腫\\從\\ \\1\\.\\6\\3\\ \\c\\m\\ \\緩\\慢\\長\\到\\ \\2\\.\\0\\ \\c\\m\\*\\*\\(\\良\\性\\,\\但\\需\\定\\期\\追\\蹤\\)\\,\\以\\及\\ \\*\\*\\2\\0\\2\\2\\ \\曾\\記\\錄\\的\\膽\\囊\\息\\肉\\ \\0\\.\\5\\5\\ \\c\\m\\ \\在\\後\\續\\三\\年\\報\\告\\中\\都\\沒\\再\\出\\現\\*\\*\\,\\需\\確\\認\\是\\真\\的\\消\\失\\還\\是\\漏\\記\\。\\
-\\
-\\#\\#\\ \\2\\-\\6\\ \\腎\\臟\\與\\尿\\酸\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\參\\考\\值\\ \\|\\ \\趨\\勢\\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\e\\G\\F\\R\\ \\|\\ \\5\\8\\.\\7\\9\\ \\|\\ \\*\\*\\5\\4\\.\\0\\4\\*\\*\\ \\|\\ \\9\\7\\.\\5\\ \\|\\ \\9\\0\\.\\8\\ \\|\\ \\*\\*\\1\\0\\3\\.\\2\\*\\*\\ \\|\\ \\>\\6\\0\\ \\|\\ \\見\\下\\方\\說\\明\\ \\|\\
-\\|\\ \\肌\\酸\\酐\\ \\|\\ \\1\\.\\4\\0\\ \\|\\ \\1\\.\\5\\0\\ \\|\\ \\0\\.\\8\\5\\ \\|\\ \\0\\.\\9\\0\\ \\|\\ \\0\\.\\9\\2\\ \\|\\ \\0\\.\\7\\–\\1\\.\\3\\ \\|\\ \\同\\上\\ \\|\\
-\\|\\ \\尿\\素\\氮\\(\\B\\U\\N\\)\\ \\|\\ \\1\\6\\.\\2\\0\\ \\|\\ \\1\\7\\.\\1\\0\\ \\|\\ \\9\\ \\|\\ \\1\\1\\ \\|\\ \\1\\0\\ \\|\\ \\7\\–\\2\\5\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\尿\\酸\\ \\|\\ \\7\\.\\7\\0\\ \\|\\ \\*\\*\\8\\.\\3\\0\\*\\*\\ \\|\\ \\6\\.\\7\\ \\|\\ \\6\\.\\4\\ \\|\\ \\*\\*\\7\\.\\5\\*\\*\\ \\|\\ \\4\\.\\4\\–\\7\\.\\6\\ \\|\\ \\⚠\\️\\ \\2\\0\\2\\5\\回\\升\\逼\\近\\上\\限\\ \\|\\
-\\|\\ \\血\\鈣\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\9\\.\\2\\ \\|\\ \\8\\.\\9\\ \\|\\ \\9\\.\\1\\ \\|\\ \\8\\.\\6\\–\\1\\0\\.\\3\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\血\\鈉\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\3\\7\\ \\|\\ \\1\\3\\8\\ \\|\\ \\1\\3\\8\\ \\|\\ \\1\\3\\6\\–\\1\\4\\6\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\血\\鉀\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\4\\.\\1\\ \\|\\ \\3\\.\\8\\ \\|\\ \\3\\.\\7\\ \\|\\ \\3\\.\\4\\–\\4\\.\\5\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\磷\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\3\\.\\7\\ \\|\\ \\2\\.\\5\\–\\5\\.\\0\\ \\|\\ \\✅\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\`\\推\\論\\:\\2\\0\\2\\1\\–\\2\\2\\ \\的\\ \\e\\G\\F\\R\\ \\5\\4\\–\\5\\9\\ \\與\\ \\2\\0\\2\\3\\–\\2\\5\\ \\的\\ \\9\\1\\–\\1\\0\\3\\ \\相\\差\\近\\一\\倍\\,\\肌\\酸\\酐\\ \\1\\.\\4\\–\\1\\.\\5\\ \\v\\s\\ \\0\\.\\8\\5\\–\\0\\.\\9\\2\\ \\也\\差\\ \\6\\0\\%\\。\\人\\的\\腎\\功\\能\\不\\會\\在\\一\\年\\內\\改\\善\\這\\麼\\多\\,\\最\\可\\能\\的\\解\\釋\\是\\兩\\家\\檢\\驗\\室\\的\\肌\\酸\\酐\\檢\\測\\方\\法\\不\\同\\(\\J\\a\\f\\f\\e\\ \\法\\會\\系\\統\\性\\高\\估\\)\\。\\`\\ \\*\\*\\[\\未\\驗\\證\\]\\ \\建\\議\\下\\次\\門\\診\\時\\直\\接\\問\\醫\\師\\。\\*\\*\\ \\結\\論\\:\\*\\*\\以\\榮\\總\\連\\續\\三\\年\\ \\>\\9\\0\\ \\的\\數\\據\\為\\準\\,\\現\\況\\腎\\功\\能\\正\\常\\,\\2\\0\\2\\1\\–\\2\\2\\ \\的\\「\\腎\\功\\能\\不\\全\\」\\警\\訊\\應\\該\\是\\虛\\驚\\。\\*\\*\\ \\但\\*\\*\\尿\\酸\\ \\2\\0\\2\\5\\ \\回\\升\\到\\ \\7\\.\\5\\,\\已\\貼\\近\\上\\限\\*\\*\\,\\需\\注\\意\\。\\
-\\
-\\#\\#\\ \\2\\-\\7\\ \\甲\\狀\\腺\\ \\🔴\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\理\\學\\檢\\查\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\無\\明\\顯\\異\\常\\ \\|\\ \\*\\*\\疑\\似\\結\\節\\*\\*\\ \\|\\ \\*\\*\\左\\側\\腫\\大\\*\\*\\ \\|\\
-\\|\\ \\超\\音\\波\\ \\|\\ \\右\\ \\0\\.\\4\\ \\c\\m\\、\\*\\*\\左\\多\\發\\最\\大\\ \\2\\.\\2\\ \\c\\m\\*\\*\\ \\|\\ \\左\\混\\合\\性\\結\\節\\ \\1\\.\\7\\3\\×\\1\\.\\7\\6\\ \\c\\m\\、\\右\\囊\\腫\\ \\0\\.\\3\\ \\c\\m\\ \\|\\ \\*\\*\\未\\做\\*\\*\\ \\|\\ \\*\\*\\未\\做\\*\\*\\ \\|\\ \\*\\*\\兩\\葉\\結\\節\\,\\最\\大\\左\\葉\\ \\2\\.\\6\\ \\c\\m\\*\\*\\ \\|\\
-\\|\\ \\結\\節\\特\\徵\\ \\|\\ \\—\\ \\|\\ \\混\\合\\性\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\混\\合\\實\\質\\+\\囊\\性\\、\\異\\質\\回\\音\\、\\*\\*\\血\\流\\增\\加\\*\\*\\、\\無\\鈣\\化\\ \\|\\
-\\|\\ \\T\\S\\H\\ \\|\\ \\1\\.\\2\\0\\ \\|\\ \\—\\ \\|\\ \\0\\.\\9\\7\\ \\|\\ \\1\\.\\5\\4\\ \\|\\ \\0\\.\\8\\7\\ \\|\\
-\\|\\ \\F\\r\\e\\e\\ \\T\\4\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\.\\1\\6\\ \\|\\ \\1\\.\\0\\9\\ \\|\\ \\1\\.\\1\\ \\|\\
-\\|\\ \\T\\3\\ \\|\\ \\0\\.\\8\\0\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\醫\\師\\處\\置\\ \\|\\ \\每\\年\\超\\音\\波\\複\\檢\\ \\|\\ \\門\\診\\追\\蹤\\ \\|\\ \\—\\ \\|\\ \\建\\議\\做\\超\\音\\波\\ \\|\\ \\*\\*\\A\\級\\:\\建\\議\\ \\F\\N\\A\\ \\細\\針\\穿\\刺\\*\\*\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\🔴\\ \\*\\*\\這\\是\\五\\年\\報\\告\\中\\唯\\一\\持\\續\\惡\\化\\、\\且\\目\\前\\優\\先\\度\\最\\高\\的\\問\\題\\。\\*\\*\\
-\\-\\ \\*\\*\\結\\節\\尺\\寸\\*\\*\\:\\2\\.\\2\\ \\c\\m\\(\\2\\0\\2\\1\\)\\ \\→\\ \\1\\.\\7\\3\\ \\c\\m\\(\\2\\0\\2\\2\\)\\ \\→\\ \\*\\*\\[\\2\\0\\2\\3\\、\\2\\0\\2\\4\\ \\兩\\年\\沒\\做\\超\\音\\波\\]\\*\\*\\ \\→\\ \\*\\*\\2\\.\\6\\ \\c\\m\\(\\2\\0\\2\\5\\)\\*\\*\\
-\\-\\ \\*\\*\\關\\鍵\\缺\\口\\*\\*\\:\\2\\0\\2\\4\\ \\年\\醫\\師\\理\\學\\檢\\查\\已\\經\\摸\\到\\、\\明\\確\\建\\議\\做\\超\\音\\波\\,\\但\\當\\年\\沒\\做\\。\\等\\到\\ \\2\\0\\2\\5\\ \\再\\做\\時\\,\\結\\節\\已\\達\\ \\2\\.\\6\\ \\c\\m\\ \\並\\升\\級\\為\\ \\A\\級\\。\\
-\\-\\ \\*\\*\\甲\\狀\\腺\\功\\能\\(\\T\\S\\H\\、\\F\\r\\e\\e\\ \\T\\4\\)\\五\\年\\全\\部\\正\\常\\*\\*\\ \\→\\ \\`\\推\\論\\:\\這\\是\\「\\結\\構\\問\\題\\」\\而\\非\\「\\功\\能\\問\\題\\」\\,\\結\\節\\不\\影\\響\\荷\\爾\\蒙\\分\\泌\\,\\但\\尺\\寸\\超\\過\\ \\2\\ \\c\\m\\ \\且\\血\\流\\增\\加\\,\\標\\準\\作\\法\\就\\是\\穿\\刺\\確\\認\\良\\惡\\性\\。\\`\\
-\\-\\ \\2\\0\\2\\4\\ \\起\\主\\訴\\出\\現\\「\\*\\*\\頸\\部\\痛\\*\\*\\」\\,\\與\\甲\\狀\\腺\\左\\側\\腫\\大\\時\\間\\點\\吻\\合\\。\\
-\\
-\\#\\#\\ \\2\\-\\8\\ \\消\\化\\道\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\上\\消\\化\\道\\攝\\影\\ \\|\\ \\無\\異\\常\\ \\|\\ \\無\\異\\常\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\胃\\鏡\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\胃\\食\\道\\逆\\流\\(\\L\\A\\-\\A\\)\\、\\胃\\炎\\、\\H\\i\\l\\l\\ \\I\\I\\*\\*\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\十\\二\\指\\腸\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\黏\\膜\\下\\腫\\瘤\\ \\1\\.\\5\\–\\2\\ \\c\\m\\ \\→\\ \\切\\片\\:\\異\\位\\性\\胰\\腺\\(\\良\\性\\)\\*\\*\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\大\\腸\\鏡\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\乙\\狀\\結\\腸\\息\\肉\\ \\0\\.\\2\\ \\c\\m\\,\\已\\切\\除\\ \\→\\ \\增\\生\\性\\息\\肉\\(\\良\\性\\)\\*\\*\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\糞\\便\\潛\\血\\ \\|\\ \\陰\\性\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\<\\7\\.\\0\\ \\正\\常\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\幽\\門\\桿\\菌\\ \\|\\ \\—\\ \\|\\ \\0\\.\\7\\5\\ \\陰\\性\\ \\|\\ \\陰\\性\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\腸\\道\\菌\\叢\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\健\\康\\指\\數\\ \\7\\8\\「\\尚\\可\\」\\*\\*\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\2\\0\\2\\3\\ \\一\\次\\胃\\鏡\\+\\大\\腸\\鏡\\,\\把\\三\\個\\隱\\藏\\問\\題\\全\\挖\\出\\來\\,\\且\\*\\*\\切\\片\\結\\果\\全\\部\\良\\性\\*\\*\\。\\但\\ \\2\\0\\2\\3\\ \\腸\\鏡\\報\\告\\原\\文\\寫\\「\\*\\*\\s\\u\\g\\g\\e\\s\\t\\ \\f\\/\\u\\ \\c\\o\\l\\o\\n\\o\\s\\c\\o\\p\\i\\c\\ \\e\\x\\a\\m\\ \\n\\e\\x\\t\\ \\y\\e\\a\\r\\*\\*\\(\\建\\議\\明\\年\\追\\蹤\\大\\腸\\鏡\\)\\」\\—\\—\\*\\*\\2\\0\\2\\4\\、\\2\\0\\2\\5\\ \\都\\沒\\有\\再\\做\\大\\腸\\鏡\\*\\*\\,\\僅\\ \\2\\0\\2\\4\\ \\做\\了\\糞\\便\\潛\\血\\。\\
-\\
-\\*\\*\\2\\0\\2\\5\\ \\腸\\道\\菌\\叢\\(\\首\\次\\檢\\測\\)\\*\\*\\:\\
-\\-\\ \\好\\消\\息\\:\\菌\\種\\多\\樣\\性\\高\\、\\豐\\富\\度\\高\\、\\益\\菌\\組\\成\\正\\常\\、\\短\\鏈\\脂\\肪\\酸\\合\\成\\正\\常\\、\\維\\生\\素\\B\\合\\成\\正\\常\\、\\*\\*\\腸\\道\\年\\齡\\ \\2\\0\\–\\3\\9\\ \\歲\\(\\比\\實\\齡\\年\\輕\\)\\*\\*\\
-\\-\\ \\壞\\消\\息\\:\\*\\*\\有\\害\\菌\\比\\例\\「\\高\\」\\*\\*\\、\\困\\難\\梭\\菌\\與\\沙\\門\\氏\\菌\\上\\升\\、\\*\\*\\A\\K\\K\\菌\\偏\\低\\*\\*\\(\\控\\制\\醣\\類\\吸\\收\\、\\強\\化\\腸\\道\\屏\\障\\)\\、\\乳\\桿\\菌\\屬\\偏\\低\\、\\*\\*\\腸\\型\\屬\\蛋\\白\\質\\/\\油\\脂\\為\\主\\的\\都\\會\\飲\\食\\型\\,\\現\\有\\菌\\相\\有\\誘\\發\\肥\\胖\\風\\險\\*\\*\\
-\\-\\ \\報\\告\\建\\議\\:\\增\\加\\蔬\\果\\纖\\維\\、\\適\\量\\降\\低\\蛋\\白\\質\\攝\\取\\、\\多\\吃\\魚\\類\\、\\減\\少\\油\\炸\\、\\補\\充\\ \\O\\m\\e\\g\\a\\-\\3\\ \\與\\益\\生\\菌\\
-\\
-\\#\\#\\ \\2\\-\\9\\ \\骨\\骼\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\腰\\椎\\ \\T\\值\\ \\|\\ \\−\\1\\.\\0\\0\\ \\|\\ \\−\\0\\.\\5\\0\\ \\|\\ \\+\\0\\.\\1\\(\\B\\M\\D\\ \\1\\.\\2\\5\\1\\)\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\髖\\/\\股\\骨\\頸\\ \\T\\值\\ \\|\\ \\−\\1\\.\\4\\0\\ \\|\\ \\無\\明\\顯\\異\\常\\ \\|\\ \\左\\ \\−\\1\\.\\5\\ \\/\\ \\右\\ \\−\\1\\.\\8\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\最\\低\\ \\Z\\值\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\−\\1\\.\\5\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\
-\\|\\ \\結\\論\\ \\|\\ \\骨\\質\\流\\失\\ \\|\\ \\改\\善\\ \\|\\ \\符\\合\\同\\齡\\預\\期\\值\\ \\|\\ \\未\\做\\ \\|\\ \\未\\做\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\腰\\椎\\骨\\密\\度\\從\\ \\2\\0\\2\\1\\ \\的\\ \\−\\1\\.\\0\\0\\ \\一\\路\\改\\善\\到\\ \\2\\0\\2\\3\\ \\的\\ \\+\\0\\.\\1\\,\\非\\常\\好\\。\\但\\*\\*\\股\\骨\\頸\\ \\T\\值\\ \\−\\1\\.\\5\\ \\/\\ \\−\\1\\.\\8\\ \\其\\實\\已\\落\\在\\「\\骨\\質\\缺\\乏\\(\\o\\s\\t\\e\\o\\p\\e\\n\\i\\a\\,\\−\\1\\.\\0\\ \\至\\ \\−\\2\\.\\5\\)\\」\\區\\間\\*\\*\\,\\榮\\總\\報\\告\\是\\用\\ \\Z\\值\\(\\與\\同\\齡\\比\\)\\判\\定\\為\\正\\常\\,\\兩\\種\\判\\讀\\基\\準\\不\\同\\。\\`\\推\\論\\:\\腰\\椎\\(\\鬆\\質\\骨\\)\\明\\顯\\進\\步\\、\\股\\骨\\頸\\(\\皮\\質\\骨\\)\\仍\\偏\\低\\,\\這\\種\\落\\差\\常\\見\\於\\「\\有\\做\\重\\量\\訓\\練\\但\\下\\肢\\負\\重\\不\\足\\」\\或\\「\\維\\生\\素\\D\\長\\期\\缺\\乏\\」\\。\\`\\ \\*\\*\\已\\連\\續\\兩\\年\\未\\做\\ \\D\\X\\A\\,\\建\\議\\ \\2\\0\\2\\6\\ \\年\\補\\做\\。\\*\\*\\
-\\
-\\#\\#\\ \\2\\-\\1\\0\\ \\維\\生\\素\\D\\、\\荷\\爾\\蒙\\與\\發\\炎\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\參\\考\\值\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\2\\5\\-\\O\\H\\ \\維\\生\\素\\D\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\8\\.\\1\\*\\*\\ \\|\\ \\*\\*\\1\\1\\.\\8\\*\\*\\ \\|\\ \\*\\*\\未\\測\\*\\*\\ \\|\\ \\3\\0\\–\\1\\0\\0\\ \\|\\
-\\|\\ \\睪\\固\\酮\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\4\\.\\6\\4\\ \\|\\ \\—\\ \\|\\ \\*\\*\\3\\.\\1\\2\\*\\*\\ \\|\\ \\2\\.\\4\\–\\8\\.\\7\\1\\ \\|\\
-\\|\\ \\高\\敏\\感\\度\\C\\R\\P\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\0\\.\\0\\9\\3\\ \\|\\ \\0\\.\\1\\0\\5\\ \\|\\ \\—\\ \\|\\ \\0\\.\\1\\–\\0\\.\\3\\ \\|\\
-\\|\\ \\同\\半\\胱\\胺\\酸\\ \\|\\ \\1\\0\\.\\9\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\1\\1\\.\\6\\5\\ \\|\\ \\—\\ \\|\\ \\5\\–\\1\\5\\ \\|\\
-\\|\\ \\類\\風\\濕\\因\\子\\(\\R\\A\\)\\ \\|\\ \\*\\*\\6\\.\\3\\0\\*\\*\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\<\\4\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\
-\\-\\ \\🔴\\ \\*\\*\\維\\生\\素\\D\\ \\是\\被\\嚴\\重\\低\\估\\的\\問\\題\\*\\*\\。\\2\\0\\2\\3\\ \\年\\ \\8\\.\\1\\ \\n\\g\\/\\m\\L\\ \\屬\\於\\*\\*\\嚴\\重\\缺\\乏\\*\\*\\(\\低\\於\\ \\1\\0\\ \\即\\為\\嚴\\重\\缺\\乏\\)\\,\\補\\充\\一\\年\\後\\ \\2\\0\\2\\4\\ \\僅\\升\\到\\ \\1\\1\\.\\8\\—\\—\\*\\*\\還\\是\\不\\到\\標\\準\\下\\限\\ \\3\\0\\ \\的\\四\\成\\*\\*\\。\\`\\推\\論\\:\\補\\充\\劑\\量\\明\\顯\\不\\足\\,\\一\\般\\成\\人\\要\\從\\ \\8\\ \\拉\\到\\ \\3\\0\\ \\以\\上\\,\\通\\常\\需\\要\\每\\日\\ \\2\\0\\0\\0\\–\\5\\0\\0\\0\\ \\I\\U\\ \\持\\續\\ \\3\\–\\6\\ \\個\\月\\。\\`\\ \\*\\*\\而\\ \\2\\0\\2\\5\\ \\竟\\然\\沒\\有\\再\\測\\*\\*\\,\\等\\於\\斷\\了\\追\\蹤\\線\\。\\維\\生\\素\\D\\ \\缺\\乏\\同\\時\\關\\聯\\到\\骨\\質\\(\\見\\ \\2\\-\\9\\ \\股\\骨\\頸\\偏\\低\\)\\、\\胰\\島\\素\\抗\\性\\、\\免\\疫\\功\\能\\。\\
-\\-\\ \\⚠\\️\\ \\*\\*\\睪\\固\\酮\\兩\\年\\掉\\ \\3\\3\\%\\*\\*\\(\\4\\.\\6\\4\\ \\→\\ \\3\\.\\1\\2\\)\\,\\雖\\仍\\在\\參\\考\\範\\圍\\ \\2\\.\\4\\–\\8\\.\\7\\1\\ \\內\\,\\但\\已\\落\\在\\偏\\低\\端\\。\\`\\推\\論\\:\\與\\體\\脂\\率\\偏\\高\\、\\內\\臟\\脂\\肪\\、\\睡\\眠\\品\\質\\(\\打\\鼾\\)\\、\\維\\生\\素\\D\\缺\\乏\\都\\可\\能\\互\\為\\因\\果\\。\\[\\未\\驗\\證\\]\\`\\
-\\-\\ \\✅\\ \\*\\*\\h\\s\\C\\R\\P\\ \\兩\\年\\都\\極\\低\\(\\0\\.\\0\\9\\3\\、\\0\\.\\1\\0\\5\\)\\*\\*\\ \\→\\ \\體\\內\\沒\\有\\慢\\性\\發\\炎\\,\\這\\是\\很\\好\\的\\訊\\號\\,\\也\\解\\釋\\了\\為\\什\\麼\\有\\脂\\肪\\肝\\與\\代\\謝\\問\\題\\卻\\沒\\有\\血\\管\\病\\變\\。\\
-\\-\\ \\2\\0\\2\\1\\ \\的\\ \\R\\A\\ \\因\\子\\ \\6\\.\\3\\0\\ \\偏\\高\\,\\*\\*\\後\\續\\四\\年\\都\\沒\\有\\再\\驗\\*\\*\\,\\且\\五\\年\\無\\關\\節\\症\\狀\\ \\→\\ \\`\\推\\論\\:\\可\\能\\為\\偽\\陽\\性\\,\\但\\可\\在\\下\\次\\抽\\血\\順\\便\\複\\驗\\。\\`\\
-\\
-\\#\\#\\ \\2\\-\\1\\1\\ \\肺\\與\\呼\\吸\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\F\\V\\C\\(\\肺\\活\\量\\)\\ \\|\\ \\3\\.\\8\\1\\ \\L\\ \\|\\ \\4\\4\\1\\0\\ \\m\\L\\(\\9\\1\\%\\)\\ \\|\\ \\4\\4\\4\\0\\ \\m\\L\\(\\9\\3\\%\\)\\ \\|\\
-\\|\\ \\F\\E\\V\\1\\ \\|\\ \\3\\.\\6\\9\\ \\L\\ \\|\\ \\3\\6\\1\\0\\ \\m\\L\\(\\9\\2\\%\\)\\ \\|\\ \\3\\6\\5\\0\\ \\m\\L\\(\\9\\4\\%\\)\\ \\|\\
-\\|\\ \\F\\E\\V\\1\\/\\F\\V\\C\\ \\|\\ \\—\\ \\|\\ \\8\\1\\%\\ \\|\\ \\8\\2\\%\\ \\|\\
-\\|\\ \\*\\*\\F\\E\\F\\7\\5\\%\\*\\*\\ \\|\\ \\2\\.\\8\\2\\ \\|\\ \\*\\*\\1\\.\\4\\0\\(\\6\\4\\.\\8\\%\\)\\*\\*\\ \\|\\ \\*\\*\\1\\.\\5\\0\\(\\7\\0\\.\\1\\%\\)\\*\\*\\ \\|\\
-\\|\\ \\結\\論\\ \\|\\ \\無\\明\\顯\\異\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\
-\\|\\ \\胸\\部\\X\\光\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\
-\\|\\ \\低\\劑\\量\\肺\\部\\C\\T\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\*\\*\\L\\u\\n\\g\\-\\R\\A\\D\\S\\ \\1\\(\\乾\\淨\\)\\*\\*\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\大\\肺\\功\\能\\指\\標\\(\\F\\V\\C\\、\\F\\E\\V\\1\\)\\五\\年\\都\\在\\ \\9\\1\\–\\9\\4\\%\\ \\預\\測\\值\\,\\很\\好\\。\\但\\ \\*\\*\\F\\E\\F\\7\\5\\%\\(\\小\\氣\\道\\功\\能\\)\\連\\兩\\年\\只\\有\\ \\6\\5\\–\\7\\0\\%\\ \\預\\測\\值\\*\\*\\,\\是\\唯\\一\\被\\打\\星\\號\\的\\異\\常\\值\\。\\`\\推\\論\\:\\配\\合\\五\\年\\主\\訴\\一\\直\\有\\「\\咳\\嗽\\」\\與\\「\\打\\鼾\\」\\,\\可\\能\\為\\小\\氣\\道\\輕\\度\\阻\\塞\\或\\慢\\性\\上\\呼\\吸\\道\\問\\題\\。\\[\\未\\驗\\證\\]\\`\\ \\2\\0\\2\\5\\ \\未\\做\\肺\\功\\能\\。\\
-\\
-\\#\\#\\ \\2\\-\\1\\2\\ \\血\\液\\、\\尿\\液\\、\\腫\\瘤\\標\\記\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\ \\判\\讀\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\血\\紅\\素\\ \\|\\ \\1\\5\\.\\0\\0\\ \\|\\ \\1\\5\\.\\6\\0\\ \\|\\ \\1\\5\\.\\2\\ \\|\\ \\1\\5\\.\\0\\ \\|\\ \\1\\4\\.\\8\\ \\|\\ \\✅\\ \\穩\\定\\ \\|\\
-\\|\\ \\血\\球\\比\\容\\ \\|\\ \\4\\3\\.\\0\\0\\ \\|\\ \\4\\5\\.\\9\\0\\ \\|\\ \\4\\4\\.\\9\\ \\|\\ \\4\\3\\.\\5\\ \\|\\ \\4\\4\\.\\7\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\紅\\血\\球\\ \\|\\ \\4\\.\\9\\7\\ \\|\\ \\5\\.\\2\\2\\ \\|\\ \\5\\.\\1\\5\\ \\|\\ \\5\\.\\0\\4\\ \\|\\ \\5\\.\\1\\0\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\白\\血\\球\\ \\|\\ \\7\\.\\0\\3\\ \\|\\ \\6\\.\\3\\5\\ \\|\\ \\6\\.\\4\\8\\ \\|\\ \\6\\.\\9\\7\\ \\|\\ \\6\\.\\0\\7\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\血\\小\\板\\ \\|\\ \\3\\0\\1\\ \\|\\ \\2\\5\\9\\ \\|\\ \\2\\9\\8\\ \\|\\ \\3\\3\\4\\ \\|\\ \\2\\7\\7\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\尿\\液\\(\\蛋\\白\\/\\糖\\/\\潛\\血\\)\\ \\|\\ \\全\\陰\\性\\ \\|\\ \\全\\陰\\性\\ \\|\\ \\全\\陰\\性\\ \\|\\ \\全\\陰\\性\\ \\|\\ \\全\\陰\\性\\ \\|\\ \\✅\\ \\五\\年\\全\\乾\\淨\\ \\|\\
-\\|\\ \\A\\F\\P\\ \\|\\ \\2\\.\\3\\0\\ \\|\\ \\3\\.\\0\\0\\ \\|\\ \\2\\.\\1\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\C\\E\\A\\ \\|\\ \\1\\.\\2\\6\\ \\|\\ \\2\\.\\0\\0\\ \\|\\ \\1\\.\\0\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\P\\S\\A\\ \\|\\ \\1\\.\\3\\0\\ \\|\\ \\2\\.\\5\\0\\ \\|\\ \\1\\.\\1\\3\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\C\\A\\-\\1\\9\\9\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\3\\.\\9\\2\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\✅\\ \\|\\
-\\|\\ \\攝\\護\\腺\\體\\積\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\2\\1\\.\\4\\6\\ \\m\\L\\ \\|\\ \\—\\ \\|\\ \\—\\ \\|\\ \\✅\\ \\正\\常\\ \\|\\
-\\
-\\*\\*\\核\\心\\判\\讀\\*\\*\\:\\血\\液\\常\\規\\與\\尿\\液\\*\\*\\五\\年\\零\\異\\常\\*\\*\\,\\是\\最\\穩\\定\\的\\一\\組\\數\\據\\。\\腫\\瘤\\標\\記\\三\\年\\全\\正\\常\\,\\但\\ \\*\\*\\2\\0\\2\\4\\、\\2\\0\\2\\5\\ \\都\\沒\\再\\驗\\*\\*\\。\\
-\\
-\\#\\#\\ \\2\\-\\1\\3\\ \\眼\\科\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\2\\0\\2\\1\\ \\|\\ \\2\\0\\2\\2\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\2\\0\\2\\5\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\視\\力\\(\\右\\/\\左\\)\\ \\|\\ \\裸\\視\\ \\1\\.\\2\\0\\/\\1\\.\\0\\0\\ \\|\\ \\裸\\視\\ \\1\\.\\2\\0\\/\\*\\*\\0\\.\\8\\0\\*\\*\\ \\|\\ \\戴\\鏡\\ \\1\\.\\2\\/\\1\\.\\0\\ \\|\\ \\戴\\鏡\\ \\1\\.\\2\\/\\1\\.\\0\\ \\|\\ \\戴\\鏡\\ \\*\\*\\1\\.\\2\\/\\1\\.\\2\\*\\*\\ \\|\\
-\\|\\ \\眼\\壓\\(\\右\\/\\左\\)\\ \\|\\ \\<\\2\\0\\ \\|\\ \\<\\2\\0\\ \\|\\ \\1\\1\\/\\1\\1\\ \\|\\ \\1\\4\\/\\1\\4\\ \\|\\ \\1\\2\\/\\1\\1\\ \\|\\
-\\|\\ \\辨\\色\\力\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\ \\正\\常\\ \\|\\
-\\
-\\✅\\ \\眼\\壓\\五\\年\\正\\常\\,\\矯\\正\\視\\力\\ \\2\\0\\2\\5\\ \\達\\到\\ \\1\\.\\2\\/\\1\\.\\2\\,\\眼\\科\\連\\三\\年\\ \\E\\ \\級\\。\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\ \\第\\三\\部\\分\\:\\目\\前\\需\\要\\注\\意\\的\\事\\項\\(\\依\\優\\先\\順\\序\\)\\
-\\
-\\>\\ \\基\\準\\日\\ \\2\\0\\2\\6\\-\\0\\9\\-\\1\\8\\。\\最\\新\\報\\告\\為\\ \\2\\0\\2\\5\\-\\1\\0\\-\\2\\9\\,\\*\\*\\距\\今\\已\\約\\ \\1\\1\\ \\個\\月\\*\\*\\,\\下\\次\\年\\度\\健\\檢\\(\\若\\照\\往\\例\\)\\約\\在\\ \\2\\0\\2\\6\\ \\年\\ \\1\\0\\ \\月\\。\\
-\\
-\\#\\#\\#\\ \\🔴\\ \\第\\一\\級\\:\\應\\立\\即\\處\\理\\
-\\
-\\*\\*\\1\\.\\ \\甲\\狀\\腺\\結\\節\\ \\2\\.\\6\\ \\c\\m\\ \\的\\ \\F\\N\\A\\ \\細\\針\\穿\\刺\\ \\—\\—\\ \\這\\是\\唯\\一\\的\\ \\A\\ \\級\\項\\目\\,\\已\\延\\宕\\近\\一\\年\\*\\*\\
-\\2\\0\\2\\5\\-\\1\\0\\-\\2\\9\\ \\榮\\總\\明\\確\\標\\示\\「\\*\\*\\★\\請\\立\\即\\進\\一\\步\\檢\\查\\或\\治\\療\\*\\*\\」\\,\\建\\議\\做\\甲\\狀\\腺\\超\\音\\波\\+\\F\\N\\A\\。\\判\\定\\依\\據\\是\\「\\大\\於\\ \\2\\ \\c\\m\\ \\且\\混\\合\\實\\質\\與\\囊\\性\\成\\分\\」\\,\\加\\上\\都\\卜\\勒\\血\\流\\增\\加\\。\\若\\這\\ \\1\\1\\ \\個\\月\\內\\尚\\未\\執\\行\\,\\*\\*\\這\\是\\整\\份\\分\\析\\中\\最\\需\\要\\馬\\上\\排\\掉\\的\\一\\件\\事\\*\\*\\。\\
-\\→\\ \\行\\動\\:\\掛\\高\\雄\\榮\\總\\新\\陳\\代\\謝\\科\\,\\帶\\ \\2\\0\\2\\5\\ \\報\\告\\,\\安\\排\\甲\\狀\\腺\\超\\音\\波\\複\\檢\\ \\+\\ \\F\\N\\A\\。\\
-\\→\\ \\附\\帶\\:\\一\\併\\請\\醫\\師\\比\\對\\ \\2\\0\\2\\1\\(\\2\\.\\2\\ \\c\\m\\)\\、\\2\\0\\2\\2\\(\\1\\.\\7\\3\\ \\c\\m\\)\\、\\2\\0\\2\\5\\(\\2\\.\\6\\ \\c\\m\\)\\的\\尺\\寸\\變\\化\\,\\以\\及\\ \\2\\0\\2\\4\\ \\起\\出\\現\\的\\「\\頸\\部\\痛\\」\\主\\訴\\是\\否\\相\\關\\。\\
-\\
-\\*\\*\\2\\.\\ \\補\\上\\ \\2\\0\\2\\3\\、\\2\\0\\2\\4\\ \\兩\\年\\沒\\做\\的\\甲\\狀\\腺\\超\\音\\波\\ \\—\\—\\ \\追\\蹤\\斷\\層\\的\\教\\訓\\*\\*\\
-\\2\\0\\2\\1\\、\\2\\0\\2\\2\\ \\連\\續\\兩\\年\\都\\做\\了\\甲\\狀\\腺\\超\\音\\波\\,\\2\\0\\2\\3\\、\\2\\0\\2\\4\\ \\中\\斷\\,\\2\\0\\2\\4\\ \\醫\\師\\理\\學\\檢\\查\\已\\摸\\到\\並\\建\\議\\做\\超\\音\\波\\卻\\未\\執\\行\\,\\結\\果\\ \\2\\0\\2\\5\\ \\一\\做\\就\\是\\ \\2\\.\\6\\ \\c\\m\\ \\+\\ \\A\\級\\。\\
-\\→\\ \\行\\動\\:\\把\\甲\\狀\\腺\\超\\音\\波\\設\\為\\*\\*\\每\\年\\固\\定\\項\\目\\*\\*\\,\\不\\要\\再\\讓\\它\\從\\清\\單\\上\\掉\\出\\去\\。\\
-\\
-\\#\\#\\#\\ \\⚠\\️\\ \\第\\二\\級\\:\\三\\個\\月\\內\\處\\理\\
-\\
-\\*\\*\\3\\.\\ \\L\\D\\L\\ \\連\\續\\五\\年\\未\\達\\標\\(\\1\\3\\4\\–\\1\\4\\5\\)\\,\\是\\最\\頑\\固\\的\\單\\一\\指\\標\\*\\*\\
-\\2\\0\\2\\1\\→\\2\\0\\2\\5\\ \\分\\別\\為\\ \\1\\3\\6\\.\\2\\ \\/\\ \\1\\4\\4\\.\\7\\ \\/\\ \\1\\3\\4\\ \\/\\ \\1\\3\\4\\ \\/\\ \\*\\*\\1\\4\\2\\*\\*\\,\\目\\標\\ \\<\\1\\3\\0\\,\\*\\*\\五\\年\\零\\次\\達\\標\\*\\*\\。\\連\\ \\2\\0\\2\\4\\ \\那\\個\\代\\謝\\數\\字\\最\\漂\\亮\\的\\年\\度\\都\\壓\\不\\下\\去\\。\\2\\0\\2\\5\\ \\總\\膽\\固\\醇\\更\\回\\升\\到\\ \\2\\1\\1\\。\\
-\\→\\ \\行\\動\\:\\與\\醫\\師\\討\\論\\「\\飲\\食\\控\\制\\已\\執\\行\\五\\年\\仍\\無\\效\\」\\這\\個\\事\\實\\,\\評\\估\\是\\否\\需\\要\\藥\\物\\(\\s\\t\\a\\t\\i\\n\\)\\介\\入\\。\\醫\\師\\ \\2\\0\\2\\5\\ \\也\\已\\建\\議\\「\\3\\ \\個\\月\\後\\追\\蹤\\血\\脂\\分\\析\\」\\。\\
-\\
-\\*\\*\\4\\.\\ \\維\\生\\素\\D\\ \\追\\蹤\\斷\\線\\,\\且\\補\\充\\劑\\量\\明\\顯\\不\\足\\*\\*\\
-\\2\\0\\2\\3\\ \\=\\ \\8\\.\\1\\(\\嚴\\重\\缺\\乏\\)\\、\\2\\0\\2\\4\\ \\=\\ \\1\\1\\.\\8\\(\\補\\充\\後\\仍\\僅\\達\\標\\準\\下\\限\\ \\3\\9\\%\\)\\、\\*\\*\\2\\0\\2\\5\\ \\未\\測\\*\\*\\。\\
-\\→\\ \\行\\動\\:\\(\\a\\)\\ \\抽\\血\\複\\驗\\ \\2\\5\\-\\O\\H\\ \\維\\生\\素\\D\\;\\(\\b\\)\\ \\與\\醫\\師\\確\\認\\正\\確\\補\\充\\劑\\量\\;\\(\\c\\)\\ \\列\\為\\每\\年\\固\\定\\項\\目\\。\\
-\\→\\ \\關\\聯\\:\\維\\生\\素\\D\\ \\同\\時\\牽\\動\\股\\骨\\頸\\骨\\密\\度\\偏\\低\\、\\胰\\島\\素\\抗\\性\\、\\睪\\固\\酮\\下\\降\\三\\件\\事\\。\\
-\\
-\\*\\*\\5\\.\\ \\大\\腸\\鏡\\追\\蹤\\逾\\期\\*\\*\\
-\\2\\0\\2\\3\\ \\腸\\鏡\\切\\除\\ \\0\\.\\2\\ \\c\\m\\ \\增\\生\\性\\息\\肉\\,\\報\\告\\原\\文\\建\\議\\「\\*\\*\\n\\e\\x\\t\\ \\y\\e\\a\\r\\ \\追\\蹤\\大\\腸\\鏡\\*\\*\\」\\,\\但\\ \\2\\0\\2\\4\\、\\2\\0\\2\\5\\ \\都\\沒\\做\\(\\僅\\ \\2\\0\\2\\4\\ \\驗\\糞\\便\\潛\\血\\)\\。\\*\\*\\已\\逾\\期\\約\\ \\2\\ \\年\\*\\*\\。\\
-\\→\\ \\行\\動\\:\\掛\\大\\腸\\直\\腸\\外\\科\\或\\腸\\胃\\科\\,\\請\\醫\\師\\依\\息\\肉\\病\\理\\型\\態\\(\\增\\生\\性\\,\\惡\\性\\風\\險\\低\\)\\重\\新\\評\\估\\追\\蹤\\間\\隔\\並\\排\\程\\。\\
-\\
-\\*\\*\\6\\.\\ \\2\\0\\2\\5\\ \\新\\出\\現\\的\\心\\雜\\音\\尚\\未\\做\\心\\臟\\超\\音\\波\\確\\認\\*\\*\\
-\\理\\學\\檢\\查\\五\\年\\來\\第\\一\\次\\記\\錄\\「\\心\\雜\\音\\:\\有\\」\\,\\醫\\師\\建\\議\\「\\必\\要\\時\\宜\\作\\心\\臟\\超\\音\\波\\檢\\查\\」\\。\\距\\最\\近\\一\\次\\心\\臟\\超\\音\\波\\(\\2\\0\\2\\4\\)\\已\\一\\年\\多\\。\\
-\\→\\ \\行\\動\\:\\下\\次\\健\\檢\\或\\門\\診\\加\\做\\心\\臟\\超\\音\\波\\,\\與\\ \\2\\0\\2\\4\\ \\的\\「\\極\\輕\\微\\ \\M\\R\\ \\+\\ \\輕\\度\\ \\T\\R\\」\\比\\對\\是\\否\\惡\\化\\。\\
-\\
-\\#\\#\\#\\ \\📊\\ \\第\\三\\級\\:\\持\\續\\管\\理\\(\\生\\活\\型\\態\\)\\
-\\
-\\*\\*\\7\\.\\ \\腰\\圍\\、\\腰\\臀\\比\\、\\內\\臟\\脂\\肪\\ \\—\\—\\ \\體\\重\\降\\了\\,\\但\\中\\央\\型\\肥\\胖\\還\\在\\*\\*\\
-\\2\\0\\2\\5\\ \\腰\\圍\\ \\9\\5\\ \\c\\m\\(\\標\\準\\ \\<\\9\\0\\)\\、\\腰\\臀\\比\\ \\1\\.\\0\\1\\(\\標\\準\\ \\<\\0\\.\\9\\0\\)\\、\\內\\臟\\脂\\肪\\面\\積\\ \\1\\6\\8\\ \\c\\m\\²\\(\\標\\準\\ \\<\\1\\0\\0\\)\\、\\內\\臟\\脂\\肪\\等\\級\\ \\1\\2\\(\\標\\準\\ \\<\\1\\0\\)\\、\\腹\\部\\外\\觀\\由\\「\\平\\坦\\」\\變\\「\\球\\狀\\」\\。\\
-\\→\\ \\`\\推\\論\\:\\五\\年\\體\\重\\只\\掉\\ \\3\\.\\2\\ \\k\\g\\,\\但\\體\\脂\\率\\掉\\ \\4\\.\\3\\ \\個\\百\\分\\點\\,\\方\\向\\是\\對\\的\\。\\問\\題\\在\\於\\剩\\下\\的\\脂\\肪\\高\\度\\集\\中\\在\\腹\\部\\,\\而\\內\\臟\\脂\\肪\\正\\是\\胰\\島\\素\\抗\\性\\、\\脂\\肪\\肝\\、\\L\\D\\L\\ \\三\\個\\問\\題\\共\\同\\的\\上\\游\\。\\`\\
-\\→\\ \\目\\標\\:\\腰\\圍\\ \\9\\5\\ \\→\\ \\9\\0\\ \\c\\m\\ \\以\\下\\(\\約\\需\\再\\減\\ \\4\\–\\6\\ \\k\\g\\ \\純\\脂\\肪\\)\\。\\
-\\
-\\*\\*\\8\\.\\ \\肌\\肉\\量\\與\\細\\胞\\品\\質\\(\\相\\位\\角\\)\\長\\期\\偏\\低\\*\\*\\
-\\相\\位\\角\\ \\5\\.\\5\\ \\→\\ \\5\\.\\0\\ \\→\\ \\5\\.\\1\\,\\*\\*\\三\\年\\都\\低\\於\\標\\準\\ \\6\\–\\8\\*\\*\\;\\S\\M\\I\\ \\7\\.\\6\\1\\ \\→\\ \\7\\.\\4\\4\\ \\→\\ \\7\\.\\5\\0\\;\\身\\體\\年\\齡\\ \\4\\9\\ \\歲\\(\\超\\出\\實\\齡\\ \\2\\ \\歲\\)\\。\\2\\0\\2\\4\\ \\曾\\出\\現\\「\\減\\重\\全\\減\\到\\肌\\肉\\」\\的\\反\\向\\操\\作\\。\\
-\\→\\ \\行\\動\\:\\減\\脂\\期\\務\\必\\搭\\配\\阻\\力\\訓\\練\\ \\+\\ \\足\\量\\蛋\\白\\質\\,\\確\\保\\減\\下\\去\\的\\是\\脂\\肪\\不\\是\\肌\\肉\\;\\下\\次\\ \\I\\n\\B\\o\\d\\y\\ \\重\\點\\看\\*\\*\\骨\\骼\\肌\\重\\與\\相\\位\\角\\有\\沒\\有\\同\\步\\上\\升\\*\\*\\。\\
-\\
-\\*\\*\\9\\.\\ \\H\\b\\A\\1\\c\\ \\五\\年\\紋\\風\\不\\動\\卡\\在\\ \\5\\.\\7\\–\\5\\.\\9\\%\\*\\*\\
-\\空\\腹\\血\\糖\\從\\ \\1\\2\\7\\ \\降\\到\\ \\9\\0\\、\\H\\O\\M\\A\\-\\I\\R\\ \\從\\ \\2\\.\\4\\8\\ \\降\\到\\ \\1\\.\\4\\2\\,\\都\\大\\幅\\改\\善\\,\\唯\\獨\\ \\H\\b\\A\\1\\c\\ \\五\\年\\不\\動\\,\\且\\ \\2\\0\\2\\5\\ \\起\\參\\考\\值\\收\\緊\\至\\ \\<\\5\\.\\7\\%\\ \\後\\變\\成\\紅\\字\\。\\
-\\→\\ \\`\\推\\論\\:\\空\\腹\\指\\標\\好\\但\\糖\\化\\血\\色\\素\\不\\動\\,\\問\\題\\可\\能\\在\\餐\\後\\血\\糖\\波\\動\\(\\精\\緻\\澱\\粉\\、\\進\\食\\順\\序\\、\\宵\\夜\\)\\,\\而\\非\\空\\腹\\狀\\態\\。\\[\\未\\驗\\證\\]\\`\\
-\\→\\ \\行\\動\\:\\醫\\師\\已\\建\\議\\「\\3\\ \\個\\月\\後\\追\\蹤\\空\\腹\\血\\糖\\與\\ \\H\\b\\A\\1\\c\\」\\。\\
-\\
-\\*\\*\\1\\0\\.\\ \\尿\\酸\\回\\升\\,\\逼\\近\\上\\限\\*\\*\\
-\\6\\.\\4\\(\\2\\0\\2\\4\\)\\ \\→\\ \\*\\*\\7\\.\\5\\*\\*\\(\\2\\0\\2\\5\\)\\,\\參\\考\\上\\限\\ \\7\\.\\6\\。\\2\\0\\2\\2\\ \\曾\\達\\ \\8\\.\\3\\0\\。\\
-\\→\\ \\行\\動\\:\\減\\少\\海\\鮮\\、\\內\\臟\\、\\肉\\汁\\、\\豆\\製\\品\\、\\香\\菇\\與\\含\\糖\\飲\\料\\,\\多\\補\\充\\水\\分\\。\\這\\與\\第\\ \\7\\ \\項\\(\\腹\\部\\肥\\胖\\)\\、\\腸\\道\\菌\\叢\\報\\告\\的\\「\\蛋\\白\\質\\/\\油\\脂\\為\\主\\飲\\食\\型\\」\\互\\相\\呼\\應\\。\\
-\\
-\\*\\*\\1\\1\\.\\ \\腸\\道\\菌\\相\\有\\害\\菌\\偏\\高\\,\\且\\被\\判\\定\\「\\有\\誘\\發\\肥\\胖\\的\\風\\險\\」\\*\\*\\
-\\2\\0\\2\\5\\ \\首\\次\\檢\\測\\:\\有\\害\\菌\\「\\高\\」\\、\\困\\難\\梭\\菌\\與\\沙\\門\\氏\\菌\\上\\升\\、\\A\\K\\K\\菌\\偏\\低\\、\\乳\\桿\\菌\\偏\\低\\;\\但\\多\\樣\\性\\與\\豐\\富\\度\\高\\、\\腸\\道\\年\\齡\\ \\2\\0\\–\\3\\9\\ \\歲\\(\\優\\於\\實\\齡\\)\\。\\
-\\→\\ \\行\\動\\:\\增\\加\\蔬\\果\\膳\\食\\纖\\維\\、\\適\\度\\降\\低\\動\\物\\性\\蛋\\白\\比\\例\\、\\多\\吃\\魚\\、\\減\\少\\油\\炸\\、\\補\\充\\益\\生\\菌\\與\\ \\O\\m\\e\\g\\a\\-\\3\\。\\約\\半\\年\\至\\一\\年\\後\\回\\測\\比\\對\\。\\
-\\
-\\*\\*\\1\\2\\.\\ \\睪\\固\\酮\\兩\\年\\下\\降\\ \\3\\3\\%\\*\\*\\
-\\4\\.\\6\\4\\(\\2\\0\\2\\3\\)\\ \\→\\ \\3\\.\\1\\2\\(\\2\\0\\2\\5\\)\\,\\仍\\在\\參\\考\\範\\圍\\但\\已\\在\\偏\\低\\端\\。\\
-\\→\\ \\行\\動\\:\\下\\次\\抽\\血\\複\\驗\\確\\認\\是\\趨\\勢\\還\\是\\單\\次\\波\\動\\。\\`\\推\\論\\:\\與\\體\\脂\\率\\、\\內\\臟\\脂\\肪\\、\\維\\生\\素\\D\\缺\\乏\\、\\睡\\眠\\呼\\吸\\品\\質\\可\\能\\互\\相\\關\\聯\\,\\`\\若\\持\\續\\下\\降\\再\\考\\慮\\專\\科\\評\\估\\。\\
-\\
-\\*\\*\\1\\3\\.\\ \\長\\期\\打\\鼾\\ \\+\\ \\咳\\嗽\\ \\+\\ \\小\\氣\\道\\功\\能\\偏\\低\\,\\睡\\眠\\呼\\吸\\中\\止\\症\\未\\曾\\評\\估\\*\\*\\
-\\五\\年\\主\\訴\\一\\直\\有\\「\\打\\鼾\\」\\與\\「\\咳\\嗽\\」\\;\\F\\E\\F\\7\\5\\%\\ \\連\\兩\\年\\僅\\ \\6\\5\\–\\7\\0\\%\\ \\預\\測\\值\\;\\同\\時\\具\\備\\ \\B\\M\\I\\ \\2\\5\\.\\8\\、\\腰\\圍\\ \\9\\5\\ \\c\\m\\、\\頸\\部\\腫\\大\\三\\項\\風\\險\\因\\子\\。\\
-\\→\\ \\`\\推\\論\\:\\這\\組\\合\\符\\合\\阻\\塞\\型\\睡\\眠\\呼\\吸\\中\\止\\症\\(\\O\\S\\A\\)\\的\\典\\型\\風\\險\\輪\\廓\\,\\而\\ \\O\\S\\A\\ \\會\\反\\過\\來\\惡\\化\\胰\\島\\素\\抗\\性\\、\\高\\血\\壓\\與\\睪\\固\\酮\\低\\下\\。\\[\\未\\驗\\證\\]\\ \\五\\年\\健\\檢\\從\\未\\評\\估\\過\\這\\一\\塊\\。\\`\\
-\\→\\ \\行\\動\\:\\可\\與\\家\\醫\\科\\或\\胸\\腔\\內\\科\\討\\論\\是\\否\\值\\得\\做\\一\\次\\睡\\眠\\檢\\查\\。\\
-\\
-\\*\\*\\1\\4\\.\\ \\肝\\囊\\腫\\緩\\慢\\增\\大\\,\\需\\維\\持\\每\\年\\追\\蹤\\*\\*\\
-\\1\\.\\6\\3\\(\\2\\0\\2\\1\\)\\ \\→\\ \\0\\.\\9\\4\\(\\2\\0\\2\\2\\)\\ \\→\\ \\1\\.\\8\\7\\(\\2\\0\\2\\3\\)\\ \\→\\ \\2\\.\\0\\ \\c\\m\\(\\2\\0\\2\\5\\)\\。\\良\\性\\,\\但\\已\\達\\ \\2\\ \\c\\m\\。\\
-\\→\\ \\行\\動\\:\\腹\\部\\超\\音\\波\\列\\為\\每\\年\\固\\定\\項\\目\\(\\醫\\師\\連\\五\\年\\都\\這\\樣\\建\\議\\)\\。\\
-\\→\\ \\附\\帶\\:\\*\\*\\2\\0\\2\\2\\ \\曾\\記\\錄\\膽\\囊\\息\\肉\\ \\0\\.\\5\\5\\ \\c\\m\\,\\2\\0\\2\\3\\–\\2\\0\\2\\5\\ \\三\\年\\報\\告\\都\\沒\\再\\提\\*\\*\\,\\下\\次\\超\\音\\波\\請\\醫\\師\\確\\認\\是\\消\\失\\還\\是\\漏\\記\\。\\
-\\
-\\*\\*\\1\\5\\.\\ \\追\\蹤\\斷\\線\\清\\單\\ \\—\\—\\ \\2\\0\\2\\6\\ \\健\\檢\\建\\議\\補\\回\\的\\項\\目\\*\\*\\
-\\以\\下\\項\\目\\曾\\做\\過\\、\\有\\臨\\床\\意\\義\\,\\但\\最\\近\\一\\至\\兩\\年\\中\\斷\\:\\
-\\
-\\|\\ \\項\\目\\ \\|\\ \\最\\後\\一\\次\\ \\|\\ \\中\\斷\\年\\數\\ \\|\\ \\建\\議\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\2\\5\\-\\O\\H\\ \\維\\生\\素\\D\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\1\\ \\年\\ \\|\\ \\🔴\\ \\必\\補\\ \\|\\
-\\|\\ \\骨\\質\\密\\度\\ \\D\\X\\A\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\ \\年\\ \\|\\ \\⚠\\️\\ \\建\\議\\補\\(\\股\\骨\\頸\\曾\\ \\−\\1\\.\\8\\)\\ \\|\\
-\\|\\ \\大\\腸\\鏡\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\ \\年\\ \\|\\ \\⚠\\️\\ \\已\\逾\\期\\ \\|\\
-\\|\\ \\腫\\瘤\\標\\記\\(\\A\\F\\P\\/\\C\\E\\A\\/\\P\\S\\A\\)\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\ \\年\\ \\|\\ \\建\\議\\補\\ \\|\\
-\\|\\ \\肺\\功\\能\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\1\\ \\年\\ \\|\\ \\建\\議\\補\\(\\F\\E\\F\\7\\5\\%\\ \\偏\\低\\)\\ \\|\\
-\\|\\ \\心\\臟\\超\\音\\波\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\1\\ \\年\\ \\|\\ \\⚠\\️\\ \\2\\0\\2\\5\\ \\有\\心\\雜\\音\\ \\|\\
-\\|\\ \\h\\s\\C\\R\\P\\、\\同\\半\\胱\\胺\\酸\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\1\\ \\年\\ \\|\\ \\建\\議\\補\\ \\|\\
-\\|\\ \\糞\\便\\潛\\血\\ \\|\\ \\2\\0\\2\\4\\ \\|\\ \\1\\ \\年\\ \\|\\ \\建\\議\\補\\ \\|\\
-\\|\\ \\胃\\鏡\\ \\|\\ \\2\\0\\2\\3\\ \\|\\ \\2\\ \\年\\ \\|\\ \\依\\症\\狀\\評\\估\\ \\|\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\ \\第\\四\\部\\分\\:\\五\\年\\總\\結\\
-\\
-\\#\\#\\ \\做\\對\\的\\三\\件\\事\\(\\數\\據\\會\\說\\話\\)\\
-\\
-\\1\\.\\ \\*\\*\\肝\\臟\\逆\\轉\\*\\*\\:\\A\\L\\T\\ \\6\\6\\ \\→\\ \\3\\7\\(\\−\\4\\4\\%\\)\\、\\脂\\肪\\肝\\中\\度\\ \\→\\ \\輕\\度\\、\\2\\0\\2\\5\\ \\肝\\纖\\維\\化\\指\\數\\ \\0\\.\\6\\。\\五\\年\\下\\來\\肝\\臟\\結\\構\\完\\好\\無\\纖\\維\\化\\。\\
-\\2\\.\\ \\*\\*\\代\\謝\\逆\\轉\\*\\*\\:\\空\\腹\\血\\糖\\ \\1\\2\\7\\ \\→\\ \\9\\0\\、\\H\\O\\M\\A\\-\\I\\R\\ \\2\\.\\4\\8\\ \\→\\ \\1\\.\\4\\2\\(\\−\\4\\3\\%\\)\\、\\診\\斷\\從\\「\\疑\\糖\\尿\\病\\/\\嚴\\重\\胰\\島\\素\\抗\\性\\」\\一\\路\\降\\級\\到\\「\\輕\\度\\胰\\島\\素\\抗\\性\\」\\。\\
-\\3\\.\\ \\*\\*\\身\\體\\組\\成\\改\\善\\*\\*\\:\\體\\脂\\率\\ \\3\\5\\.\\2\\%\\ \\→\\ \\3\\0\\.\\4\\%\\、\\體\\脂\\重\\ \\−\\4\\.\\5\\ \\k\\g\\、\\內\\臟\\脂\\肪\\面\\積\\ \\1\\8\\4\\ \\→\\ \\1\\6\\8\\、\\1\\0\\年\\心\\血\\管\\風\\險\\ \\4\\%\\ \\→\\ \\2\\.\\2\\%\\,\\*\\*\\而\\且\\ \\2\\0\\2\\4\\ \\冠\\狀\\動\\脈\\鈣\\化\\分\\數\\ \\=\\ \\0\\*\\*\\。\\
-\\
-\\#\\#\\ \\沒\\做\\好\\的\\三\\件\\事\\
-\\
-\\1\\.\\ \\*\\*\\L\\D\\L\\ \\五\\年\\零\\次\\達\\標\\*\\*\\—\\—\\唯\\一\\完\\全\\沒\\有\\進\\展\\的\\指\\標\\,\\飲\\食\\控\\制\\已\\證\\明\\無\\效\\。\\
-\\2\\.\\ \\*\\*\\追\\蹤\\斷\\線\\*\\*\\—\\—\\甲\\狀\\腺\\超\\音\\波\\斷\\兩\\年\\、\\大\\腸\\鏡\\逾\\期\\兩\\年\\、\\維\\生\\素\\D\\ \\斷\\一\\年\\。\\*\\*\\2\\0\\2\\4\\ \\年\\醫\\師\\建\\議\\做\\甲\\狀\\腺\\超\\音\\波\\卻\\沒\\做\\,\\直\\接\\導\\致\\ \\2\\0\\2\\5\\ \\發\\現\\時\\已\\ \\2\\.\\6\\ \\c\\m\\ \\並\\升\\級\\ \\A\\ \\級\\。\\這\\是\\五\\年\\來\\代\\價\\最\\高\\的\\一\\次\\疏\\忽\\。\\*\\*\\
-\\3\\.\\ \\*\\*\\中\\央\\型\\肥\\胖\\未\\解\\*\\*\\—\\—\\腰\\圍\\五\\年\\只\\從\\ \\9\\7\\ \\降\\到\\ \\9\\5\\,\\腰\\臀\\比\\ \\1\\.\\0\\1\\,\\這\\是\\脂\\肪\\肝\\、\\胰\\島\\素\\抗\\性\\、\\L\\D\\L\\、\\尿\\酸\\、\\睪\\固\\酮\\下\\降\\五\\個\\問\\題\\共\\同\\的\\上\\游\\。\\
-\\
-\\#\\#\\ \\一\\句\\話\\總\\結\\
-\\
-\\>\\ \\*\\*\\代\\謝\\與\\肝\\臟\\五\\年\\走\\出\\漂\\亮\\的\\逆\\轉\\曲\\線\\,\\心\\血\\管\\底\\子\\(\\鈣\\化\\分\\數\\ \\0\\)\\極\\佳\\;\\但\\甲\\狀\\腺\\結\\節\\已\\亮\\紅\\燈\\需\\立\\即\\穿\\刺\\,\\L\\D\\L\\ \\五\\年\\未\\達\\標\\可\\能\\需\\要\\藥\\物\\,\\而\\「\\該\\追\\蹤\\的\\項\\目\\沒\\追\\蹤\\」\\是\\最\\需\\要\\用\\制\\度\\(\\而\\非\\意\\志\\力\\)\\解\\決\\的\\問\\題\\。\\*\\*\\
-\\
-\\-\\-\\-\\
-\\
-\\#\\#\\ \\附\\錄\\:\\資\\料\\來\\源\\檔\\案\\
-\\
-\\|\\ \\年\\度\\ \\|\\ \\檔\\案\\ \\|\\
-\\|\\-\\-\\-\\|\\-\\-\\-\\|\\
-\\|\\ \\2\\0\\2\\1\\ \\|\\ \\`\\2\\0\\2\\1\\_\\佑\\康\\診\\所\\.\\p\\d\\f\\`\\(\\9\\ \\頁\\)\\ \\|\\
-\\|\\ \\2\\0\\2\\2\\ \\|\\ \\`\\2\\0\\2\\2\\_\\佑\\康\\診\\所\\.\\p\\d\\f\\`\\(\\9\\ \\頁\\)\\ \\|\\
-\\|\\ \\2\\0\\2\\3\\ \\|\\ \\`\\2\\0\\2\\3\\_\\高\\雄\\榮\\總\\.\\p\\d\\f\\`\\(\\2\\9\\ \\頁\\,\\含\\胃\\鏡\\/\\大\\腸\\鏡\\/\\D\\X\\A\\)\\ \\|\\
-\\|\\ \\2\\0\\2\\4\\ \\|\\ \\`\\2\\0\\2\\4\\_\\高\\雄\\榮\\總\\.\\p\\d\\f\\`\\(\\1\\9\\ \\頁\\,\\含\\肺\\部\\C\\T\\/\\冠\\狀\\動\\脈\\C\\T\\)\\ \\|\\
-\\|\\ \\2\\0\\2\\5\\ \\|\\ \\`\\2\\0\\2\\5\\_\\高\\雄\\榮\\總\\.\\p\\d\\f\\`\\(\\1\\8\\ \\頁\\ \\+\\ \\腸\\道\\菌\\叢\\報\\告\\,\\含\\甲\\狀\\腺\\超\\音\\波\\)\\ \\|\\
-\\
-\\原\\始\\檔\\位\\置\\:\\`\\G\\:\\\\\我\\的\\雲\\端\\硬\\碟\\\\\1\\_\\大\\衛\\人\\生\\\\\B\\3\\.\\ \\運\\動\\養\\生\\\\\B\\3\\.\\5\\ \\醫\\療\\\\\B\\3\\.\\5\\.\\1\\ \\健\\康\\檢\\康\\\\\健\\檢\\報\\告\\\\\`\\
-\\;
-        
-        function extractSection(text, startKeyword, endKeyword) {
-            let startIndex = text.indexOf(startKeyword);
-            if(startIndex === -1) return \x22\x22;
-            
-            let endIndex = text.length;
-            if(endKeyword) {
-                let endIdx = text.indexOf(endKeyword, startIndex + startKeyword.length);
-                if(endIdx !== -1) endIndex = endIdx;
-            }
-            return text.substring(startIndex, endIndex);
-        }
+          <text x="420" y="30" font-size="12" font-weight="bold" fill="#12293D">ALT 肝指數: 66 U/L (標準 0-40)</text>
+          <rect x="420" y="40" width="320" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="420" y="40" width="230" height="14" rx="3" fill="#D95F45"/>
 
-        document.getElementById('content-home').innerHTML = marked.parse(rawMarkdown.substring(0, rawMarkdown.indexOf('# 第一部分')));
-        document.getElementById('content-part1').innerHTML = marked.parse(extractSection(rawMarkdown, '# 第一部分', '# 第二部分'));
-        document.getElementById('content-part2').innerHTML = marked.parse(extractSection(rawMarkdown, '# 第二部分', '# 第三部分'));
-        document.getElementById('content-part3').innerHTML = marked.parse(extractSection(rawMarkdown, '# 第三部分', '## 附錄'));
+          <text x="420" y="85" font-size="12" font-weight="bold" fill="#12293D">LDL 膽固醇: 136.2 mg/dL (標準 <130)</text>
+          <rect x="420" y="95" width="320" height="14" rx="3" fill="#E2E8F0"/>
+          <rect x="420" y="95" width="210" height="14" rx="3" fill="#1968AD"/>
+        </svg>
+      </div>
+    </div>
 
-        window.addEventListener('scroll', () => {
-            let current = '';
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
+    <div class="slide-foot">
+      <span>資料來源：2021-08-14 佑康診所健檢報告</span>
+      <span class="pageno">PART 1 · 1 / 5</span>
+    </div>
+  </div>
 
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').includes(current)) {
-                    link.classList.add('active');
-                }
-            });
+  <!-- p1-2: 2022 -->
+  <div class="slide" id="p1-2">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 1 · 逐年摘要 2/5</div>
+        <h2>2022 (44歲・佑康診所)：體重腰圍進步，但代謝數字跌入五年谷底</h2>
+        <div class="sub">這一年腰圍縮小、血壓極佳，然而血糖與腎指標卻出現五年最嚴峻的數值，直接被診斷「疑糖尿病」。</div>
+      </div>
+      <div class="flags">
+        <span class="flag coral">疑糖尿病</span>
+        <span class="flag amber">eGFR 54 谷底</span>
+        <span class="flag green">腰圍 90cm 最佳</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="four-col">
+        <div class="metric coral">
+          <div class="k">127 mg/dL</div>
+          <div class="t">空腹血糖超標 (醫師註記：疑糖尿病宜門診追蹤)</div>
+        </div>
+        <div class="metric amber">
+          <div class="k">54.04</div>
+          <div class="t">eGFR 降至五年最低點 (肌酸酐高達 1.50)</div>
+        </div>
+        <div class="metric green">
+          <div class="k">90 cm</div>
+          <div class="t">腰圍自 97cm 縮至 90cm (創五年最佳紀錄)</div>
+        </div>
+        <div class="metric teal">
+          <div class="k">105 / 61</div>
+          <div class="t">血壓極佳 (收縮壓/舒張壓維持最理想水準)</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-thumbs-up text-green"></i> 亮點進步</h3>
+          <ul>
+            <li><strong>體態改善：</strong>體重由 87.4 降至 85.0 kg，BMI 降為 26.71。</li>
+            <li><strong>血壓與血管：</strong>血壓 105/61 mmHg，三酸甘油脂自 137 大幅降至 93 mg/dL。</li>
+            <li><strong>高密度好膽固醇飆高：</strong>HDL 53.4 升至 66.7 mg/dL (五年最高)，總膽固醇/HDL 比值降至 3.45。</li>
+            <li><strong>骨質回升：</strong>腰椎 T值由 -1.00 改善至 -0.50，髖關節轉為無明顯異常。幽門桿菌吹氣 0.75 DOB 陰性。</li>
+          </ul>
+        </div>
+
+        <div class="card coral">
+          <h3><i class="fas fa-exclamation-triangle text-coral"></i> 嚴峻惡化點</h3>
+          <ul>
+            <li><strong>血糖危機：</strong>空腹血糖自 110 飆高至 127 mg/dL，正式踏入糖尿病警訊門檻。</li>
+            <li><strong>血脂惡化：</strong>總膽固醇達 230、LDL 惡化至 144.7 (皆為五年高檔)。</li>
+            <li><strong>尿酸超標：</strong>尿酸 7.70 升至 8.30 mg/dL，正式超標。</li>
+            <li><strong>減肌非減脂警訊：</strong>體脂率反而從 34.7% 升至 35.2% (推論減重 2.4kg 減掉的是水分與肌肉)。</li>
+            <li><strong>新增膽囊息肉：</strong>超音波首度發現膽囊息肉 0.55 cm；甲狀腺結節 1.73x1.76 cm 持續追蹤。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Comparison Visual -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>核心觀察項目</th>
+              <th>2021 數據</th>
+              <th>2022 數據</th>
+              <th>年度變動幅度</th>
+              <th>臨床意義解讀</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bad-row">
+              <td>空腹血糖 (Glucose AC)</td>
+              <td>110 mg/dL</td>
+              <td>127 mg/dL</td>
+              <td>+17 mg/dL (&uarr; 15%)</td>
+              <td>明顯惡化，診所首次警示疑似糖尿病</td>
+            </tr>
+            <tr class="bad-row">
+              <td>eGFR 腎絲球過濾率</td>
+              <td>58.79</td>
+              <td>54.04</td>
+              <td>-4.75 (&darr; 8%)</td>
+              <td>跨機構檢驗法不同導致的虛驚，但當年造成高度心理警訊</td>
+            </tr>
+            <tr class="good-row">
+              <td>三酸甘油脂 (TG)</td>
+              <td>137 mg/dL</td>
+              <td>93 mg/dL</td>
+              <td>-44 mg/dL (&darr; 32%)</td>
+              <td>受清淡飲食與短期節制正面影響大幅改善</td>
+            </tr>
+            <tr class="hl-row">
+              <td>體脂率 vs 體重</td>
+              <td>87.4kg / 34.7%</td>
+              <td>85.0kg / 35.2%</td>
+              <td>體重降但體脂率升</td>
+              <td>典型流失骨骼肌與水分的無效減重型態</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>資料來源：2022-11-05 佑康診所健檢報告</span>
+      <span class="pageno">PART 1 · 2 / 5</span>
+    </div>
+  </div>
+
+  <!-- p1-3: 2023 -->
+  <div class="slide" id="p1-3">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 1 · 逐年摘要 3/5</div>
+        <h2>2023 (45歲・高雄榮總)：轉院榮總大盤查，解開腎功能謎團與深層隱患</h2>
+        <div class="sub">轉移至醫學中心執行高規格檢查（胃鏡、大腸鏡、DXA 骨密），證實腎臟無恙，但挖出了嚴重胰島素抗性與極低維生素 D。</div>
+      </div>
+      <div class="flags">
+        <span class="flag blue">高雄榮總首檢</span>
+        <span class="flag green">eGFR 97.5 解套</span>
+        <span class="flag coral">胰島素抗性 B級</span>
+        <span class="flag amber">維生素D 8.1 嚴重缺乏</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="four-col">
+        <div class="metric green">
+          <div class="k">97.5</div>
+          <div class="t">eGFR 正常化 (肌酸酐 0.85，破除前兩年慢性腎病警報)</div>
+        </div>
+        <div class="metric coral">
+          <div class="k">2.48</div>
+          <div class="t">HOMA-IR 嚴重胰島素抗性 (標準 &le;1.0，超標 2.5 倍)</div>
+        </div>
+        <div class="metric red">
+          <div class="k">8.1 ng/mL</div>
+          <div class="t">25-OH 維生素 D 嚴重缺乏 (標準 30~100，僅達低標 27%)</div>
+        </div>
+        <div class="metric teal">
+          <div class="k">31.1 %</div>
+          <div class="t">體脂率大幅改善 (自 35.2% 顯著降至 31.1%)</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-check-circle text-green"></i> 醫學中心證實之優點</h3>
+          <ul>
+            <li><strong>腎功能洗清嫌疑：</strong>肌酸酐 0.85、eGFR 97.5，證明過去診所數據係因 Jaffe 反應法高估所致，實體腎臟健康。</li>
+            <li><strong>肝功能大躍進：</strong>ALT 自 66 降至 47 U/L，脂肪肝從中度降至輕度。</li>
+            <li><strong>血糖與尿酸正常化：</strong>空腹血糖 88 mg/dL、HbA1c 5.7%、尿酸 6.7 mg/dL。</li>
+            <li><strong>切片皆良性：</strong>大腸 0.2cm 增生性息肉已切除；十二指腸黏膜下腫瘤證實為先天「異位性胰腺」，非惡性。</li>
+            <li><strong>體內無慢性發炎：</strong>hsCRP 高敏感度發炎蛋白僅 0.093，心血管風險 2.0%。</li>
+          </ul>
+        </div>
+
+        <div class="card coral">
+          <h3><i class="fas fa-exclamation-circle text-coral"></i> 醫學中心揪出的深層缺點</h3>
+          <ul>
+            <li><strong>新陳代謝科 B級：</strong>診斷「嚴重胰島素抗性」，糖尿病長期風險高。</li>
+            <li><strong>維生素D 瀕危：</strong>僅 8.1 ng/mL，對骨質、睪固酮與代謝屏障形成骨牌效應。</li>
+            <li><strong>內臟脂肪累積：</strong>腰圍 98cm、內臟脂肪面積 175 cm² (標準 &lt;100)，屬標準中央型肥胖。</li>
+            <li><strong>腸胃黏膜病變：</strong>首次確診胃食道逆流 (LA-A 級)、慢性胃炎。</li>
+            <li><strong>小氣道功能受限：</strong>FEF75% 僅 64.8%，主訴常態性「打鼾、咳嗽」。</li>
+            <li><strong>動脈硬化警訊：</strong>PWV 脈波傳導速度輕微偏高 (右 1360 / 左 1467)。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>重要決策盲點：</strong>2023 年榮總大腸鏡切除增生性息肉後，病理報告明載<strong>「suggest f/u colonoscopic exam next year (建議次年追蹤大腸鏡)」</strong>，且甲狀腺超音波當年漏未排檢，形成後續追蹤斷層。
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>資料來源：2023-10-26 高雄榮總健康管理中心 (29頁完整報告)</span>
+      <span class="pageno">PART 1 · 3 / 5</span>
+    </div>
+  </div>
+
+  <!-- p1-4: 2024 -->
+  <div class="slide" id="p1-4">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 1 · 逐年摘要 4/5</div>
+        <h2>2024 (46歲・高雄榮總)：數字最漂亮的一年，取得「鈣化分數 0」強大護身符</h2>
+        <div class="sub">雙 CT 檢查（冠狀動脈 CT＋低劑量肺癌 CT）交出滿分成績，然而甲狀腺理學摸到結節卻未排超音波，埋下最大隱患。</div>
+      </div>
+      <div class="flags">
+        <span class="flag green">鈣化分數 0</span>
+        <span class="flag teal">Lung-RADS 1 肺部乾淨</span>
+        <span class="flag blue">ALT 36 正常化</span>
+        <span class="flag coral">追蹤漏洞：漏檢超音波</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="four-col">
+        <div class="metric green">
+          <div class="k">0 分</div>
+          <div class="t">冠狀動脈鈣化分數 (CAD-RADS 0，無狹窄無斑塊，含金量最高)</div>
+        </div>
+        <div class="metric teal">
+          <div class="k">Lung-RADS 1</div>
+          <div class="t">微輻射肺部 CT 乾淨 (無大於 6mm 實質結節)</div>
+        </div>
+        <div class="metric green">
+          <div class="k">36 U/L</div>
+          <div class="t">ALT 肝指數完全正常 (五年最佳：ALT 36 / AST 21 / GGT 27)</div>
+        </div>
+        <div class="metric coral">
+          <div class="k">134 mg/dL</div>
+          <div class="t">LDL 壞膽固醇連續第 4 年未達標 (紋風不動)</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-shield-alt text-green"></i> 心血管與全身核心防線全面確立</h3>
+          <ul>
+            <li><strong>最強防護罩：</strong>冠狀動脈 18 個節段 Stenosis 全部為 None，主動脈與瓣膜無鈣化，回推過去所有代謝紅字尚未造成血管實體器質性破壞。</li>
+            <li><strong>肺部乾淨：</strong>Lung-RADS 1，排除肺癌風險。</li>
+            <li><strong>體重跌破 85kg：</strong>體重 84.4kg、BMI 25.9，胰島素抗性 HOMA-IR 由 2.48 降至 2.07。</li>
+            <li><strong>多科全數無異常：</strong>大腸直腸外科、腎臟科、胸腔內科、家醫科、眼科全數獲評 E 級。維生素 D 回升至 11.8。</li>
+          </ul>
+        </div>
+
+        <div class="card coral">
+          <h3><i class="fas fa-exclamation-triangle text-coral"></i> 致命追蹤疏忽與身體組成警訊</h3>
+          <ul>
+            <li><strong>🔴 重大疏忽：</strong>醫師理學檢查摸到「疑似甲狀腺結節」，明確建議做超音波，<strong>但當年並未執行</strong>！</li>
+            <li><strong>減重反減肌肉：</strong>體重雖降 1.7kg，但肌肉量掉 0.9kg (骨骼肌 33.1&rarr;32.2kg)，體脂重 26.8kg 毫無改變；相位角跌至 5.0&deg;。</li>
+            <li><strong>內臟脂肪上升：</strong>腰圍反彈至 99cm，內臟脂肪面積上升至 184 cm² (五年最高)。</li>
+            <li><strong>維生素 D 仍遠不足：</strong>11.8 ng/mL 僅達標準下限之 39%，日常補充劑量明顯過低。</li>
+            <li><strong>主訴新增：</strong>首度記錄「頸部痛」，與甲狀腺病變時間軸高度吻合。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="warn">
+        <strong>五年最大代價教訓：</strong>2024 年體檢已獲醫師預警甲狀腺有異，若當時即刻排檢超音波即可提早一年處置，未執行的結果直接導致 2025 年腫瘤擴大至 2.6cm 並升為 A 級警訊。
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>資料來源：2024-10-09 高雄榮總健康管理中心 (含雙CT報告)</span>
+      <span class="pageno">PART 1 · 4 / 5</span>
+    </div>
+  </div>
+
+  <!-- p1-5: 2025 -->
+  <div class="slide" id="p1-5">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 1 · 逐年摘要 5/5</div>
+        <h2>2025 (47歲・高雄榮總)：代謝指標持續改善，但甲狀腺亮起五年首度「A級立即處置」</h2>
+        <div class="sub">HOMA-IR 大幅改善至 1.42、體脂率降至五年最佳 30.4%，然而甲狀腺結節增大至 2.6cm，正式進入細針穿刺關鍵期。</div>
+      </div>
+      <div class="flags">
+        <span class="flag red">新陳代謝科 A級</span>
+        <span class="flag red">甲狀腺結節 2.6cm</span>
+        <span class="flag green">HOMA-IR 1.42</span>
+        <span class="flag teal">體脂率 30.4% 最優</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="four-col">
+        <div class="metric red">
+          <div class="k">2.6 cm</div>
+          <div class="t">甲狀腺左葉結節 (血流增加、異質回音，建議立即 FNA 穿刺)</div>
+        </div>
+        <div class="metric green">
+          <div class="k">1.42</div>
+          <div class="t">HOMA-IR 降至輕度 (相較 2023 年 2.48 大幅改善 43%)</div>
+        </div>
+        <div class="metric green">
+          <div class="k">30.4 %</div>
+          <div class="t">體脂率創五年最低 (體脂重自 30.1 累計降至 25.6kg)</div>
+        </div>
+        <div class="metric amber">
+          <div class="k">心雜音</div>
+          <div class="t">心臟理學首見雜音 (醫師建議必要時安排心臟超音波比對)</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-trophy text-green"></i> 2025 年度重大健康勝績</h3>
+          <ul>
+            <li><strong>代謝結構徹底扭轉：</strong>HOMA-IR 降至 1.42，胰島素抗性降至「輕度」，空腹血糖 90 mg/dL。</li>
+            <li><strong>身體組成回穩：</strong>骨骼肌重止跌回升至 32.7kg、內臟脂肪面積降至 168 cm²、腰圍自 99 縮至 95cm。</li>
+            <li><strong>肝臟零纖維化：</strong>Fibrosis-4 纖維化指數僅 0.6 (標準 &le;3.25)，五年脂肪肝未造成器質硬化。</li>
+            <li><strong>腸道年輕化：</strong>腸道菌叢檢測腸道年齡僅 20~39 歲，多樣性高、益菌組成正常。</li>
+            <li><strong>腎絲球過濾率極佳：</strong>eGFR 達 103.2，血液與尿液常規全數健全。</li>
+          </ul>
+        </div>
+
+        <div class="card red">
+          <h3><i class="fas fa-bell text-red"></i> 🔴 2025 必須正視之紅色警戒</h3>
+          <ul>
+            <li><strong>甲狀腺 A級警報：</strong>超音波見兩葉結節，最大在左葉約 2.6cm，混合實質與囊性、異質回音且血流豐富。<strong>醫囑明列：建議 FNA 細針穿刺檢查</strong>。</li>
+            <li><strong>首見心雜音：</strong>心臟聽診首次發現心雜音，需與 2024 年二尖瓣/三尖瓣輕微逆流進行超音波比對。</li>
+            <li><strong>血脂全線回升：</strong>總膽固醇回彈至 211、LDL 竄高至 142 (連續第 5 年超標未達標)。</li>
+            <li><strong>男性荷爾蒙衰退：</strong>睪固酮兩年內自 4.64 銳減 33% 至 3.12 ng/mL (逼近低標 2.4)。</li>
+            <li><strong>腸道有害菌偏高：</strong>困難梭菌與沙門氏菌偏多、AKK 瘦子菌偏低，呈現都會油脂型飲食特徵。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        <strong>現況關鍵節點 (2026/09 基準)：</strong>距 2025-10-29 健檢報告出爐已近 11 個月，甲狀腺結節 2.6cm 的 FNA 穿刺處置不可再拖延，需在近期門診列為最高優先掛號項目！
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>資料來源：2025-10-29 高雄榮總健康管理中心 (含甲狀腺超音波與腸道菌報告)</span>
+      <span class="pageno">PART 1 · 5 / 5</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= PART 2: 長期趨勢分析 (13 頁) ================= -->
+<div class="view" id="view-p2">
+
+  <!-- p2-1: 體位與身體組成 -->
+  <div class="slide" id="p2-1">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 1/13</div>
+        <h2>2-1 體位與身體組成趨勢：體脂減去 4.5kg，但中央型肥胖仍在警戒線</h2>
+        <div class="sub">五年總體重微幅減少 3.2 kg，但體脂率下降 4.3%，顯示身體組成質性提升；然而腰圍與內臟脂肪仍待最後攻堅。</div>
+      </div>
+      <div class="flags"><span class="flag blue">體脂率 30.4%</span><span class="flag amber">腰圍 95cm</span><span class="flag teal">減脂 4.5kg</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>標準參考值</th><th>五年趨勢判讀</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>體重 (kg)</td><td>87.4</td><td>85.0</td><td>86.1</td><td>84.4</td><td><strong>84.2</strong></td><td>--</td><td>&darr; 累計減少 3.2 kg</td></tr>
+            <tr><td>BMI</td><td>27.19</td><td>26.71</td><td>26.6</td><td>25.9</td><td><strong>25.8</strong></td><td>18.5~24</td><td>&darr; 由輕度肥胖降至過重</td></tr>
+            <tr class="good-row"><td>體脂率 (%)</td><td>34.7</td><td>35.2</td><td>31.1</td><td>31.7</td><td><strong>30.4</strong></td><td>&lt; 25%</td><td>&darr; 大幅改善 4.3 個百分點</td></tr>
+            <tr class="good-row"><td>體脂重 (kg)</td><td>30.1</td><td>29.8</td><td>26.8</td><td>26.8</td><td><strong>25.6</strong></td><td>--</td><td>&darr; 純脂肪減少 4.5 kg</td></tr>
+            <tr><td>骨骼肌重 (kg)</td><td>--</td><td>--</td><td>33.1</td><td>32.2</td><td><strong>32.7</strong></td><td>--</td><td>&darr;&uarr; 2024探底後已回升</td></tr>
+            <tr class="hl-row"><td>腰圍 (cm)</td><td>97.0</td><td><strong>90.0</strong></td><td>98.0</td><td>99.0</td><td><strong>95.0</strong></td><td>&lt; 90 cm</td><td>&Delta; 波動劇烈，仍超標 5cm</td></tr>
+            <tr class="hl-row"><td>內臟脂肪面積 (cm²)</td><td>--</td><td>--</td><td>175</td><td>184</td><td><strong>168</strong></td><td>&lt; 100 cm²</td><td>&darr; 2025改善但仍在警戒區</td></tr>
+            <tr class="bad-row"><td>相位角 (Phase Angle)</td><td>--</td><td>--</td><td>5.5°</td><td>5.0°</td><td><strong>5.1°</strong></td><td>6.0° ~ 8.0°</td><td>&darr; 持續偏低 (細胞膜營養品質)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-check"></i> 正面成果：高品質減脂</h3>
+          <p>減重過程減掉的幾乎全為脂肪（純脂肪減 4.5kg，佔總減重 140%），代表生活型態有在起作用。2024 年減去肌肉的錯誤已被 2025 年的肌力回升 (+0.5kg) 所修正。</p>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-exclamation"></i> 核心阻礙：內臟脂肪頑固</h3>
+          <p>腰圍 95cm、內臟脂肪面積 168 cm²、腹部外觀變為「球狀」，這是目前體脂率卡在 30% 難以跌破 25% 的根本上游源頭。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>檢測儀器：InBody 身體組成分析儀</span><span class="pageno">PART 2 · 1 / 13</span></div>
+  </div>
+
+  <!-- p2-2: 心血管系統 -->
+  <div class="slide" id="p2-2">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 2/13</div>
+        <h2>2-2 血壓與心血管系統：鈣化分數 0 護身符，但需注意 PWV 與心雜音</h2>
+        <div class="sub">冠狀動脈電腦斷層掃描顯示血管乾淨無斑塊，但周邊動脈硬化指標 (PWV) 偏高與 2025 新增心雜音需持續盯防。</div>
+      </div>
+      <div class="flags"><span class="flag green">鈣化分數 0</span><span class="flag teal">血壓正常</span><span class="flag amber">PWV 偏高</span><span class="flag coral">2025 心雜音</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>檢驗項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>標準參考值</th><th>五年臨床評定</th></tr>
+          </thead>
+          <tbody>
+            <tr class="good-row"><td>收縮壓 / 舒張壓</td><td>127/78</td><td>105/61</td><td>119/66</td><td>105/62</td><td><strong>121/68</strong></td><td>&lt; 120/80</td><td>✅ 五年皆在優良區間</td></tr>
+            <tr class="good-row"><td>靜態脈搏 (次/分)</td><td>92</td><td>76</td><td>77</td><td>68</td><td><strong>74</strong></td><td>60~90</td><td>&darr; 心肺平靜狀態改善</td></tr>
+            <tr class="good-row"><td>10 年心血管風險 (%)</td><td>4.0</td><td>3.0</td><td>2.0</td><td><strong>1.5</strong></td><td><strong>2.2</strong></td><td>&lt; 10% 低風險</td><td>✅ 長年維持極低風險</td></tr>
+            <tr class="good-row"><td>冠狀動脈鈣化 (CAC)</td><td>--</td><td>--</td><td>--</td><td><strong>0 分</strong></td><td>--</td><td>0 分 (無鈣化)</td><td>⭐ CAD-RADS 0 無狹窄斑塊</td></tr>
+            <tr class="hl-row"><td>PWV 脈波速度 (右/左)</td><td>--</td><td>--</td><td>1360/1467</td><td>--</td><td><strong>1395/1469</strong></td><td>&lt; 1400 cm/s</td><td>⚠️ 兩年皆呈輕微血管僵硬</td></tr>
+            <tr class="bad-row"><td>心雜音 (理學聽診)</td><td>無</td><td>無</td><td>無</td><td>無</td><td><strong>有</strong></td><td>無雜音</td><td>🔴 2025 首度聽診出現雜音</td></tr>
+            <tr><td>心電圖 / ABI</td><td>正常</td><td>正常</td><td>正常 / 1.11</td><td>正常</td><td>正常 / 1.05</td><td>正常 / 0.9~1.3</td><td>✅ 下肢動脈無阻塞</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split-55">
+        <div class="big-callout">
+          <div class="label">五年含金量最高的單一數據</div>
+          <div class="answer">冠狀動脈鈣化分數 CAC = 0 (CAD-RADS 0)</div>
+          <div class="more">
+            榮總 2024 電腦斷層證實 18 條冠狀動脈皆無狹窄。這項數據提供了 5~10 年的強大心臟病保護傘，推論過去的血糖與膽固醇問題尚未形成實質血管內皮粥狀硬化斑塊。
+          </div>
+        </div>
+        <div class="card coral">
+          <h3><i class="fas fa-stethoscope"></i> 2025 新訊號處置對策</h3>
+          <p><strong>心雜音成因：</strong>可能是 2024 年超音波發現的「極輕微二尖瓣逆流 (MR) 或輕度三尖瓣逆流 (TR)」生理音擴大。<strong>行動：</strong>下次門診請加排心臟超音波比對瓣膜狀況。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>檢查單位：高雄榮總心臟血管中心</span><span class="pageno">PART 2 · 2 / 13</span></div>
+  </div>
+
+  <!-- p2-3: 血糖與胰島素代謝 -->
+  <div class="slide" id="p2-3">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 3/13</div>
+        <h2>2-3 血糖與胰島素代謝：HOMA-IR 大幅改善 43%，HbA1c 卡在瓶頸</h2>
+        <div class="sub">五年最具成就感的逆轉線：從 2022 年「疑糖尿病」一路降級至 2025 年「輕度胰島素抗性」。</div>
+      </div>
+      <div class="flags"><span class="flag green">HOMA-IR 降 43%</span><span class="flag teal">空腹血糖 90</span><span class="flag amber">HbA1c 5.8% 橫盤</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>指標</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>參考值</th><th>趨勢判讀</th></tr>
+          </thead>
+          <tbody>
+            <tr class="good-row"><td>空腹血糖 (mg/dL)</td><td>110</td><td><strong>127</strong></td><td>88</td><td>94</td><td><strong>90</strong></td><td>70~99</td><td>&darr; 2022 飆高後已完全穩定</td></tr>
+            <tr class="hl-row"><td>糖化血色素 HbA1c (%)</td><td>5.90</td><td>5.90</td><td>5.70</td><td>5.90</td><td><strong>5.80</strong></td><td>&lt; 5.7 (榮總新標)</td><td>&Delta; 五年卡在 5.7~5.9 狹幅震盪</td></tr>
+            <tr class="good-row"><td>HOMA-IR 胰島素抗性</td><td>--</td><td>--</td><td>2.48</td><td>2.07</td><td><strong>1.42</strong></td><td>&le; 1.0 (輕度&le;1.4)</td><td>⭐ 自 2.48 大幅下降 43%</td></tr>
+            <tr><td>C-胜肽 (C-Peptide)</td><td>--</td><td>--</td><td>--</td><td>--</td><td><strong>2.00 ng/mL</strong></td><td>1.1~4.4</td><td>✅ 胰臟分泌儲備機能正常</td></tr>
+            <tr><td>臨床診斷用語</td><td>--</td><td><span class="chip red">疑糖尿病</span></td><td><span class="chip coral">嚴重胰島素抗性</span></td><td><span class="chip amber">明顯胰島素抗性</span></td><td><span class="chip green">輕度胰島素抗性</span></td><td>逐年階梯式降級改善！</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-chart-line text-teal"></i> HOMA-IR 改善的實質效益</h3>
+          <p>HOMA-IR 從 2023 的 2.48（嚴重）下降到 2025 的 1.42（輕度），代表周邊細胞對胰島素的敏感度顯著提升，胰島細胞不需要再超載分泌巨量胰島素即可壓制空腹血糖。</p>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-question-circle text-amber"></i> 為什麼 HbA1c 紋風不動？</h3>
+          <p>空腹指標都顯著進步，但 HbA1c 連五年卡在 5.8% 左右，醫學推論這代表<strong>「餐後血糖波動」</strong>（精緻澱粉、用餐進食順序或消夜）仍偏高。若想突破降至 5.5%，重心在於飲食結構而非挨餓。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>新陳代謝科五年追蹤模型</span><span class="pageno">PART 2 · 3 / 13</span></div>
+  </div>
+
+  <!-- p2-4: 血脂全項 -->
+  <div class="slide" id="p2-4">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 4/13</div>
+        <h2>2-4 血脂全項趨勢：三酸甘油脂大降，但 LDL 連續五年零次達標</h2>
+        <div class="sub">三酸甘油脂靠飲食成功壓制，但低密度壞膽固醇（LDL）卡在 134~145 區間，印證肝臟體質合成佔比極高。</div>
+      </div>
+      <div class="flags"><span class="flag red">LDL 5年零達標</span><span class="flag green">TG 125 正常</span><span class="flag teal">HDL 56 達標</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>指標項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>參考目標值</th><th>趨勢狀態</th></tr>
+          </thead>
+          <tbody>
+            <tr class="bad-row"><td>LDL-C 壞膽固醇</td><td>136.2</td><td>144.7</td><td>134.0</td><td>134.0</td><td><strong>142.0</strong></td><td>&lt; 130 (理想&lt;100)</td><td>🔴 五年五次全數超標</td></tr>
+            <tr class="hl-row"><td>總膽固醇 (Total-Chol)</td><td>217</td><td>230</td><td>199</td><td>186</td><td><strong>211</strong></td><td>&lt; 200 mg/dL</td><td>&Delta; 2024短暫達標後2025回彈</td></tr>
+            <tr class="good-row"><td>HDL-C 好膽固醇</td><td>53.4</td><td>66.7</td><td>45.0</td><td>48.0</td><td><strong>56.0</strong></td><td>&gt; 40 mg/dL</td><td>✅ 五年全數維持健康保護標準</td></tr>
+            <tr class="good-row"><td>三酸甘油脂 (TG)</td><td>137</td><td>93</td><td>203</td><td>140</td><td><strong>125</strong></td><td>&lt; 150 mg/dL</td><td>&darr; 控制良好，遠離高血脂</td></tr>
+            <tr class="good-row"><td>總膽固醇 / HDL 比值</td><td>4.06</td><td>3.45</td><td>4.42</td><td>3.88</td><td><strong>3.77</strong></td><td>&lt; 5.0 (理想&lt;4.0)</td><td>✅ 血管粥狀硬化比值極優</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split-45">
+        <div class="card coral">
+          <h3><i class="fas fa-capsules"></i> 臨床判讀：是否該使用降血脂藥物？</h3>
+          <p>大衛執行飲食與運動調整五年，TG 順利從 203 壓至 125，但 LDL 始終紋風不動（134~145），這說明飲食對大衛的 LDL 影響有限，大部分來自<strong>體質遺傳與肝臟自發合成</strong>。建議與醫師諮詢是否啟動低劑量 Statin 類藥物保護心血管。</p>
+        </div>
+        <div class="card green">
+          <h3><i class="fas fa-heart"></i> 防護盾：好的比值與零鈣化</h3>
+          <p>慶幸的是，HDL 五年平均在 50 以上，總/HDL 比值保持在 3.8 左右的優質水準，加上 2024 年 CAC=0，說明高 LDL 尚未對大衛血管壁造成穿透性發炎損傷，目前處於「預防勝於治療」的黃金窗口期。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>標準指引：中華民國心臟學會血脂治療指引</span><span class="pageno">PART 2 · 4 / 13</span></div>
+  </div>
+
+  <!-- p2-5: 肝膽機能與結構 -->
+  <div class="slide" id="p2-5">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 5/13</div>
+        <h2>2-5 肝膽機能與結構：五年最大成功典範，脂肪肝逆轉且無纖維化</h2>
+        <div class="sub">ALT 指數自 66 驟降至 37（降幅 44%），脂肪肝自中度降至輕度，2025 肝纖維化指數僅 0.6 安全無虞。</div>
+      </div>
+      <div class="flags"><span class="flag green">ALT 37 正常</span><span class="flag green">纖維化 0.6 極佳</span><span class="flag teal">脂肪肝輕度</span><span class="flag amber">囊腫 2.0cm</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>檢驗項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>標準參考值</th><th>趨勢判讀</th></tr>
+          </thead>
+          <tbody>
+            <tr class="good-row"><td>ALT (SGPT 肝發炎)</td><td>66</td><td>66</td><td>47</td><td>36</td><td><strong>37</strong></td><td>0~40 U/L</td><td>⭐ 大幅降低 44%，完全正常化</td></tr>
+            <tr class="good-row"><td>AST (SGOT)</td><td>37</td><td>30</td><td>28</td><td>21</td><td><strong>23</strong></td><td>13~39 U/L</td><td>✅ 穩定於健康低檔</td></tr>
+            <tr class="good-row"><td>GGT (膽道發炎/脂肪肝)</td><td>50</td><td>50</td><td>32</td><td>27</td><td><strong>31</strong></td><td>9~64 U/L</td><td>&darr; 改善明顯</td></tr>
+            <tr class="good-row"><td>肝纖維化指數 (FIB-4)</td><td>--</td><td>--</td><td>--</td><td>--</td><td><strong>0.6</strong></td><td>&le; 3.25 (低風險&le;1.45)</td><td>⭐ 極佳：五年脂肪肝未纖維化</td></tr>
+            <tr><td>脂肪肝超音波程度</td><td>中度</td><td>中度</td><td>輕度</td><td>輕度(CT)</td><td><strong>輕度</strong></td><td>無脂肪肝</td><td>&darr; 自中度降級為輕度</td></tr>
+            <tr class="hl-row"><td>肝囊腫最大徑 (cm)</td><td>1.63</td><td>0.94</td><td>1.87</td><td>多發</td><td><strong>2.00</strong></td><td>--</td><td>&Delta; 緩慢增大，良性水泡定期追蹤</td></tr>
+            <tr class="bad-row"><td>膽囊息肉 (cm)</td><td>--</td><td>0.55</td><td>未提及</td><td>未提及</td><td>未提及</td><td>--</td><td>⚠️ 後續三年漏記，需確認狀態</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-smile text-teal"></i> 肝臟逆轉勝實績</h3>
+          <p>肝臟是五年報告中最振奮人心的指標。ALT 發炎指標回到 37，更重要的是 2025 年檢測 FIB-4 僅 0.6，證明脂肪肝並未引起非酒精性脂肪肝炎（NASH）或早期肝硬化結構變性。</p>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-search text-amber"></i> 待確認項目：膽囊息肉與水囊腫</h3>
+          <p><strong>膽囊息肉：</strong>2022 年曾量測 0.55cm，但在榮總的三年報告皆未記錄，需在下次超音波請醫師特意照射膽囊，確認是萎縮吸收還是遺漏記錄。肝水囊腫 2.0cm 為良性結構，每年常規觀察即可。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>科別：高雄榮總胃腸肝膽科</span><span class="pageno">PART 2 · 5 / 13</span></div>
+  </div>
+
+  <!-- p2-6: 腎臟機能與尿酸 -->
+  <div class="slide" id="p2-6">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 6/13</div>
+        <h2>2-6 腎臟機能與尿酸：榮總三年 eGFR >90 破除腎病虛驚，尿酸逼近上限</h2>
+        <div class="sub">2021~2022 佑康檢出 eGFR 54~58 係檢驗方法偏誤；榮總連續三年 >90 確認腎臟健全，但尿酸 2025 回彈至 7.5。</div>
+      </div>
+      <div class="flags"><span class="flag green">eGFR 103.2 正常</span><span class="flag teal">肌酸酐 0.92</span><span class="flag amber">尿酸 7.5 貼邊</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>檢驗項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>標準參考值</th><th>趨勢判讀</th></tr>
+          </thead>
+          <tbody>
+            <tr class="good-row"><td>eGFR 腎絲球過濾率</td><td>58.79</td><td>54.04</td><td>97.5</td><td>90.8</td><td><strong>103.2</strong></td><td>&gt; 60 (優良&gt;90)</td><td>⭐ 榮總三年全數大於 90</td></tr>
+            <tr class="good-row"><td>肌酸酐 Creatinine</td><td>1.40</td><td>1.50</td><td>0.85</td><td>0.90</td><td><strong>0.92</strong></td><td>0.7~1.3 mg/dL</td><td>✅ 穩定於 0.9 左右之正常值</td></tr>
+            <tr><td>尿素氮 BUN</td><td>16.2</td><td>17.1</td><td>9.0</td><td>11.0</td><td><strong>10.0</strong></td><td>7~25 mg/dL</td><td>✅ 長年正常</td></tr>
+            <tr class="hl-row"><td>尿酸 (Uric Acid)</td><td>7.70</td><td>8.30</td><td>6.70</td><td>6.40</td><td><strong>7.50</strong></td><td>4.4~7.6 mg/dL</td><td>⚠️ 2025 回彈逼近上限 7.6</td></tr>
+            <tr><td>尿液全項 (蛋白/糖/潛血)</td><td>陰性</td><td>陰性</td><td>陰性</td><td>陰性</td><td><strong>陰性</strong></td><td>全陰性</td><td>✅ 五年全乾淨無蛋白尿</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split-55">
+        <div class="card teal">
+          <h3><i class="fas fa-flask text-teal"></i> 方法學解密：為什麼 eGFR 暴增近一倍？</h3>
+          <p>人體真實腎功能不可能在一年內由 54 逆轉跳升至 97。主因在於早期佑康診所使用傳統 <strong>Jaffe 鹼性苦味酸法</strong>，易受血液中酮體、蛋白質偽性干擾而高估肌酸酐；榮總則採用精準 <strong>酵素法 (Enzymatic method)</strong>，排除了干擾，證實大衛腎功能始終健在。</p>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-beer text-amber"></i> 尿酸管理新對策</h3>
+          <p>2025 尿酸回升至 7.5 mg/dL，與腸道菌叢呈現的「肉類油脂飲食型」及內臟脂肪代謝密切連動。建議每日飲水量維持 2,500cc 以上，節制動物內臟與高果糖漿飲料。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>科別：高雄榮總腎臟科 / 佑康診所檢驗室</span><span class="pageno">PART 2 · 6 / 13</span></div>
+  </div>
+
+  <!-- p2-7: 甲狀腺專題 🔴 -->
+  <div class="slide" id="p2-7">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 7/13</div>
+        <h2>2-7 甲狀腺專題 🔴：結節增大至 2.6cm，五年首見「A級立即進一步檢查」</h2>
+        <div class="sub">這是整份健檢報告中唯一持續惡化、且處置優先順序最高的焦點問題；功能正常，但結構需穿刺切片。</div>
+      </div>
+      <div class="flags"><span class="flag red">A級立即處置</span><span class="flag red">最大徑 2.6cm</span><span class="flag coral">都卜勒血流增加</span><span class="flag green">TSH 0.87 正常</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>處置指引標準</th></tr>
+          </thead>
+          <tbody>
+            <tr class="alert-row"><td>超音波結節尺寸</td><td>最大 2.2 cm</td><td>最大 1.73 cm</td><td><span class="chip grey">未排超音波</span></td><td><span class="chip grey">未排超音波</span></td><td><strong>最大 2.6 cm (左葉)</strong></td><td>&gt; 2.0cm 符合穿刺門檻</td></tr>
+            <tr class="alert-row"><td>超音波影像特徵</td><td>--</td><td>混合性</td><td>--</td><td>--</td><td><strong>混合實質與囊性、血流增加</strong></td><td>異質回音需鑑別良惡性</td></tr>
+            <tr class="hl-row"><td>理學觸診</td><td>--</td><td>--</td><td>無明顯異常</td><td>疑似結節 (建議做超音波)</td><td><strong>左側腫大</strong></td><td>外觀與觸摸可辨</td></tr>
+            <tr class="good-row"><td>促甲狀腺素 TSH</td><td>1.20</td><td>--</td><td>0.97</td><td>1.54</td><td><strong>0.87 &mu;IU/mL</strong></td><td>0.27~4.2 (功能全正常)</td></tr>
+            <tr class="good-row"><td>游離甲狀腺素 Free T4</td><td>--</td><td>--</td><td>1.16</td><td>1.09</td><td><strong>1.10 ng/dL</strong></td><td>0.93~1.7 (荷爾蒙未失調)</td></tr>
+            <tr class="alert-row"><td>醫師建議等級</td><td>每年超音波複檢</td><td>門診追蹤</td><td>--</td><td>理學摸到建議排超音波</td><td><span class="chip red">★ A級：建議 FNA 細針穿刺</span></td><td>榮總最高警示級別</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="big-callout red-alert">
+          <div class="label">最高優先處理事項</div>
+          <div class="answer">掛高雄榮總新陳代謝科，排定 FNA 細針穿刺</div>
+          <div class="more">
+            結節從 2.2cm 成長至 2.6cm，且伴隨都卜勒血流豐富與「頸部痛」主訴。雖然 TSH 與 Free T4 正常（荷爾蒙功能無虞），但腫瘤醫學上大於 2cm 且非純水泡的結節，標準指引就是進行細針抽吸細胞學檢查（FNA），以 100% 排除惡性可能。
+          </div>
+        </div>
+        <div class="card coral">
+          <h3><i class="fas fa-exclamation-triangle"></i> 追蹤斷層的代價與防範</h3>
+          <p>2023、2024 連續兩年健檢漏做甲狀腺超音波，2024 年醫師理學已摸出異常卻未補排，導致 2025 一驗即逼近 3cm。從 2026 起，甲狀腺超音波必須列為<strong>每年強制自費必選項目</strong>，絕不可再遺漏。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>科別：高雄榮總新陳代謝科 ｜ 醫囑明細：立即進一步檢查治療</span><span class="pageno">PART 2 · 7 / 13</span></div>
+  </div>
+
+  <!-- p2-8: 消化道與腸道菌叢 -->
+  <div class="slide" id="p2-8">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 8/13</div>
+        <h2>2-8 消化道與腸道菌叢：切片全良性，但大腸鏡追蹤逾期兩年</h2>
+        <div class="sub">2023 腸胃鏡抓出胃食道逆流、息肉切除與異位性胰腺；2025 腸道菌顯示多樣性高但缺乏 AKK 瘦子菌。</div>
+      </div>
+      <div class="flags"><span class="flag teal">腸道年齡 20~39</span><span class="flag coral">大腸鏡逾期 2 年</span><span class="flag amber">AKK 菌偏低</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card blue">
+          <h3><i class="fas fa-procedures"></i> 內視鏡與消化道病理回顧 (2023)</h3>
+          <ul>
+            <li><strong>胃食道逆流 (GERD)：</strong>洛杉磯分級 LA-A 級，伴隨慢性胃炎、Hill II 賁門鬆弛。</li>
+            <li><strong>十二指腸黏膜下腫瘤：</strong>1.5~2.0cm，切片病理證實為先天「異位性胰腺 (Heterotopic pancreas)」，良性無惡化風險。</li>
+            <li><strong>乙狀結腸息肉：</strong>0.2cm，內視鏡切除，病理為良性增生性息肉 (Hyperplastic polyp)。</li>
+            <li><strong>🔴 逾期警訊：</strong>2023 報告建議「次年追蹤大腸鏡」，但 2024、2025 皆未重照，已逾期約兩年。</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <h3><i class="fas fa-bacterium"></i> 2025 首度腸道菌叢次世代定序分析</h3>
+          <ul>
+            <li><strong>好消息：</strong>腸道菌健康分數 78（尚可）、腸道年齡 20~39 歲（優於實齡 47 歲）、益菌組成與短鏈脂肪酸（SCFA）合成健全。</li>
+            <li><strong>壞消息：</strong>有害菌比例偏高（困難梭菌、沙門氏菌偏多）、<strong>AKK 菌偏低</strong>、乳酸桿菌屬偏少。</li>
+            <li><strong>腸型判定：</strong>典型蛋白質/油脂為主的都會型飲食，現有菌相<strong>「具有誘發肥胖與慢性發炎的潛在風險」</strong>。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tip">
+        <strong>腸道菌改善處方：</strong>每日補充水溶性膳食纖維（燕麥、木耳、奇異果）、多攝取多酚類食物（莓果、深色蔬菜、綠茶）以活化 AKK 菌，並補充優質 Omega-3 降低腸道有害梭菌。
+      </div>
+    </div>
+    <div class="slide-foot"><span>科別：胃腸肝膽科 / 宏碁智醫腸道菌基因定序報告</span><span class="pageno">PART 2 · 8 / 13</span></div>
+  </div>
+
+  <!-- p2-9: 骨骼肌肉與骨密度 -->
+  <div class="slide" id="p2-9">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 9/13</div>
+        <h2>2-9 骨骼肌肉與骨密度：腰椎顯著改善，但股骨頸骨質缺乏仍待補強</h2>
+        <div class="sub">腰椎骨質自 2021 年 -1.00 逆轉至 2023 年 +0.1，但下肢髖關節股骨頸 T值 (-1.8) 顯示下肢骨質偏脆弱。</div>
+      </div>
+      <div class="flags"><span class="flag green">腰椎 T值 +0.1</span><span class="flag amber">股骨頸 T值 -1.8</span><span class="flag coral">DXA 中斷 2 年</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>骨密與骨骼肌肉項目</th><th>2021</th><th>2022</th><th>2023 (榮總 DXA)</th><th>2024</th><th>2025</th><th>臨床判定標準</th></tr>
+          </thead>
+          <tbody>
+            <tr class="good-row"><td>腰椎 L1~L4 T值</td><td>-1.00</td><td>-0.50</td><td><strong>+0.1 (BMD 1.251)</strong></td><td>--</td><td>--</td><td>&gt; -1.0 (完全正常)</td></tr>
+            <tr class="hl-row"><td>股骨頸 (Neck) T值</td><td>--</td><td>--</td><td><strong>左 -1.5 / 右 -1.8</strong></td><td>--</td><td>--</td><td>-1.0 ~ -2.5 為骨質缺乏 (Osteopenia)</td></tr>
+            <tr><td>四肢骨骼肌質量指數 SMI</td><td>--</td><td>--</td><td>7.61 kg/m²</td><td>7.44 kg/m²</td><td><strong>7.50 kg/m²</strong></td><td>正常 &gt; 7.0 kg/m²</td></tr>
+            <tr class="bad-row"><td>DXA 追蹤狀態</td><td>超音波</td><td>超音波</td><td>雙能量 X 光 (DXA)</td><td><span class="chip grey">未排檢</span></td><td><span class="chip grey">未排檢</span></td><td>⚠️ 已中斷 2 年未追蹤</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="card teal">
+          <h3><i class="fas fa-bone text-teal"></i> 鬆質骨 vs 皮質骨的落差機制</h3>
+          <p>腰椎（鬆質骨為主）在 2023 年達到 +0.1 的優異數字，但股骨頸（皮質骨為主）卻只有 -1.8。這種顯著落差在醫學上常見於：日常運動有上半身重訓，但<strong>下肢承重抗阻力訓練不足</strong>，加上<strong>維生素 D 長期處於個位數極低狀態</strong>，導致骨骼礦化不良。</p>
+        </div>
+        <div class="card blue">
+          <h3><i class="fas fa-dumbbell text-blue"></i> 2026 行動建議</h3>
+          <p>1. 2026 健檢務必自費加排雙能量 X 光骨密度 (DXA)。<br>2. 增加深蹲、硬舉、行走負重等垂直承重訓練刺激股骨頸造骨。<br>3. 大幅拉高維生素 D 補充劑量，提升腸道鈣離子主動吸收率。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>檢測：高雄榮總骨密度中心 (DXA 雙能量X光吸光式測定)</span><span class="pageno">PART 2 · 9 / 13</span></div>
+  </div>
+
+  <!-- p2-10: 維生素D與睪固酮 -->
+  <div class="slide" id="p2-10">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 10/13</div>
+        <h2>2-10 維生素D、荷爾蒙與發炎：維生素D嚴重缺乏，睪固酮兩年驟降 33%</h2>
+        <div class="sub">維生素 D 僅 11.8 ng/mL 被長期忽視；男性睪固酮兩年掉三分之一，但高敏感度 CRP 極低證明無全身發炎。</div>
+      </div>
+      <div class="flags"><span class="flag red">維生素D 11.8 極低</span><span class="flag amber">睪固酮跌 33%</span><span class="flag green">hsCRP 0.10 無發炎</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>檢驗項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>標準參考值</th><th>趨勢判讀</th></tr>
+          </thead>
+          <tbody>
+            <tr class="bad-row"><td>25-OH 維生素 D</td><td>--</td><td>--</td><td><strong>8.1 ng/mL</strong></td><td><strong>11.8 ng/mL</strong></td><td><span class="chip grey">未測</span></td><td>30~100 (低於10為重度缺乏)</td><td>🔴 長年嚴重不足，補充劑量不足</td></tr>
+            <tr class="hl-row"><td>總睪固酮 (Testosterone)</td><td>--</td><td>--</td><td><strong>4.64 ng/mL</strong></td><td>--</td><td><strong>3.12 ng/mL</strong></td><td>2.40~8.71 ng/mL</td><td>⚠️ 兩年內下降 33%，逼近邊緣</td></tr>
+            <tr class="good-row"><td>高敏感度 CRP (發炎指標)</td><td>--</td><td>--</td><td>0.093</td><td>0.105</td><td>--</td><td>0.10~0.30 mg/dL</td><td>⭐ 極低發炎，保護血管內皮</td></tr>
+            <tr><td>同半胱胺酸 (Homocysteine)</td><td>10.9</td><td>--</td><td>--</td><td>11.65</td><td>--</td><td>5~15 &mu;mol/L</td><td>✅ 正常</td></tr>
+            <tr><td>類風濕因子 (RA Factor)</td><td>6.3 (偏高)</td><td>--</td><td>--</td><td>--</td><td>--</td><td>&lt; 4.0 IU/mL</td><td>後續無關節症狀，推論單次偽陽性</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="card red">
+          <h3><i class="fas fa-sun text-red"></i> 維生素 D 危機連鎖效應</h3>
+          <p>維生素 D 絕非單純「骨骼維生素」，它是全身性的荷爾蒙前驅物。長年只有 8~11 ng/mL（不到標準下限的四成），直接連動影響：<strong>股骨頸骨質流失、胰島素敏感度下降、以及睪固酮生成不足</strong>。一般劑量難以拉升，需每日 3000~5000 IU 密集補充。</p>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-male text-amber"></i> 睪固酮衰退之病理推論</h3>
+          <p>睪固酮從 4.64 掉到 3.12，與體脂率偏高（30%）、內臟脂肪分泌雌激素前驅物、維生素 D 匱乏以及長期「打鼾造成夜間缺氧」息息相關。改善中央型肥胖與睡眠品質將是逆轉關鍵。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>檢驗：高雄榮總內分泌生化組</span><span class="pageno">PART 2 · 10 / 13</span></div>
+  </div>
+
+  <!-- p2-11: 呼吸與肺功能 -->
+  <div class="slide" id="p2-11">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 11/13</div>
+        <h2>2-11 呼吸與肺功能：低劑量 CT 乾淨，但小氣道功能偏低伴隨長期打鼾</h2>
+        <div class="sub">肺活量與大氣道極佳，微輻射 CT 排除肺癌；唯小氣道 FEF75% 偏低，吻合常態性打鼾與咳嗽之呼吸道特徵。</div>
+      </div>
+      <div class="flags"><span class="flag green">Lung-RADS 1</span><span class="flag teal">FVC 93% 優良</span><span class="flag amber">FEF75% 65~70%</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-lungs text-green"></i> 大肺功能與斷層掃描滿分</h3>
+          <ul>
+            <li><strong>肺部電腦斷層 (2024)：</strong>微輻射 LDCT 評級為 <strong>Lung-RADS 1</strong>，肺實質乾淨，無大於 6mm 實質結節或毛玻璃結節。</li>
+            <li><strong>肺活量 FVC：</strong>4440 mL（達 93% 預測值），正常健全。</li>
+            <li><strong>第一秒用力呼氣量 FEV1：</strong>3650 mL（達 94% 預測值），FEV1/FVC 達 82%，無阻塞性肺氣腫或氣喘病徵。</li>
+            <li><strong>胸部 X 光：</strong>五年連續全數正常無浸潤。</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-head-side-cough text-amber"></i> 小氣道阻塞與睡眠呼吸警訊</h3>
+          <ul>
+            <li><strong>FEF75% (末端小氣道流量)：</strong>2023 年僅 64.8% 預測值、2024 年僅 70.1% 預測值，為五年肺功能唯一紅字。</li>
+            <li><strong>臨床主訴高度吻合：</strong>大衛健檢主訴五年皆勾選「打鼾、咳嗽」。</li>
+            <li><strong>睡眠呼吸中止 (OSA) 潛在風險：</strong>BMI 25.8 + 腰圍 95cm + 頸部偏粗 + 小氣道流量低，屬於標準 OSA 高風險族群，可能影響夜間深層睡眠與睪固酮分泌。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        <strong>建議處置：</strong>若夜間打鼾頻繁或晨起口乾疲憊，建議可至胸腔科或睡眠中心安排一次<strong>居家睡眠多項生理檢查 (HST)</strong>，徹底評估是否存在夜間血氧下降問題。
+      </div>
+    </div>
+    <div class="slide-foot"><span>科別：高雄榮總胸腔內科 ｜ 儀器：肺功能機 / 微輻射胸部斷層</span><span class="pageno">PART 2 · 11 / 13</span></div>
+  </div>
+
+  <!-- p2-12: 血液常規與腫瘤標記 -->
+  <div class="slide" id="p2-12">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 12/13</div>
+        <h2>2-12 血液、尿液與腫瘤標記：造血系統五年零異常，腫瘤標記全數過關</h2>
+        <div class="sub">血液常規、紅白血球、血小板與尿液全項是五年最穩固的基石；主要腫瘤標記長年維持健康安全水準。</div>
+      </div>
+      <div class="flags"><span class="flag green">血紅素 15.0 穩定</span><span class="flag green">尿液全陰性</span><span class="flag teal">腫瘤標記全過關</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>指標項目</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>標準參考值</th><th>五年判讀</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>血紅素 Hb (g/dL)</td><td>15.0</td><td>15.6</td><td>15.2</td><td>15.0</td><td><strong>14.8</strong></td><td>13.0~18.0</td><td>✅ 造血極為穩定健康</td></tr>
+            <tr><td>白血球 WBC (1000/uL)</td><td>7.03</td><td>6.35</td><td>6.48</td><td>6.97</td><td><strong>6.07</strong></td><td>4.0~10.0</td><td>✅ 免疫白血球正常無感染</td></tr>
+            <tr><td>血小板 Platelet (1000/uL)</td><td>301</td><td>259</td><td>298</td><td>334</td><td><strong>277</strong></td><td>150~400</td><td>✅ 凝血機制完整正常</td></tr>
+            <tr><td>尿蛋白 / 尿糖 / 尿潛血</td><td>陰性</td><td>陰性</td><td>陰性</td><td>陰性</td><td><strong>陰性</strong></td><td>全陰性</td><td>⭐ 連續五年無任何腎泌尿紅字</td></tr>
+            <tr><td>AFP 胎兒蛋白 (肝癌)</td><td>2.30</td><td>3.00</td><td>2.10</td><td>--</td><td>--</td><td>&lt; 8.0 ng/mL</td><td>✅ 即使有脂肪肝亦無肝癌變</td></tr>
+            <tr><td>CEA 癌胚抗原 (腸胃道)</td><td>1.26</td><td>2.00</td><td>1.00</td><td>--</td><td>--</td><td>&lt; 5.0 ng/mL</td><td>✅ 正常</td></tr>
+            <tr><td>PSA 攝護腺特異抗原</td><td>1.30</td><td>2.50</td><td>1.13</td><td>--</td><td>--</td><td>&lt; 4.0 ng/mL</td><td>✅ 攝護腺體積 21.4mL 正常</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card teal">
+        <h3><i class="fas fa-shield-alt text-teal"></i> 扎實的造血防線</h3>
+        <p>血液五項與尿液檢驗連續五年無任何瑕疵，顯示骨髓造血、肝腎排泄與基本免疫系統底子極為良好，沒有任何隱藏性慢性貧血或自體免疫破壞徵兆。</p>
+      </div>
+    </div>
+    <div class="slide-foot"><span>檢驗室：佑康診所 / 高雄榮總病理檢驗部</span><span class="pageno">PART 2 · 12 / 13</span></div>
+  </div>
+
+  <!-- p2-13: 眼科與綜合體能 -->
+  <div class="slide" id="p2-13">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 2 · 長期趨勢 13/13</div>
+        <h2>2-13 眼科與綜合健康評分：視力矯正穩定 1.2，身體年齡略超實齡需逆轉</h2>
+        <div class="sub">眼科連續三年維持 E 級無異常，眼壓完全正常；身體年齡 49 歲超出實齡 2 歲，未來攻堅重心在內臟脂肪。</div>
+      </div>
+      <div class="flags"><span class="flag green">眼科 E 級無異常</span><span class="flag teal">眼壓 11~14</span><span class="flag amber">身體年齡 49 歲</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-eye text-green"></i> 眼科機能檢驗 (五年健康)</h3>
+          <ul>
+            <li><strong>矯正視力：</strong>戴鏡視力逐年提升，2025 年達到右眼 1.2 / 左眼 1.2 的最佳水準。</li>
+            <li><strong>眼壓 (IOP)：</strong>五年全數介於 11~14 mmHg 之間（標準 &lt; 20 mmHg），無青光眼風險。</li>
+            <li><strong>辨色力與眼底：</strong>連年正常，眼底無高血壓或糖尿病微血管病變。榮總眼科連三年評 E 級。</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <h3><i class="fas fa-user-clock text-amber"></i> 身體綜合健康指數</h3>
+          <ul>
+            <li><strong>身體年齡 (Body Age)：</strong>2023 年 47 歲（實齡 45）&rarr; 2024 年 49 歲（實齡 46）&rarr; 2025 年 49 歲（實齡 47）。超出實齡 2 歲。</li>
+            <li><strong>身體健康綜合評分：</strong>2023 年 69 分 &rarr; 2024 年 67 分 &rarr; 2025 年回升至 69 分。</li>
+            <li><strong>拉高分數核心：</strong>只要將內臟脂肪面積由 168 壓至 100 以下，身體年齡將快速逆轉年輕化。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="big-callout">
+        <div class="label">五年全科趨勢總結定錨</div>
+        <div class="answer">三大優勢確立，三大關鍵隱患待解</div>
+        <div class="more">
+          三大優勢：冠狀動脈鈣化 0、肝發炎逆轉無纖維化、胰島素抗性改善 43%；<br>
+          三大隱患：甲狀腺結節 2.6cm 穿刺迫在眉睫、LDL 連續五年未達標、內臟型肥胖尚未完全破局。
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>綜合評定：高雄榮總健康管理整合平台</span><span class="pageno">PART 2 · 13 / 13</span></div>
+  </div>
+
+</div>
+
+<!-- ================= PART 3: 行動方案 (4 頁) ================= -->
+<div class="view" id="view-p3">
+
+  <!-- p3-1: 第一級：應立即處理 -->
+  <div class="slide" id="p3-1">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 行動方案 1/4</div>
+        <h2>🔴 第一級：應立即處理事項（已延宕近一年之重大醫療決策）</h2>
+        <div class="sub">基準日為 2026/09，距離 2025-10-29 榮總發布 A 級警報已過去 11 個月，以下事項必須在兩週內完成掛號排程。</div>
+      </div>
+      <div class="flags"><span class="flag red">榮總 A 級</span><span class="flag red">立即處理</span><span class="flag coral">已延宕11個月</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="split-55">
+        <div class="card red" style="border-width:2px">
+          <h3><i class="fas fa-exclamation-triangle text-red"></i> 行動 1：甲狀腺結節 2.6cm 的 FNA 細針抽吸穿刺</h3>
+          <p><strong>急迫原因：</strong>2025-10-29 高雄榮總報告明確標示<strong>「★請立即進一步檢查或治療」</strong>。結節大於 2.0cm（目前已 2.6cm），且超音波顯影呈「混合實質與囊性、異質回音、血流增加」。</p>
+          <ul style="margin-top:10px">
+            <li><strong>具體掛號：</strong>掛高雄榮總「新陳代謝科」或「一般外科（甲狀腺專門門診）」。</li>
+            <li><strong>攜帶資料：</strong>攜帶 2025 榮總體檢報告電子檔或紙本。</li>
+            <li><strong>當診要求：</strong>安排高解析度超音波即時定位 + FNA 細針抽吸穿刺切片。</li>
+            <li><strong>附帶主訴鑑別：</strong>務必請醫師評估 2024 年起持續存在的「頸部痛」主訴是否為左葉結節壓迫或局部包膜發炎所致。</li>
+          </ul>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-calendar-check text-amber"></i> 行動 2：將甲狀腺超音波列為終身年度固定標配</h3>
+          <p><strong>記取深刻教訓：</strong>2021 (2.2cm) 與 2022 (1.73cm) 皆有追蹤，但 2023、2024 連續兩年因換院或套餐自選漏排，2024 醫師觸摸疑似異常亦未補做，導致 2025 發現時已膨脹為 2.6cm 之 A 級腫塊。</p>
+          <ul style="margin-top:10px">
+            <li>自 2026 年起，無論健檢機構或套餐項目為何，<strong>甲狀腺超音波一律自費列為每年必做</strong>。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Decision Flow SVG -->
+      <div class="fig">
+        <div class="figtitle"><span><i class="fas fa-project-diagram"></i> 甲狀腺 2.6cm 醫療決策與處置標準流程 (FNA 演算法)</span><span class="chip red">臨床指引</span></div>
+        <svg viewBox="0 0 880 110" style="background:#F8FAFC">
+          <rect x="20" y="30" width="180" height="50" rx="4" fill="#0C3A63"/>
+          <text x="110" y="52" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">門診超音波定位</text>
+          <text x="110" y="68" fill="#8FD9E4" font-size="10" text-anchor="middle">比對 2.6cm 尺寸增長</text>
+
+          <path d="M200 55 h50" stroke="#1968AD" stroke-width="2" marker-end="url(#arr)"/>
+
+          <rect x="250" y="30" width="180" height="50" rx="4" fill="#C5221F"/>
+          <text x="340" y="52" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">FNA 細針穿刺抽吸</text>
+          <text x="340" y="68" fill="#FFEAEA" font-size="10" text-anchor="middle">無須麻醉 5分鐘完成</text>
+
+          <path d="M430 55 h50" stroke="#1968AD" stroke-width="2"/>
+
+          <rect x="480" y="15" width="180" height="38" rx="4" fill="#2E7D32"/>
+          <text x="570" y="38" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">結果良性 (Benign)</text>
+
+          <rect x="480" y="60" width="180" height="38" rx="4" fill="#E09A2B"/>
+          <text x="570" y="83" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">不確定 / 濾泡性病變</text>
+
+          <path d="M660 34 h50" stroke="#2E7D32" stroke-width="2"/>
+          <path d="M660 79 h50" stroke="#E09A2B" stroke-width="2"/>
+
+          <rect x="710" y="15" width="150" height="38" rx="4" fill="#E8F5E9" stroke="#2E7D32"/>
+          <text x="785" y="38" fill="#2E7D32" font-size="11" font-weight="bold" text-anchor="middle">每 6~12 個月超音波</text>
+
+          <rect x="710" y="60" width="150" height="38" rx="4" fill="#FCF2DE" stroke="#E09A2B"/>
+          <text x="785" y="83" fill="#9a6a10" font-size="11" font-weight="bold" text-anchor="middle">進一步切除或微創消融</text>
+        </svg>
+      </div>
+    </div>
+    <div class="slide-foot"><span>處置時程：建議於 2026/09 兩週內完成門診</span><span class="pageno">PART 3 · 1 / 4</span></div>
+  </div>
+
+  <!-- p3-2: 第二級：三個月內處理 -->
+  <div class="slide" id="p3-2">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 行動方案 2/4</div>
+        <h2>⚠️ 第二級：三個月內應處理事項（專科門診與追蹤處方）</h2>
+        <div class="sub">包含連續五年超標之 LDL 頑固抗藥性評估、維生素 D 劑量校正、大腸鏡逾期補做及心雜音確認。</div>
+      </div>
+      <div class="flags"><span class="flag amber">三個月內</span><span class="flag coral">LDL 藥物諮詢</span><span class="flag teal">維生素D 補追</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="four-col">
+        <div class="card coral">
+          <h3><i class="fas fa-capsules text-coral"></i> 3. LDL 藥物評估</h3>
+          <p>五年零次達標（134~145），飲食調整已被證明無法克服體質合成。榮總醫師已明載「3 個月後追蹤血脂分析」。<strong>行動：</strong>與心臟科或家醫科討論是否開始使用低劑量 Statin（如 Rosuvastatin 5mg）。</p>
+        </div>
+
+        <div class="card red">
+          <h3><i class="fas fa-sun text-red"></i> 4. 維生素 D 劑量修正</h3>
+          <p>2023 年 8.1 嚴重缺乏，補充一年後 2024 年僅 11.8，<strong>2025 年漏未抽驗</strong>。<strong>行動：</strong>自費抽血驗 25-OH 維生素 D，並將每日劑量由目前的低劑量拉升至每日 2000~4000 IU 滴劑持續 3 個月。</p>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-stethoscope text-amber"></i> 5. 大腸鏡逾期補排</h3>
+          <p>2023 年大腸切除 0.2cm 增生性息肉，醫囑建議隔年追蹤，但 2024、2025 連續兩年未做（已逾期 2 年）。<strong>行動：</strong>預約榮總胃腸科，依良性增生病理形態請醫師重新評估大腸鏡追蹤時程。</p>
+        </div>
+
+        <div class="card teal">
+          <h3><i class="fas fa-heartbeat text-teal"></i> 6. 心雜音超音波複查</h3>
+          <p>2025 首度聽診記錄「心雜音：有」，醫師建議「必要時宜作心臟超音波」。<strong>行動：</strong>在門診請心臟科醫師重新聽診，並安排心臟超音波比對二尖瓣/三尖瓣閉鎖狀況。</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>行動項目</th><th>負責門診科別</th><th>攜帶檢驗數據</th><th>目標成果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>LDL 血脂門診</strong></td><td>心臟內科 / 家醫科</td><td>五年血脂趨勢表 (LDL 134~145, 鈣化分數 0)</td><td>評估是否啟動低劑量 Statin 介入治療</td></tr>
+            <tr><td><strong>維生素 D 門診</strong></td><td>新陳代謝科 / 家醫科</td><td>2023: 8.1, 2024: 11.8 ng/mL</td><td>抽血複檢，確立每日 3000 IU 醫囑補充劑量</td></tr>
+            <tr><td><strong>大腸鏡評估</strong></td><td>胃腸肝膽科</td><td>2023 榮總大腸鏡切片病理報告</td><td>安排大腸鏡檢時間，確認無新長息肉</td></tr>
+            <tr><td><strong>心臟雜音確認</strong></td><td>心臟內科</td><td>2024 心臟超音波 (MR/TR) + 2025 聽診雜音</td><td>完成心臟超音波確認瓣膜逆流無惡化</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="slide-foot"><span>執行目標：2026 Q4 前完成專科門診與排檢</span><span class="pageno">PART 3 · 2 / 4</span></div>
+  </div>
+
+  <!-- p3-3: 第三級：生活型態長期管理 -->
+  <div class="slide" id="p3-3">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 行動方案 3/4</div>
+        <h2>📊 第三級：生活型態與長期健康治理（6 大工程）</h2>
+        <div class="sub">體重大致到位，但內臟脂肪、肌肉品質、餐後血糖、尿酸、腸道菌與睡眠呼吸是決定未來 10 年健康壽命的關鍵。</div>
+      </div>
+      <div class="flags"><span class="flag blue">生活型態</span><span class="flag green">減脂增肌</span><span class="flag purple">腸道調整</span><span class="flag teal">睡眠呼吸</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="three-col">
+        <div class="card blue">
+          <h3><i class="fas fa-tape text-blue"></i> 7. 攻堅中央型肥胖</h3>
+          <p><strong>現況：</strong>腰圍 95cm、內臟脂肪面積 168 cm²、腰臀比 1.01。<br><strong>目標：</strong>腰圍降至 89cm 以下，內臟脂肪面積跌破 100 cm²（約需再減去 4~5kg 純內臟脂肪）。這是解決脂肪肝與胰島素抗性最根本的一役。</p>
+        </div>
+
+        <div class="card green">
+          <h3><i class="fas fa-dumbbell text-green"></i> 8. 提升肌肉與相位角</h3>
+          <p><strong>現況：</strong>相位角 5.0°~5.1° 連續三年低於標準 6~8，SMI 7.50。<br><strong>目標：</strong>避免 2024 年「只減重卻減到肌肉」的錯誤。維持每週 2~3 次下肢大肌群重量訓練（深蹲、腿推），每日攝取足量每公斤 1.2g 優質蛋白質。</p>
+        </div>
+
+        <div class="card teal">
+          <h3><i class="fas fa-utensils text-teal"></i> 9. 餐後血糖管理</h3>
+          <p><strong>現況：</strong>空腹指標優良，但 HbA1c 卡在 5.8% 瓶頸。<br><strong>目標：</strong>實行<strong>「菜 &rarr; 肉 &rarr; 飯」</strong>進食順序，嚴格戒除晚上 8 點後的精緻碳水化合物與含糖宵夜，壓平餐後血糖高峰，使 HbA1c 順利降至 5.5%。</p>
+        </div>
+
+        <div class="card amber">
+          <h3><i class="fas fa-tint text-amber"></i> 10. 尿酸主動壓制</h3>
+          <p><strong>現況：</strong>2025 年尿酸回升至 7.5 mg/dL。<br><strong>目標：</strong>每日規律飲水 2,500~3,000 cc。減少濃肉湯、帶殼海鮮、內臟與高果糖玉米糖漿（最易阻礙尿酸排泄）。</p>
+        </div>
+
+        <div class="card purple">
+          <h3><i class="fas fa-seedling text-purple"></i> 11. 腸道菌相修復</h3>
+          <p><strong>現況：</strong>AKK 瘦子菌偏低、有害梭菌偏高。<br><strong>目標：</strong>每日補充水溶性膳食纖維、多吃深綠色蔬菜、每週補充 2~3 次深海魚（Omega-3）或亞麻仁油，減少高溫油炸，培育健康腸型。</p>
+        </div>
+
+        <div class="card coral">
+          <h3><i class="fas fa-bed text-coral"></i> 12. 睡眠呼吸 (OSA) 評估</h3>
+          <p><strong>現況：</strong>常年打鼾 + 咳嗽 + 睪固酮兩年降 33%。<br><strong>目標：</strong>若常有晨起口乾、白天精神不濟，至胸腔科做睡眠呼吸檢查，確認是否有夜間呼吸暫停與低血氧破壞荷爾蒙分泌。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>執行方針：日常行為科學管理 ｜ 預計回測時間：2026/10 年度體檢</span><span class="pageno">PART 3 · 4 / 4</span></div>
+  </div>
+
+  <!-- p3-4: 2026 補回清單與五年總結 -->
+  <div class="slide" id="p3-4">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 3 · 行動方案 4/4</div>
+        <h2>📋 2026 年度健檢必補項目清單與五年全景總結</h2>
+        <div class="sub">建立「防呆制度」補齊過往中斷的關鍵檢驗，並盤點五年健檢做對與沒做好的核心功課。</div>
+      </div>
+      <div class="flags"><span class="flag blue">2026 健檢清單</span><span class="flag green">做對三件事</span><span class="flag coral">沒做好三件事</span></div>
+    </div>
+    <div class="slide-body">
+      <!-- 追蹤斷線清單表 -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>追蹤項目</th><th>前次受檢年度</th><th>已中斷時間</th><th>急迫性建議</th><th>2026 健檢執行方式</th></tr>
+          </thead>
+          <tbody>
+            <tr class="alert-row"><td><strong>甲狀腺超音波</strong></td><td>2025 (2.6cm)</td><td>即將屆期</td><td>🔴 極高 (A級)</td><td>門診提前於本月執行，明年固定複檢</td></tr>
+            <tr class="bad-row"><td><strong>25-OH 維生素 D</strong></td><td>2024 (11.8)</td><td>已中斷 1 年</td><td>🔴 必補</td><td>自費抽血檢驗 (目標值 &gt; 30 ng/mL)</td></tr>
+            <tr class="bad-row"><td><strong>骨質密度 (DXA 雙能量)</strong></td><td>2023</td><td>已中斷 2 年</td><td>⚠️ 強烈建議</td><td>自費加選腰椎與雙側股骨頸 DXA</td></tr>
+            <tr class="bad-row"><td><strong>大腸鏡檢查</strong></td><td>2023 (切除息肉)</td><td>已中斷 2 年</td><td>⚠️ 逾期必排</td><td>全大腸鏡檢查 (監測新息肉)</td></tr>
+            <tr class="hl-row"><td><strong>心臟超音波</strong></td><td>2024</td><td>已中斷 1 年</td><td>⚠️ 建議加排</td><td>因 2025 發現心雜音，需超音波比對</td></tr>
+            <tr><td><strong>腫瘤標記 (AFP/CEA/PSA)</strong></td><td>2023</td><td>已中斷 2 年</td><td>建議加驗</td><td>自費血液腫瘤標記套餐</td></tr>
+            <tr><td><strong>肺功能檢查 (PFT)</strong></td><td>2024</td><td>已中斷 1 年</td><td>建議加驗</td><td>追蹤小氣道 FEF75% 恢復狀況</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="two-col">
+        <div class="card green">
+          <h3><i class="fas fa-check-double text-green"></i> 做對的三件事（數據證明成果）</h3>
+          <ol style="padding-left:18px; line-height:1.6">
+            <li><strong>肝臟結構全面逆轉：</strong>ALT 66&rarr;37，脂肪肝自中度降為輕度，肝纖維化指數 0.6 證實無肝硬化變性。</li>
+            <li><strong>代謝胰島素逆轉：</strong>空腹血糖自 127 降至 90，HOMA-IR 大幅改善 43%，從「疑糖尿病」降級為「輕度」。</li>
+            <li><strong>心血管與身體組成優化：</strong>體脂純減 4.5kg，最關鍵的<strong>冠狀動脈鈣化分數為 0 分</strong>，確立心血管強韌底子。</li>
+          </ol>
+        </div>
+
+        <div class="card coral">
+          <h3><i class="fas fa-times-circle text-coral"></i> 沒做好的三件事（必須用制度解決）</h3>
+          <ol style="padding-left:18px; line-height:1.6">
+            <li><strong>追蹤斷線造成重大代價：</strong>甲狀腺超音波中斷兩年、大腸鏡逾期兩年、維生素D中斷；2024 摸到甲狀腺結節未做超音波，直接導致 2025 腫大至 2.6cm 升級 A 級。</li>
+            <li><strong>LDL 連續五年未達標：</strong>唯一完全沒有改善的指標，已被證明飲食控制無效，需醫師評估藥物。</li>
+            <li><strong>中央型內臟肥胖未破局：</strong>腰圍仍在 95cm，內臟脂肪是其餘代謝問題的根本源頭。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="big-callout">
+        <div class="label">五年總結定錨宣言</div>
+        <div class="answer">「代謝與肝臟走出逆轉曲線，心血管底子極佳；甲狀腺立即穿刺，該追蹤的項目用制度鎖死。」</div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>大衛體檢五年分析決策平台 ｜ 完結篇</span><span class="pageno">PART 3 · 4 / 4</span></div>
+  </div>
+
+</div>
+
+<!-- ================= PART 4: AI 虛擬醫生 (即時互動問診室) ================= -->
+<div class="view" id="view-p4">
+  <div class="slide" id="p4-1">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">PART 4 · AI 專屬醫療顧問</div>
+        <h2>AI 虛擬醫生：即時問診諮詢室（已完整載入 2021–2025 大衛健檢大腦）</h2>
+        <div class="sub">以大衛 5 年完整健檢數據為知識底座，結合實證臨床醫學。支援自備 Gemini API Key 即時對話，或點選內建預置問題體驗深度解答。</div>
+      </div>
+      <div class="flags">
+        <span class="flag purple"><i class="fas fa-brain"></i> Gemini 驅動</span>
+        <span class="flag blue"><i class="fas fa-database"></i> 5年全數據就緒</span>
+        <span class="flag green"><i class="fas fa-lock"></i> 本地隱私保障</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="doctor-layout">
+        <!-- Sidebar -->
+        <div class="doc-sidebar">
+          <div>
+            <h4 style="font-size:.85rem; font-weight:800; color:var(--ink); margin-bottom:6px"><i class="fas fa-key text-blue"></i> Gemini API Key 設定</h4>
+            <p style="font-size:.75rem; color:var(--muted); line-height:1.4; margin-bottom:8px">純前端呼叫，Key 僅儲存於您的瀏覽器 LocalStorage，不會外傳。</p>
+            <div style="display:flex; gap:6px">
+              <input type="password" id="apiKeyInput" placeholder="貼上 AIzaSy... 開頭的金鑰" style="flex:1; padding:6px 10px; border:1px solid var(--line); border-radius:3px; font-size:.78rem">
+              <button id="saveKeyBtn" style="background:var(--blue); color:#fff; border:none; padding:6px 10px; border-radius:3px; font-size:.75rem; font-weight:700; cursor:pointer">儲存</button>
+            </div>
+            <div id="keyStatus" style="font-size:.72rem; margin-top:4px; color:var(--teal-d); font-weight:700"></div>
+          </div>
+
+          <div style="border-top:1px solid var(--line); padding-top:10px">
+            <h4 style="font-size:.84rem; font-weight:800; color:var(--ink); margin-bottom:8px"><i class="fas fa-lightbulb text-amber"></i> 點選快速問診提問</h4>
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <button class="prompt-btn" onclick="askPreset('為什麼我的 LDL-C 連續五年都在 134~145 降不下來？我需要吃藥嗎？')">
+                <i class="fas fa-question-circle"></i> 為什麼我的 LDL 連續五年降不下？需吃藥嗎？
+              </button>
+              <button class="prompt-btn" onclick="askPreset('甲狀腺結節 2.6cm 做細針穿刺 (FNA) 流程如何？會痛嗎？我該怎麼排？')">
+                <i class="fas fa-question-circle"></i> 甲狀腺結節 2.6cm 做 FNA 穿刺會痛嗎？流程？
+              </button>
+              <button class="prompt-btn" onclick="askPreset('冠狀動脈鈣化分數 0 代表我的心臟完全沒有問題嗎？但為什麼我 2025 有心雜音？')">
+                <i class="fas fa-question-circle"></i> 鈣化分數 0 代表心臟完全沒問題嗎？心雜音怎解釋？
+              </button>
+              <button class="prompt-btn" onclick="askPreset('維生素 D 只有 11.8 ng/mL，該怎麼補充才能有效拉高到 30 以上？')">
+                <i class="fas fa-question-circle"></i> 維生素 D 只有 11.8，該怎麼補才能達標？
+              </button>
+              <button class="prompt-btn" onclick="askPreset('我常年咳嗽、打鼾、小氣道數值低，這跟睪固酮兩年掉 33% 有關聯嗎？')">
+                <i class="fas fa-question-circle"></i> 打鼾、小氣道數值低跟睪固酮下降有關聯嗎？
+              </button>
+              <button class="prompt-btn" onclick="askPreset('請給我一份針對我目前狀況（內臟脂肪、輕度脂肪肝、尿酸7.5）的具體一週飲食與運動指引。')">
+                <i class="fas fa-question-circle"></i> 給我針對內臟脂肪與尿酸的一週飲食指引
+              </button>
+            </div>
+          </div>
+
+          <div class="note" style="margin-top:auto; font-size:.72rem">
+            <strong>免責聲明：</strong>AI 虛擬醫生依據您的健檢數據提供分析推論與就醫引導，不能取代合格醫師之實體門診診斷。
+          </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="doc-main">
+          <div class="chat-window" id="chatBox">
+            <div class="chat-bubble ai">
+              <strong><i class="fas fa-user-md text-blue"></i> AI 專屬虛擬醫生：</strong><br>
+              大衛先生您好！我已經仔細研讀了您 2021 至 2025 年共 5 份健檢報告的完整數據與醫囑。<br><br>
+              恭喜您在<strong>肝臟發炎（ALT 降 44%）、無肝纖維化、胰島素抗性改善 43% 以及冠狀動脈鈣化分數 0</strong> 上取得了重大突破！<br><br>
+              目前最需要您專注排解的是 <strong>2025 年榮總新陳代謝科發布的 A 級警訊：甲狀腺左葉 2.6cm 結節之細針穿刺 (FNA)</strong>，以及連續五年未達標的 LDL-C。<br><br>
+              請問您今天想先針對哪個項目進行深入了解？您可以點選左側快速問題，或在下方直接輸入任何提問！
+            </div>
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" id="userMsgInput" placeholder="輸入您的醫學疑問或健康諮詢（按 Enter 發送）..." onkeydown="if(event.key==='Enter') sendUserMessage()">
+            <button onclick="sendUserMessage()"><i class="fas fa-paper-plane"></i> 發送</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-foot">
+      <span>AI 引擎支援：Google Gemini 1.5 Flash / 2.0 ｜ 具備大衛完整五年健檢上下文記憶</span>
+      <span class="pageno">PART 4 · 1 / 1</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= BOTTOM DECK CONTROLS ================= -->
+<div class="deckbar" id="deckbar">
+  <div class="progress"><div class="fill" id="progressFill"></div></div>
+  <div class="hint">切換快捷鍵：&larr; &rarr; 翻頁 ｜ Home 封面 ｜ F 全螢幕</div>
+  <div class="ctrl">
+    <div class="counter" id="counter">1 / 5</div>
+    <button id="btnPrev" title="上一頁 (Left Arrow)">&larr;</button>
+    <button id="btnNext" title="下一頁 (Right Arrow)">&rarr;</button>
+  </div>
+</div>
+
+<!-- ================= PRESENTATION & APP CONTROLLER SCRIPT ================= -->
+<script>
+(function(){
+  // Slide groups matching topnav
+  var parts = {
+    p1: Array.prototype.slice.call(document.querySelectorAll('#view-p1 .slide')),
+    p2: Array.prototype.slice.call(document.querySelectorAll('#view-p2 .slide')),
+    p3: Array.prototype.slice.call(document.querySelectorAll('#view-p3 .slide')),
+    p4: Array.prototype.slice.call(document.querySelectorAll('#view-p4 .slide'))
+  };
+
+  var order = ['p1','p2','p3','p4'];
+  var state = { view:'home', idx:0 };
+  var last = { p1:0, p2:0, p3:0, p4:0 };
+
+  var views = {
+    home: document.getElementById('view-home'),
+    p1: document.getElementById('view-p1'),
+    p2: document.getElementById('view-p2'),
+    p3: document.getElementById('view-p3'),
+    p4: document.getElementById('view-p4')
+  };
+
+  var deckbar = document.getElementById('deckbar');
+  var fill = document.getElementById('progressFill');
+  var counter = document.getElementById('counter');
+
+  function render(){
+    Object.keys(views).forEach(function(k){
+      if(views[k]) views[k].classList.toggle('active', k === state.view);
+    });
+
+    var navs = document.querySelectorAll('[data-nav]');
+    for(var i=0; i<navs.length; i++){
+      navs[i].classList.toggle('active', navs[i].getAttribute('data-nav') === state.view);
+    }
+
+    if(state.view === 'home'){
+      deckbar.style.display = 'none';
+    } else {
+      deckbar.style.display = 'block';
+      var slides = parts[state.view];
+      if(slides && slides.length){
+        slides.forEach(function(s, i){
+          s.classList.toggle('active', i === state.idx);
         });
+        counter.textContent = (state.idx + 1) + ' / ' + slides.length;
+        fill.style.width = (((state.idx + 1) / slides.length) * 100) + '%';
+        last[state.view] = state.idx;
+      }
+    }
+    window.scrollTo(0, 0);
+  }
 
-        const { createApp } = Vue;
-        
-        createApp({
-            data() {
-                return {
-                    apiKey: localStorage.getItem('gemini_api_key') || '',
-                    tempKey: '',
-                    userInput: '',
-                    loading: false,
-                    messages: [
-                        { role: 'assistant', content: '您好，我是您的專屬 AI 虛擬醫生。我已經詳細閱讀了您 2021-2025 的體檢報告。有什麼我可以幫您的？例如您可以問我：「為什麼我的 LDL 一直降不下來？」或「甲狀腺結節穿刺會痛嗎？」' }
-                    ],
-                    systemPrompt: 你是一位專業、親切且有同理心的虛擬醫生。你已經閱讀了患者大衛2021-2025年的體檢報告。
-請根據以下報告內容回答問題。回答要專業但口語化，給出具體的建議。如果是嚴重問題請提醒他就醫。
+  function goHash(hash){
+    hash = (hash || '#home').replace('#', '');
+    if(hash === 'home' || hash === ''){
+      state.view = 'home';
+      render();
+      return;
+    }
+    var m = hash.match(/^(p1|p2|p3|p4)-(\d+)$/);
+    if(m){
+      var v = m[1], i = parseInt(m[2], 10) - 1;
+      if(parts[v] && parts[v][i]){
+        state.view = v;
+        state.idx = i;
+        render();
+        return;
+      }
+    }
+    if(parts[hash]){
+      state.view = hash;
+      state.idx = last[hash] || 0;
+      render();
+      return;
+    }
+    state.view = 'home';
+    render();
+  }
 
-體檢報告內容：
+  function setHash(){
+    var h = state.view === 'home' ? '#home' : '#' + state.view + '-' + (state.idx + 1);
+    if(location.hash !== h) history.replaceState(null, '', h);
+  }
 
+  function move(d){
+    if(state.view === 'home'){
+      if(d > 0){ state.view = 'p1'; state.idx = 0; render(); setHash(); }
+      return;
+    }
+    var slides = parts[state.view];
+    var n = state.idx + d, pos = order.indexOf(state.view);
+    if(n < 0){
+      if(pos > 0){
+        state.view = order[pos - 1];
+        state.idx = parts[state.view].length - 1;
+      } else {
+        state.view = 'home';
+      }
+    } else if(n >= slides.length){
+      if(pos < order.length - 1){
+        state.view = order[pos + 1];
+        state.idx = 0;
+      } else {
+        state.view = 'home';
+      }
+    } else {
+      state.idx = n;
+    }
+    render();
+    setHash();
+  }
 
-                }
-            },
-            methods: {
-                saveKey() {
-                    if (this.tempKey.trim()) {
-                        this.apiKey = this.tempKey.trim();
-                        localStorage.setItem('gemini_api_key', this.apiKey);
-                    }
-                },
-                renderMd(text) {
-                    return marked.parse(text);
-                },
-                scrollToBottom() {
-                    setTimeout(() => {
-                        const box = document.getElementById('chatbox');
-                        if (box) box.scrollTop = box.scrollHeight;
-                    }, 100);
-                },
-                async sendMessage() {
-                    if (!this.userInput.trim() || !this.apiKey) return;
-                    
-                    const userText = this.userInput;
-                    this.messages.push({ role: 'user', content: userText });
-                    this.userInput = '';
-                    this.loading = true;
-                    this.scrollToBottom();
+  document.getElementById('btnPrev').addEventListener('click', function(){ move(-1); });
+  document.getElementById('btnNext').addEventListener('click', function(){ move(1); });
 
-                    const contents = [
-                        { role: \x22user\x22, parts: [{ text: this.systemPrompt }] },
-                        { role: \x22model\x22, parts: [{ text: \x22好的，我已經準備好為大衛提供醫療諮詢了。\x22 }] }
-                    ];
+  document.addEventListener('keydown', function(e){
+    var t = e.target;
+    if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){
+      e.preventDefault(); move(1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){
+      e.preventDefault(); move(-1);
+    } else if(e.key === 'Home'){
+      e.preventDefault(); state.view = 'home'; render(); setHash();
+    } else if(e.key === 'End' && state.view !== 'home'){
+      e.preventDefault(); state.idx = parts[state.view].length - 1; render(); setHash();
+    } else if(e.key === 'f' || e.key === 'F'){
+      if(document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    }
+  });
 
-                    for (let i = 1; i < this.messages.length; i++) {
-                        const msg = this.messages[i];
-                        contents.push({
-                            role: msg.role === 'user' ? 'user' : 'model',
-                            parts: [{ text: msg.content }]
-                        });
-                    }
+  window.addEventListener('hashchange', function(){ goHash(location.hash); });
+  goHash(location.hash);
+})();
+</script>
 
-                    try {
-                        const response = await fetch(https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contents: contents,
-                                generationConfig: {
-                                    temperature: 0.7,
-                                    maxOutputTokens: 1000,
-                                }
-                            })
-                        });
+<!-- ================= AI VIRTUAL DOCTOR LOGIC ================= -->
+<script>
+var systemPrompt = `你是一位專業、嚴謹且有極高同理心的私人資深主治醫師兼健康管理顧問。你正在為患者「大衛 (David，現年47-48歲)」進行健康諮詢。
+你已經完整研讀並熟記大衛 2021-2025 年這五年間在「佑康診所」與「高雄榮總健康管理中心」的所有體檢數據。
 
-                        if (!response.ok) {
-                            throw new Error(API 請求失敗: );
-                        }
+【大衛核心臨床病歷與數據總覽】：
+1. 甲狀腺（最緊急）：
+   - 2021: 2.2cm 結節 -> 2022: 1.73cm -> 2023、2024漏檢 -> 2025: 兩葉結節，最大左葉2.6cm，伴隨混合實質與囊性、異質回音、都卜勒血流增加。
+   - 榮總判定：新陳代謝科 A級（請立即進一步檢查治療），醫囑明確建議做細針抽吸細胞學檢查 (FNA)。
+   - 主訴自2024起有「頸部痛」，但TSH(0.87)與Free T4(1.10)功能全部正常。
+2. 心血管系統（底子極佳但有新雜音）：
+   - 2024 冠狀動脈CT：鈣化分數 = 0, CAD-RADS 0，18節段全部無狹窄及斑塊！
+   - 2025 心臟理學聽診首度出現「心雜音：有」；2024曾有極輕微二尖瓣與輕度三尖瓣逆流。
+   - 脈波傳導速度(PWV)約 1395~1469 輕微偏高。血壓長年105~121/61~68極佳。
+3. 血糖與代謝（重大逆轉）：
+   - 2022空腹血糖曾達127(疑糖尿病) -> 2023 HOMA-IR 2.48(嚴重) -> 2025 HOMA-IR 降至 1.42(輕度，改善43%)，空腹血糖90。
+   - 但糖化血色素 HbA1c 連五年卡在 5.7~5.9% 橫盤（推論與餐後血糖波動有關）。
+4. 血脂（最頑固）：
+   - LDL 壞膽固醇連續五年零次達標 (136.2 -> 144.7 -> 134 -> 134 -> 142)，三酸甘油脂已正常(125)，HDL良好(56)。證明高LDL主要源於體質與肝臟自發合成，飲食已達瓶頸。
+5. 肝膽（成功逆轉典範）：
+   - ALT從66降至37，脂肪肝由中度降為輕度，2025 Fibrosis-4 纖維化指數僅0.6（安全無纖維化）。肝囊腫緩慢增至2.0cm。2022曾有0.55cm膽囊息肉需複驗。
+6. 腎臟與尿酸：
+   - 榮總三年eGFR皆>90 (2025達103.2)，破除診所早年54的檢驗法偏誤。尿酸2025回升至7.5 (上限7.6)。
+7. 其他隱憂：
+   - 維生素D嚴重缺乏：2023年8.1，2024年補充後僅11.8，2025漏驗。
+   - 睪固酮兩年跌33% (4.64 -> 3.12)。
+   - 大腸鏡：2023切除0.2cm增生息肉，已逾期2年未複檢。
+   - 呼吸：FEF75%小氣道流量偏低(65~70%)，常年主訴打鼾、咳嗽。
 
-                        const data = await response.json();
-                        const reply = data.candidates[0].content.parts[0].text;
-                        
-                        this.messages.push({ role: 'assistant', content: reply });
-                    } catch (error) {
-                        this.messages.push({ role: 'assistant', content: 抱歉，系統發生錯誤：。請確認您的 API Key 是否正確。 });
-                        if (error.message.includes('400') || error.message.includes('403')) {
-                            this.apiKey = '';
-                            localStorage.removeItem('gemini_api_key');
-                        }
-                    } finally {
-                        this.loading = false;
-                        this.scrollToBottom();
-                    }
-                }
-            }
-        }).mount('#app');
-    </script>
+回答原則：
+- 專業、具說服力、條理清晰，多用重點條列與粗體。
+- 語氣溫和親切，給予信心，但對重大風險（如甲狀腺穿刺、大腸鏡逾期、LDL用藥）給予明確、堅定的行動指導。`;
+
+// Pre-computed fallback responses for offline or zero-key instant preview
+var precomputed = {
+  "ldl": `**為什麼您的 LDL-C 連續五年降不下來？**
+
+1. **「體質合成」遠大於「飲食攝取」**：
+   五年數據是最好的科學證據——您的三酸甘油脂（TG）已經從 203 成功降到 125，HDL 也高達 56，這說明您這幾年的飲食節制非常努力且方向正確。然而 LDL 連五年紋風不動卡在 134~142，這在醫學上明確代表：您體內的 LDL 有高達 75~80% 是由**肝臟自發性膽固醇合成酶（HMG-CoA Reductase）**製造，單純靠飲食已經到達生理極限。
+
+2. **您需要吃藥嗎？**
+   - **好消息**：您 2024 年的冠狀動脈鈣化分數是 **0 分**，這代表過去五年的高 LDL 尚未在血管壁內形成動脈粥狀硬化斑塊，您沒有迫切的心肌梗塞立即危機。
+   - **臨床建議**：但為了「長期防患於未然」，建議下次門診與醫師深入討論是否啟動**極低劑量 Statin 類藥物**（例如 Crestor 5mg 或 Lipitor 10mg，甚至隔天吃一顆）。這能精準抑制肝臟合成，輕鬆將 LDL 壓到 100 以下，給血管一個長期的無憂保障。`,
+
+  "fna": `**甲狀腺結節 2.6cm 細針穿刺 (FNA) 專業說明：**
+
+1. **為什麼非做不可？**
+   - 您的結節已從 2021 年的 2.2cm 成長至 2.6cm，且超音波顯示**「異質回音、混合性、血流增加」**。
+   - 在內分泌醫學指引中，**大於 2.0cm 的實質/混合結節**，無論甲狀腺荷爾蒙（TSH）是否正常，**細針穿刺 (FNA) 是唯一能 100% 定性良惡性的黃金標準**。
+   - 高雄榮總已在 2025 年給予最高級別的 **「A級：立即進一步檢查治療」**。
+
+2. **穿刺流程與疼痛程度：**
+   - **過程極快**：在超音波即時顯影導引下，醫師使用比一般抽血針更細的針頭（23~27 Gauge），刺入結節抽吸細胞，全程約僅需 2~5 分鐘。
+   - **疼痛感**：一般不需要打麻醉（因為打麻醉針反而比穿刺針更痛），感受就像被蚊子叮或抽血輕微痠脹，做完局部加壓 15 分鐘即可返家，完全不影響工作生活。
+
+3. **立即行動指引**：
+   請立即掛高雄榮總新陳代謝科，並務必向醫師提及 2024 年起出現的「頸部痛」主訴，確認是否有包膜壓迫。`,
+
+  "cac": `**鈣化分數 0 與 2025 新增「心雜音」的醫學關聯解密：**
+
+1. **鈣化分數 0 代表什麼？**
+   - 這是榮總五年體檢含金量最高的一張成績單！
+   - 代表供應心臟肌肉的三條主要冠狀動脈管壁上**完全沒有鈣化斑塊**，CAD-RADS 0 評定。這意味著您未來 5~10 年內發生急性心肌梗塞或缺血性冠心病的機率趨近於零。
+
+2. **那為什麼 2025 年理學檢查會首次聽到「心雜音」？**
+   - **病理位置不同**：鈣化分數看的是**「水管（冠狀動脈）」**；心雜音聽的是**「水龍頭瓣膜（二尖瓣、三尖瓣、主動脈瓣）」**血液流經的亂流聲。
+   - 2024 年您的心臟超音波曾記錄有「極輕微二尖瓣逆流 (MR)」與「輕度三尖瓣逆流 (TR)」。2025 年聽診到的雜音，極高機率只是這項生理性逆流的聽診投射。
+   - **處置**：下次心臟科門診請醫師安排一次心臟超音波對比即可，無須過度擔憂！`,
+
+  "vitd": `**維生素 D 僅 11.8 ng/mL 的危害與快速補充攻略：**
+
+1. **嚴峻現況**：
+   - 正常人需 &ge; 30 ng/mL，低於 10 屬於「重度缺乏」。您 2023 年僅 8.1，補充一年後 2024 年僅升到 11.8，這證明**您之前的補充劑量遠遠不足**（可能每天只吃 400~800 IU 綜合維他命）。
+
+2. **它牽動的三大關鍵問題**：
+   - **股骨頸骨質流失**：您的股骨頸 T值只有 -1.8（骨質缺乏），維生素 D 不足導致腸道無法吸收鈣質。
+   - **胰島素阻抗**：維生素 D 是胰島 &beta; 細胞分泌胰島素的重要輔酶。
+   - **男性荷爾蒙**：與睪固酮下降呈現高度正相關。
+
+3. **專業急救補充方案**：
+   - **第一階段（前 3 個月）**：改用醫療級**液態滴劑 (Vitamin D3)**，每天餐後直接補充 **3000~5000 IU**。
+   - **第二階段**：3 個月後抽血複查 25-OH 維生素 D，確認突破 30 ng/mL 後，再改為每日 2000 IU 維持量。
+   - 維生素 D 為脂溶性，請務必與「含有油脂的正餐」一起服用吸收率最佳。`,
+
+  "testo": `**打鼾、小氣道數值低與睪固酮下降 33% 的隱形連鎖鏈：**
+
+醫學上這是一個非常經典但常被忽視的「惡性三角循環」：
+
+1. **小氣道 FEF75% 偏低 + 常年打鼾**：
+   加上您的 BMI 25.8 與腰圍 95cm，高度指向**「阻塞型睡眠呼吸中止 (OSA)」**的潛在特徵。
+2. **夜間缺氧與深層睡眠剝奪**：
+   男性有超過 80% 的睪固酮是在**夜間深度慢波睡眠（NREM Stage 3）**中脈衝式分泌。若因打鼾氣道塌陷頻繁微覺醒，會嚴重抑制下視丘-腦下垂體-性腺軸（HPG 軸），導致睪固酮分泌暴跌。
+3. **內臟脂肪的雙重打擊**：
+   95cm 腰圍的內臟脂肪組織富含「芳香化酶 (Aromatase)」，會主動把男性的睪固酮轉化為雌激素，進一步拉低游離睪固酮。
+
+**建議處置步驟**：
+至胸腔內科或睡眠中心借測「居家睡眠檢測儀 (HST)」，同時將腰圍從 95 壓回 89cm，雙管齊下睪固酮便能自然回升！`,
+
+  "diet": `**針對大衛（內臟脂肪 168cm²、輕度脂肪肝、尿酸 7.5）的專屬一週飲食生活作息：**
+
+- **核心原則**：低升糖防發炎、促進尿酸排泄、活化 AKK 瘦子菌、阻斷夜間脂肪堆積。
+
+### 1. 每日三餐架構：
+- **早餐**：無糖豆漿 300cc ＋ 奇亞籽 1 匙 ＋ 水煮蛋 2 顆 ＋ 蒸地瓜半條（低升糖、啟動晨間代謝）。
+- **午餐（外食原則）**：採「2 拳頭蔬菜 ＋ 1 掌心優質蛋白質 ＋ 半碗糙米/五穀飯」。進食順序嚴格遵守：**菜 &rarr; 肉 &rarr; 飯**。
+- **晚餐（關鍵戰役）**：晚上 7:30 前結束。去皮雞胸肉/煎鮭魚 ＋ 大盤深綠蔬菜 ＋ 豆腐味噌湯。**晚餐不吃精緻麵食、不吃甜品水餃**。
+
+### 2. 針對尿酸與腸道菌的微調：
+- **水分子炸彈**：每天喝足 **2,500 ~ 3,000 cc 白開水**，白天每小時設鬧鐘喝 200cc，稀釋尿酸結晶。
+- **活化 AKK 菌**：每週吃 3 次藍莓或奇異果（富含多酚與果膠），每週吃兩次鯖魚或秋刀魚（補 Omega-3）。
+- **絕對禁忌**：含果糖手搖飲（尿酸大敵）、火鍋濃湯、動物內臟、啤酒。
+
+### 3. 運動處方：
+- 每週 2 次 40 分鐘「下肢深蹲抗阻重訓」（拉升股骨頸骨密與 SMI 肌肉量）。
+- 飯後散步 15 分鐘（直接削平餐後血糖高峰，突破 HbA1c 5.8 瓶頸）。`
+};
+
+// Handle preset buttons
+function askPreset(question){
+  var q = question.toLowerCase();
+  var input = document.getElementById('userMsgInput');
+  input.value = question;
+  sendUserMessage();
+}
+
+function appendMessage(role, text){
+  var chatBox = document.getElementById('chatBox');
+  var div = document.createElement('div');
+  div.className = 'chat-bubble ' + role;
+
+  if(role === 'user'){
+    div.textContent = text;
+  } else {
+    div.innerHTML = '<strong><i class="fas fa-user-md text-blue"></i> AI 虛擬醫生：</strong><br>' + marked.parse(text);
+  }
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// LocalStorage API Key handling
+var savedKey = localStorage.getItem('david_gemini_api_key') || '';
+if(savedKey){
+  document.getElementById('apiKeyInput').value = savedKey;
+  document.getElementById('keyStatus').textContent = '✓ 已就緒（已載入本地金鑰）';
+}
+
+document.getElementById('saveKeyBtn').addEventListener('click', function(){
+  var key = document.getElementById('apiKeyInput').value.trim();
+  if(key){
+    localStorage.setItem('david_gemini_api_key', key);
+    savedKey = key;
+    document.getElementById('keyStatus').textContent = '✓ 儲存成功！將直接以 Gemini 進行即時推論';
+  } else {
+    localStorage.removeItem('david_gemini_api_key');
+    savedKey = '';
+    document.getElementById('keyStatus').textContent = '已清除金鑰（將切換為內建深度醫師解析庫）';
+  }
+});
+
+async function sendUserMessage(){
+  var input = document.getElementById('userMsgInput');
+  var text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+
+  appendMessage('user', text);
+
+  // Check if API Key is available
+  if(savedKey){
+    var loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-bubble ai';
+    loadingDiv.id = 'loadingIndicator';
+    loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin text-blue"></i> 醫師正在調閱五年病歷與最新臨床文獻，請稍候...';
+    document.getElementById('chatBox').appendChild(loadingDiv);
+    document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+
+    try {
+      var response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + savedKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            { role: "user", parts: [{ text: systemPrompt + "\n\n【患者提問】：\n" + text }] }
+          ],
+          generationConfig: {
+            temperature: 0.6,
+            maxOutputTokens: 1500
+          }
+        })
+      });
+
+      var data = await response.json();
+      var loader = document.getElementById('loadingIndicator');
+      if(loader) loader.remove();
+
+      if(data.candidates && data.candidates[0] && data.candidates[0].content){
+        var reply = data.candidates[0].content.parts[0].text;
+        appendMessage('ai', reply);
+      } else if(data.error){
+        appendMessage('ai', 'API 回傳錯誤：' + data.error.message + '。已為您切換至內建專家知識庫。');
+        fallbackAnswer(text);
+      } else {
+        fallbackAnswer(text);
+      }
+    } catch(err){
+      var loader2 = document.getElementById('loadingIndicator');
+      if(loader2) loader2.remove();
+      appendMessage('ai', '連線異常，正在為您啟用內建大衛健檢專家知識庫答覆：');
+      fallbackAnswer(text);
+    }
+  } else {
+    // Intelligent matching to rich fallback
+    setTimeout(function(){
+      fallbackAnswer(text);
+    }, 400);
+  }
+}
+
+function fallbackAnswer(text){
+  var lower = text.toLowerCase();
+  if(lower.indexOf('ldl') !== -1 || lower.indexOf('膽固醇') !== -1 || lower.indexOf('吃藥') !== -1){
+    appendMessage('ai', precomputed['ldl']);
+  } else if(lower.indexOf('甲狀腺') !== -1 || lower.indexOf('穿刺') !== -1 || lower.indexOf('fna') !== -1 || lower.indexOf('結節') !== -1){
+    appendMessage('ai', precomputed['fna']);
+  } else if(lower.indexOf('鈣化') !== -1 || lower.indexOf('雜音') !== -1 || lower.indexOf('心臟') !== -1){
+    appendMessage('ai', precomputed['cac']);
+  } else if(lower.indexOf('維生素') !== -1 || lower.indexOf('維他命') !== -1 || lower.indexOf('d') !== -1){
+    appendMessage('ai', precomputed['vitd']);
+  } else if(lower.indexOf('打鼾') !== -1 || lower.indexOf('睪固酮') !== -1 || lower.indexOf('咳嗽') !== -1 || lower.indexOf('睡眠') !== -1){
+    appendMessage('ai', precomputed['testo']);
+  } else if(lower.indexOf('飲食') !== -1 || lower.indexOf('運動') !== -1 || lower.indexOf('內臟') !== -1 || lower.indexOf('尿酸') !== -1){
+    appendMessage('ai', precomputed['diet']);
+  } else {
+    appendMessage('ai', `針對您詢問的「**${text}**」：
+依據您 2021–2025 年的綜合病歷，您目前整體的代謝與肝臟機能（ALT 37, HOMA-IR 1.42）正在朝良性方向快速修復，且 2024 年冠狀動脈鈣化分數 0 分提供極佳的心血管防護基礎。
+
+然而在全身治理上，建議您現階段依序遵循三大原則：
+1. **立即性**：優先於本月至高雄榮總新陳代謝科執行 **甲狀腺 2.6cm 結節之細針穿刺 (FNA)**。
+2. **專科門診**：於三個月內與醫師評估 **連續五年未達標之 LDL-C 藥物處方**、加驗 **25-OH 維生素 D** 並拉高補充劑量，以及補做已逾期 2 年的 **大腸鏡**。
+3. **日常鞏固**：以「每日 2,500cc 飲水 + 菜肉飯順序」攻堅 **95cm 腰圍與 7.5 尿酸**。
+
+若您需要更即時的深度自然語言互動，歡迎在左側輸入您的 Google Gemini API Key！`);
+  }
+}
+</script>
 </body>
 </html>
